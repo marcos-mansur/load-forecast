@@ -4,6 +4,7 @@ optuna
 numpy
 matplotlib
 seaborn
+sklearn
 keras == 2.8.0
 Keras-Preprocessing == 1.1.2
 keras-vis == 0.4.1
