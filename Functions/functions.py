@@ -91,7 +91,7 @@ def windowed_dataset(df, batch_size,
   if df_grouped.count().iloc[-1]!=7:
     data_week = data_week[:-1]
 
-
+  
   series = df[load_col]
   # generate tf.dataset
   dataset = tf.data.Dataset.from_tensor_slices(series)
@@ -182,6 +182,7 @@ class Preprocessor(BaseEstimator, TransformerMixin):
     df['Mes'] = df['din_instante'].dt.month
     df['ano'] = df['din_instante'].dt.year
     return df
+
 
   def drop_incomplete_week(self,df):
     """ drop incomplete week at the bottom of the dataset """
