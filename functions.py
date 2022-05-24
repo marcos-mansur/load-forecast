@@ -32,9 +32,10 @@ def load_data(start=2009, end=2021):
 
 class Preprocessor(BaseEstimator, TransformerMixin):
 
-  def __init__(self, regiao):
+  def __init__(self, regiao, input_form):
     self.regiao = regiao
     self.missing_days = []
+    self.input_form = input_form
     pass
 
 
