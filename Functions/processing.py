@@ -8,13 +8,14 @@ time_col = 'din_instante'
 load_col = 'val_cargaenergiamwmed'
 SEED = 42
 
+wd = Window_Generator(window_size=15)
 
 class Window_Generator(BaseEstimator):
     
     def __init__(self, target_period, window_size, batch_size,shuffle_buffer,
                  regiao = 'SUDESTE', sazo_weeks=2, SEED=SEED, how = 'dia para semana'):
-        self.target_period = target_period
-        self.window_size = window_size
+        self.target_period = target_period*7 # in weeks
+        self.window_size = window_size # in weeks
         self.batch_size = batch_size
         self.shuffle_buffer = shuffle_buffer
         self.regiao = regiao
@@ -22,7 +23,6 @@ class Window_Generator(BaseEstimator):
         self.how = how
         self.sazo_weeks = sazo_weeks
         assert self.how in ['dia para semana', 'sazonalidade anual','autorregressivo']
-        assert self.window_size % 7 == 0, "window_size deve ser divisível por 7"
     pass
     
     def generate_data_week(self, df):
@@ -32,11 +32,8 @@ class Window_Generator(BaseEstimator):
             data_week: first day of the first target week
         """
         df = df.copy()
-        # if df['din_instante'].iloc[0].day_name() != 'Friday':
-        #     # get next friday - begins the operative week
-        #     df = Preprocessor(regiao=self.regiao).go_to_friday(df)
         # groupby object by week and then by day
-        df_grouped = df[self.window_size:].groupby(by=['semana'])['din_instante']
+        df_grouped = df[self.window_size*7:].groupby(by=['semana'])['din_instante']
         # get first day of each week and  removes the last 4 rows 
         # because we want to save the first day of the first target week
         # so we drop the last target 4 weeks 
@@ -68,13 +65,13 @@ class Window_Generator(BaseEstimator):
         
         if self.how == 'sazonalidade anual':
             """ the inputs are the daily load of the same week in the year before and in the last sazo_weeks from the time window"""
-            assert self.window_size >= 365, "window size menor que 365 dias, não é possível usar how = 'sazonalidade anual'"
+            assert self.window_size*7 >= 365, "window size menor que 365 dias, não é possível usar how = 'sazonalidade anual'"
             assert self.target_period == 35, f"targe_period = {self.target_period}, deve ser igual a 35 (5 semanas)"
             dataset = dataset.map(lambda window:(tf.concat(
                 values=
                     [
-                    window[-364-self.target_period:-357-self.target_period],     # week in the year before
-                    window[-(self.sazo_weeks*7)-self.target_period:-self.target_period] # last weeks
+                    tf.math.reduce_mean(window[-364-self.target_period:-357-self.target_period],axis=0),     # week in the year before
+                    tf.math.reduce_mean(window[-(self.sazo_weeks*7)-self.target_period:-self.target_period],axis=0) # last weeks
                     ], 
                 axis=-1),   #features
                                     [tf.math.reduce_sum(window[-35:-28])/7, # first target week
@@ -88,19 +85,17 @@ class Window_Generator(BaseEstimator):
         if self.how == 'autorregressivo':
             """ for multi-step forecasting. target = next week; inputs = last five weeks as weekly average load, before that, in daily load"""
             assert self.target_period == 7, f"target_periodo = {self.target_period}, deve ser igual = 7 (dias)"
-            assert self.window_size >=35, "window_size menor que 5 semanas"
+            assert self.window_size >= 5, "window_size menor que 5 semanas"
             
-            dataset = dataset.map(lambda window:(tf.concat(values=[
-                window[:-35-self.target_period], # features in days before the last five weeks
-                tf.reshape(tf.math.reduce_mean(window[-5*7-self.target_period:-4*7-self.target_period],axis=0),shape=[-1]), # fifth last input week
-                tf.reshape(tf.math.reduce_mean(window[-4*7-self.target_period:-3*7-self.target_period],axis=0),shape=[-1]), # forth last input week
-                tf.reshape(tf.math.reduce_mean(window[-3*7-self.target_period:-2*7-self.target_period],axis=0),shape=[-1]), # third last input week
-                tf.reshape(tf.math.reduce_mean(window[-2*7-self.target_period:-7-self.target_period],axis=0),shape=[-1]),  # second last input week
-                tf.reshape(tf.math.reduce_mean(window[-7-self.target_period:-self.target_period],axis=0),shape=[-1]) # last input week
-                                ],
-                                                            axis=-1),
-                                        # target - the weekly average load of one week 
-                                        tf.math.reduce_mean(window[-self.target_period:],axis=0)
+            dataset = dataset.map(lambda window:(
+                # input in weeks
+                tf.reshape([tf.reshape(tf.math.reduce_mean(window[-x*7-self.target_period:-(x-1)*7-self.target_period],
+                                                            axis=0),
+                                    shape = [-1]) 
+                            for x in range(int(self.window_size),0,-1)], 
+                            shape=[-1]),
+                            # target 
+                            tf.math.reduce_mean(window[-self.target_period:],axis=0)
                                                 )
                                 )
 
@@ -119,9 +114,9 @@ class Window_Generator(BaseEstimator):
         dataset = tf.data.Dataset.from_tensor_slices(series)
         
         # create windows 
-        dataset = dataset.window(self.window_size + self.target_period, shift=7, drop_remainder=True)
+        dataset = dataset.window(self.window_size*7 + self.target_period, shift=7, drop_remainder=True)
         # make sure every window is the same size / clip NaN at the end
-        dataset = dataset.flat_map(lambda window: window.batch(self.window_size + self.target_period))
+        dataset = dataset.flat_map(lambda window: window.batch(self.window_size*7 + self.target_period))
         if shuffle:
             # randomly shuffles the windows instances in the dataset 
             dataset = dataset.shuffle(self.shuffle_buffer,seed=self.SEED)

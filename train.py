@@ -18,15 +18,11 @@ from Functions.functions import (load_data,
 regiao = 'SUDESTE'
 SEED = 42
 
-batch_size = 99
+batch_size = 32
 # number of week to be predicted
-predict_weeks = 1
-# target days to sum into weeks
-target_period = 7*predict_weeks
-# number of weeks in the window
-n_weeks_ws = 11
-# window size in days for each row
-window_size = 7*n_weeks_ws
+target_period = 1
+# window size in weeks for each row
+window_size = 5
 # optmizer learning rate
 adam_learning_rate = 0.007500032882345478
 
@@ -37,7 +33,7 @@ np.random.seed(SEED)
 tf.random.set_seed(SEED)
 
 
-df_20XX = load_data(start=2009, end=2022)
+df_20XX = load_data(start=2012, end=2022)
 
 
 pp = Preprocessor(regiao='SUDESTE')
@@ -51,9 +47,9 @@ train_df, val_df, test_df = pp.split_time(df=df,
 df_target = create_target_df(df, baseline_size=5)
 
 wd = Window_Generator(batch_size = batch_size, 
-                     window_size = 5*7,
+                     window_size = 7,
                      shuffle_buffer = 20, 
-                     target_period = 7, 
+                     target_period = 1, 
                      how = 'autorregressivo',
                      SEED = SEED)
 
@@ -84,7 +80,7 @@ model = tf.keras.models.Sequential([
 history = compile_and_fit(model, epochs = 150, 
                           data=train_dataset, 
                           val_data = val_dataset,
-                          optimizer = tf.optimizers.Adam(learning_rate=0.001),
+                          optimizer = tf.optimizers.Adam(), #learning_rate=0.001
                           patience = 100,
                           filepath = filepath)
 

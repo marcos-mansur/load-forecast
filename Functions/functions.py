@@ -5,6 +5,7 @@ import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.metrics import mean_absolute_error, mean_absolute_percentage_error, mean_squared_error
+from statsmodels.tsa.seasonal import seasonal_decompose
 
 time_col = 'din_instante'
 load_col = 'val_cargaenergiamwmed'
@@ -108,6 +109,7 @@ def compile_and_fit(model, data, val_data, epochs,optimizer,
                     ])
   return history
 
+
 def learning_curves(history, skip, id, save=False, plot=False):
   # starting epoch to plot
   
@@ -152,6 +154,7 @@ def plot_pred(date_list, pred_list, df_target, id, baseline=False, save=False, p
     _,ax=plt.subplots(figsize=(20,35), ncols=1, nrows=5)
     extra = plt.Rectangle((0, 0), 0, 0, fc="none", fill=False, ec='none', linewidth=0)
 
+    # plot baseline
     if baseline == True:
         sns.lineplot(x = df_target['Data'],
                 y = df_target['Média Móvel'], 
@@ -169,7 +172,7 @@ def plot_pred(date_list, pred_list, df_target, id, baseline=False, save=False, p
         # plot predicted data
         for date,pred,color in zip(date_list, 
                                 pred_list,
-                                colors): 
+                                colors[:len(pred_list)]): 
             sns.lineplot(x = date[:].shift(x),
                         y = pred[:,x], 
                         ax=np.ravel(ax)[x],
@@ -179,15 +182,17 @@ def plot_pred(date_list, pred_list, df_target, id, baseline=False, save=False, p
         np.ravel(ax)[x].set_title(f'Carga real vs Predição em todo o período - Semana {x+1}')
         # np.ravel(ax)[x].legend(['Real','Previsão no treino','Previsão na validação','Previsão no teste'], loc='upper left')
 
-        
+        score = [tf.keras.metrics.mean_absolute_error(df_target[f'Semana {x+1}'].loc[np.array(date_list[j].index)],
+                                                    pred_list[j][:,x]).numpy() for j in range(len(pred_list))]
         scores = (r"MAE Train ={:.0f}"+'\n'+r"MAE val ={:.0f}"+"\n"+r"MAE test ={:.0f}").format(
-                tf.keras.metrics.mean_absolute_error(df_target[f'Semana {x+1}'].loc[np.array(date_list[0].index)],
-                                                    pred_list[0][:,x]).numpy(),
-                tf.keras.metrics.mean_absolute_error(df_target[f'Semana {x+1}'].loc[np.array(date_list[1].index)],
-                                                    pred_list[1][:,x]).numpy(),
-                tf.keras.metrics.mean_absolute_error(df_target[f'Semana {x+1}'].loc[np.array(date_list[2].index)],
-                                                    pred_list[2][:,x]).numpy() 
-                                                                                                )
+                **score
+                # tf.keras.metrics.mean_absolute_error(df_target[f'Semana {x+1}'].loc[np.array(date_list[0].index)],
+                #                                     pred_list[0][:,x]).numpy(),
+                # tf.keras.metrics.mean_absolute_error(df_target[f'Semana {x+1}'].loc[np.array(date_list[1].index)],
+                #                                     pred_list[1][:,x]).numpy(),
+                # tf.keras.metrics.mean_absolute_error(df_target[f'Semana {x+1}'].loc[np.array(date_list[2].index)],
+                #                                     pred_list[2][:,x]).numpy() 
+                )
         np.ravel(ax)[x].legend([extra], [scores], loc='lower right')
     if save:
         plt.savefig(f"valuation/prediction_series{id}.png")
@@ -206,7 +211,7 @@ def plot_res(df_target,pred_list, date_list,id, save=False, plot=False):
     # diferença normalizada entre semanas consecutivas
     #sns.lineplot(y=res_baseline, x=df_target['Data'], ax=ax)
 
-    for pred, date, color in zip(pred_list,date_list,colors):
+    for pred, date, color in zip(pred_list,date_list,colors[:len(pred_list)]):
         
         res_pred = pred[:,0] - df_target[f'Semana 1'].loc[np.array(date.index)]
         sns.lineplot(y=res_pred, x=df_target['Data'], ax=ax, color= color)
@@ -224,9 +229,12 @@ def metrics_semana(df_target, pred_list,date_list,id, save=False, plot=False):
                 '1':'val_data',
                 '2': 'test_data'}
 
-    fig, ax = plt.subplots(figsize=(20,10),ncols=3,nrows=3)
+    fig, ax = plt.subplots(figsize=(20,10),ncols=3,nrows=len(pred_list))
 
-    for [i,df_loop,data_week] in zip([0,1,2],pred_list, date_list):
+    # list of size equals to number of folds the dataset were splited
+    contador = [cont for cont in range(len(pred_list))]
+
+    for [i,df_loop,data_week] in zip(contador,pred_list, date_list):
 
         mae_list = []
         mape_list = []
@@ -272,42 +280,42 @@ def metrics_semana(df_target, pred_list,date_list,id, save=False, plot=False):
       plt.show()
 
 
-def baseline_metrics(df_target, date_list):
+def baseline_metrics(df_target, date_list, semana=1):
     # metrics for baseline model
-    metrics_baseline = pd.DataFrame(index = ['train', 'val', 'test'], 
+    metrics_baseline = pd.DataFrame(index = [f'train_semana{semana}', f'val_semana{semana}', f'test_semana{semana}'], 
                         data = 
 
             {'MAE' : [tf.keras.metrics.mean_absolute_error(
             # target
-            df_target[f'Semana 1'].loc[np.array(date_list[x].index)],
+            df_target[f'Semana {semana}'].loc[np.array(date_list[x].index)],
             # baseline (week before)
             df_target[f'Média Móvel'].loc[np.array(date_list[x].index)]).numpy()
             for x in range(0,3)],
             
             'MAPE' : [tf.keras.metrics.mape(
             # target
-            df_target[f'Semana 1'].loc[np.array(date_list[x].index)],
+            df_target[f'Semana {semana}'].loc[np.array(date_list[x].index)],
             # baseline (week before)
             df_target[f'Média Móvel'].loc[np.array(date_list[x].index)]).numpy()
             for x in range(0,3)],
 
             'MSE' : [tf.keras.metrics.mse(
              # target
-            df_target[f'Semana 1'].loc[np.array(date_list[x].index)],
+            df_target[f'Semana {semana}'].loc[np.array(date_list[x].index)],
             # baseline (week before)
             df_target[f'Média Móvel'].loc[np.array(date_list[x].index)]).numpy()
             for x in range(0,3)],
 
             'MSLE' : [tf.keras.metrics.msle(
             # target
-            df_target[f'Semana 1'].loc[np.array(date_list[x].index)],
+            df_target[f'Semana {semana}'].loc[np.array(date_list[x].index)],
             # baseline (week before)
             df_target[f'Média Móvel'].loc[np.array(date_list[x].index)]).numpy()
             for x in range(0,3)],
 
             'RMSE' : [tf.keras.metrics.RootMeanSquaredError().update_state(
                         # target
-            df_target[f'Semana 1'].loc[np.array(date_list[x].index)],
+            df_target[f'Semana {semana}'].loc[np.array(date_list[x].index)],
             # baseline (week before)
             df_target[f'Média Móvel'].loc[np.array(date_list[x].index)]).numpy()
             for x in range(0,3)]
@@ -339,3 +347,21 @@ def unbatch_pred(window_pred):
         for item in batch:
             pred = np.append(pred,item).reshape([-1,5])
     return pred[:-4]
+
+
+def sazonality(df,id=1,model='aditive',save=False):
+    assert model in ['aditive', 'multiplicative']
+    mean_load_week = df.groupby(by=['semana'])['val_cargaenergiamwmed'].mean()  
+    date_week = df.groupby(by=['semana'])['din_instante'].min()
+    df_sazo = pd.DataFrame(data=mean_load_week)
+    # data de inicio da semana prevista
+    df_sazo['din_instante'] = date_week
+
+    analysis = df_sazo.set_index('din_instante')[['val_cargaenergiamwmed']].copy()
+
+    decompose_result_mult = seasonal_decompose(analysis, model=model)
+
+    fig = decompose_result_mult.plot();
+    fig.set_size_inches((20, 9))
+    if save:
+        fig.savefig(f'sazonalidade_{id}_{model}.png')
