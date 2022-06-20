@@ -8,8 +8,6 @@ time_col = 'din_instante'
 load_col = 'val_cargaenergiamwmed'
 SEED = 42
 
-wd = Window_Generator(window_size=15)
-
 class Window_Generator(BaseEstimator):
     
     def __init__(self, target_period, window_size, batch_size,shuffle_buffer,
