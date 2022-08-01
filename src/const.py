@@ -6,7 +6,8 @@ DATA_YEAR_END_PP = 2022
 VAL_START_PP = 0.7
 TEST_START_PP = 0.9
 
-M_PRE_FIT = '[DEBUG] PREPROCESS - FIT (1/1): DONE!'
+M_PRE_FIT = '[DEBUG] PREPROCESS - FIT (2/2): DONE!'
+M_PRE_FIT_FILTER = '[DEBUG] PREPROCESS - FIT: FILTER SUBSYSTEM (1/2): DONE!'
 M_PRE_FILTER = '[DEBUG] PREPROCESS - FILTER SUBSYSTEM (1/6): DONE!'
 M_PRE_IMPUTE = '[DEBUG] PREPROCESS - IMPUTE NAN (2/6): DONE!'
 M_PRE_GOTOFRYDAY = '[DEBUG] PREPROCESS - GO TO FRIDAY (3/6): DONE!'
@@ -32,6 +33,7 @@ TRAIN_TREATED_DATA_PATH = 'data/treated/train_preprocessed.csv'
 VAL_TREATED_DATA_PATH = 'data/treated/val_preprocessed.csv'
 TEST_TREATED_DATA_PATH = 'data/treated/test_preprocessed.csv'
 
+TARGET_DF_PATH = 'data/target_df.csv'
 
 PROCESSED_DATA_PATH = 'data/processed'
 TRAIN_PROCESSED_DATA_PATH = 'data/processed/train_processed'
@@ -43,3 +45,9 @@ TRAIN_PROCESSED_DATA_WEEK_PATH = 'data/processed/train_data_week.csv'
 TRAIN_PRED_PROCESSED_DATA_WEEK_PATH = 'data/processed/train_pred_data_week.csv'
 VAL_PROCESSED_DATA_WEEK_PATH = 'data/processed/val_data_week.csv'
 TEST_PROCESSED_DATA_WEEK_PATH = 'data/processed/test_data_week.csv'
+
+
+EPOCHS = 50
+PATIENCE = 100
+MODEL_PATH = 'src/model/'
+NEURONS = [32]

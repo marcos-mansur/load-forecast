@@ -5,6 +5,8 @@ from sklearn.base import BaseEstimator, TransformerMixin
 from const import *
 import os
 
+from utils import create_target_df
+
 class Preprocessor(BaseEstimator, TransformerMixin):
 
   def __init__(self, regiao=REGIAO):
@@ -22,7 +24,7 @@ class Preprocessor(BaseEstimator, TransformerMixin):
     """ Learns the missing days """
     df = df.copy()
     # filter by subsystem
-    df = self.filter_subsystem(df, regiao = self.regiao)
+    df = self.filter_subsystem(df, regiao = self.regiao, debug_msg=M_PRE_FIT_FILTER)
     # saves missing days in a variable called missing_days 
     self.missing_days = df[pd.isna(df.val_cargaenergiamwmed)].din_instante
     print(M_PRE_FIT)
@@ -32,7 +34,7 @@ class Preprocessor(BaseEstimator, TransformerMixin):
   def transform(self, df:pd.DataFrame):
     """ Applies transformations """
     df = df.copy()
-    df = self.filter_subsystem(df, regiao = self.regiao)  # filter by subsystem
+    df = self.filter_subsystem(df,regiao = self.regiao)  # filter by subsystem
     df = self.impute_nan(df)                              # impute/drop NaN values
     df = self.go_to_friday(df)        # starts the dataset at a friday - the operative week 
     df = self.parse_dates(df)         # create columns parsing the data
@@ -41,7 +43,9 @@ class Preprocessor(BaseEstimator, TransformerMixin):
     return df
 
 
-  def filter_subsystem(self, df:pd.DataFrame, regiao:str):
+  def filter_subsystem(self, df:pd.DataFrame, 
+                        regiao:str, 
+                        debug_msg=M_PRE_FILTER):
     """ filter data by subsystem and reset index """
     df = df.copy()
     # try and except so it doesn't crash if it's applied to an already treated dataset
@@ -53,7 +57,7 @@ class Preprocessor(BaseEstimator, TransformerMixin):
     df.drop(labels=['nom_subsistema','id_subsistema'], inplace=True, axis=1,errors='ignore')
     # reset index of concatenated datasets
     df.reset_index(inplace=True,drop=True)
-    print(M_PRE_FILTER, " (", REGIAO, ")")
+    print(debug_msg, " (", REGIAO, ")")
     return df
 
 
@@ -249,5 +253,7 @@ if __name__ == '__main__':
     train_df.to_csv(TRAIN_TREATED_DATA_PATH) 
     val_df.to_csv(VAL_TREATED_DATA_PATH)
     test_df.to_csv(TEST_TREATED_DATA_PATH)
+
+    create_target_df(df, df_target_path=TARGET_DF_PATH, baseline_size=5)
 
     print('CSV files saved to ',TREATED_DATA_PATH)
