@@ -234,7 +234,9 @@ def load_data_pp(start=2009, end=2021):
                             parse_dates=['din_instante'])))
     return df_20XX.reset_index(drop=True)
 
-def main():
+
+if __name__ == '__main__':
+    
     df_20XX = load_data_pp(start=DATA_YEAR_START_PP, end=DATA_YEAR_END_PP)
 
     pp = Preprocessor(regiao=REGIAO)
@@ -244,10 +246,8 @@ def main():
                                                 val_start=VAL_START_PP, 
                                                 test_start=TEST_START_PP)
 
-    train_df.to_csv('data/treated/train_preprocessed.csv') 
-    val_df.to_csv('data/treated/val_preprocessed.csv')
-    test_df.to_csv('data/treated/test_preprocessed.csv')
+    train_df.to_csv(TRAIN_TREATED_DATA_PATH) 
+    val_df.to_csv(VAL_TREATED_DATA_PATH)
+    test_df.to_csv(TEST_TREATED_DATA_PATH)
 
-
-if __name__ == '__main__':
-    main()
+    print('CSV files saved to ',TREATED_DATA_PATH)

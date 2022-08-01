@@ -23,4 +23,9 @@ TARGET_PERIOD_PRO = 1
 HOW_WINDOW_GEN_PRO = 'autorregressivo'
 
 
-TREATED_DATA_PATH = 'data/treated/'
+TREATED_DATA_PATH = 'data\treated'
+PROCESSED_DATA_PATH = 'data\processed'
+
+TRAIN_TREATED_DATA_PATH = 'data/treated/train_preprocessed.csv'
+VAL_TREATED_DATA_PATH = 'data/treated/val_preprocessed.csv'
+TEST_TREATED_DATA_PATH = 'data/treated/test_preprocessed.csv'
