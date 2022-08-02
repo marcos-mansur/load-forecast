@@ -44,30 +44,6 @@ def learning_curves(history, skip, id, save=False, plot=False):
     plt.show()
 
 
-def predict_load(model,pred_dataset,window_size=5):
-    window_pred= []
-    # loop the input windows
-    for window_loop, target in pred_dataset:
-        # make a copy of the window to edit
-        window = window_loop
-        # loop the time steps in a input window
-        for step in range(0,5):
-            # predict using the last 5 inputs
-            forecast = model.predict(window[:,-window_size:])
-            # append the prediction to the input window
-            window = tf.concat(values=[window,forecast], axis=-1)[:,-window_size:]
-        window_pred.append(window)
-    return window_pred
-
-def unbatch_pred(window_pred):
-    # unbatch
-    numpy_pred = [x.numpy() for x in window_pred]  
-    pred = numpy_pred[0]
-    for batch in numpy_pred[1:]:
-        for item in batch:
-            pred = np.append(pred,item).reshape([-1,5])
-    return pred[:-4]
-
 def plot_pred(  date_list, pred_list, 
                 df_target, id, 
                 baseline=False, 
@@ -97,7 +73,7 @@ def plot_pred(  date_list, pred_list,
         for date,pred,color in zip(date_list, 
                                 pred_list,
                                 colors[:len(pred_list)]): 
-            sns.lineplot(x = date[:].shift(x),
+            sns.lineplot(x = date.shift(x).din_instante,
                         y = pred[:,x], 
                         ax=np.ravel(ax)[x],
                         color=color)
@@ -109,7 +85,7 @@ def plot_pred(  date_list, pred_list,
         score = [tf.keras.metrics.mean_absolute_error(df_target[f'Semana {x+1}'].loc[np.array(date_list[j].index)],
                                                     pred_list[j][:,x]).numpy() for j in range(len(pred_list))]
         scores = (r"MAE Train ={:.0f}"+'\n'+r"MAE val ={:.0f}"+"\n"+r"MAE test ={:.0f}").format(
-                **score
+                *score
                 # tf.keras.metrics.mean_absolute_error(df_target[f'Semana {x+1}'].loc[np.array(date_list[0].index)],
                 #                                     pred_list[0][:,x]).numpy(),
                 # tf.keras.metrics.mean_absolute_error(df_target[f'Semana {x+1}'].loc[np.array(date_list[1].index)],
@@ -175,7 +151,7 @@ def metrics_semana(df_target, pred_list,date_list,id, save=False, plot=False):
         ax[i,2].legend([extra], [scores], loc='lower right')
 
     if save:
-        fig.savefig(f"valuation/learning_curves{id}.png")
+        fig.savefig(f"valuation/metrics_semana{id}.png")
     if plot:
       plt.show()
 
