@@ -44,7 +44,7 @@ def learning_curves(history, skip, id, save=False, plot=False):
     plt.show()
 
 
-def plot_pred(  date_list, pred_list, 
+def plot_predicted_series(  date_list, pred_list, 
                 df_target, id, 
                 baseline=False, 
                 save=False, plot=False):
@@ -100,7 +100,21 @@ def plot_pred(  date_list, pred_list,
       plt.show()
 
 
-def metrics_semana(df_target, pred_list,date_list,id, save=False, plot=False):
+def generate_metrics_semana(df_target, pred_list,date_list,id, save=False, plot=False):
+    """Generates metrics for prediction performance of the 5 predicted weeks
+    and generates plot for such metrics 
+
+    Args:
+        df_target (_type_): dataframe with target values
+        pred_list (_type_): list with predictions for train, val and test dataset as items 
+        date_list (_type_): list with week initial day data for train, val and test dataset as items
+        id (_type_): _description_
+        save (bool, optional): If True, saves plots as png. Defaults to False.
+        plot (bool, optional): If True, show plots. Defaults to False.
+
+    Returns:
+        _type_: list with dataframes of
+    """
     name_dict = {'0':'train_data',
                 '1':'val_data',
                 '2': 'test_data'}
@@ -108,55 +122,89 @@ def metrics_semana(df_target, pred_list,date_list,id, save=False, plot=False):
     fig, ax = plt.subplots(figsize=(20,10),ncols=3,nrows=len(pred_list))
 
     # list of size equals to number of folds the dataset were splited
-    contador = [cont for cont in range(len(pred_list))]
+    enumerator = [cont for cont in range(len(pred_list))]
 
-    for [i,df_loop,data_week] in zip(contador,pred_list, date_list):
+    train_metrics_df = pd.DataFrame(index=[f'Semana {week}' for week in range(1,6)])
+    val_metrics_df =  pd.DataFrame(index=[f'Semana {week}' for week in range(1,6)])
+    test_metrics_df = pd.DataFrame(index=[f'Semana {week}' for week in range(1,6)])
+    metrics_df_list = [train_metrics_df,val_metrics_df,test_metrics_df]
+
+    # df_set will take the values: train_pred, val_pred and test_pred
+    for [i,df_set,data_week] in zip(enumerator,pred_list, date_list):
 
         mae_list = []
         mape_list = []
         mse_list = []
 
-        for x in range(0,5):
-            #print(f"MAE train_pred Semana {i+1}:  {mean_absolute_error(train_pred[:,i], df_target[5 : int(len(df_target)*0.7)-4].iloc[:,i])}")
-            mae_list.append(mean_absolute_error(df_loop[:,x], 
-                                                df_target[f'Semana {x+1}'].loc[np.array(data_week.index)]))
-        for x in range(0,5):
-            #print(f"MAPE train_pred Semana {i+1}: {mean_absolute_percentage_error(train_pred[:,i], df_target[5 : int(len(df_target)*0.7)-4].iloc[:,i])*100}")
-            mape_list.append(mean_absolute_percentage_error(df_loop[:,x], 
-                                                            df_target[f'Semana {x+1}'].loc[np.array(data_week.index)])*100)
-        for x in range(0,5):
-            #print(f"MSE train_pred Semeana {i+1}: {mean_squared_error(train_pred[:,i], df_target[5 : int(len(df_target)*0.7)-4].iloc[:,i])}")                
-            mse_list.append(mean_squared_error(df_loop[:,x], df_target[f'Semana {x+1}'].loc[np.array(data_week.index)]))
-        
+        # loops the five weeks
+        for week in range(0,5):
+
+            # adds mae of each week to mae_list
+            mae_list.append(
+              mean_absolute_error(
+                      df_set[:,week], 
+                      df_target[f'Semana {week+1}'].loc[np.array(data_week.index)]
+                  )
+              )
+
+            # adds mape of each week to mape_list
+            mape_list.append(
+              mean_absolute_percentage_error(
+                      df_set[:,week], 
+                      df_target[f'Semana {week+1}'].loc[np.array(data_week.index)]
+                  )*100
+              )
+
+            # adds mse of each week to mse_list
+            mse_list.append(mean_squared_error(
+                      df_set[:,week], 
+                      df_target[f'Semana {week+1}'].loc[np.array(data_week.index)],
+                      squared=False
+                  )
+              ) 
+
+        # saves weekly metrics to a df 
+        metrics_df_list[i]['MAE'] =  mae_list
+        metrics_df_list[i]['MAPE'] =  mape_list
+        metrics_df_list[i]['RMSE'] =  mse_list
 
         # rectangle to print the metrics mean and std over it 
-        extra = plt.Rectangle((0, 0), 0, 0, fc="none", fill=False, ec='none', linewidth=0)
+        extra = plt.Rectangle((0, 0), 0, 0, 
+                              fc="none", fill=False, 
+                              ec='none', linewidth=0)
+        
         # plot MAE by week
         sns.lineplot(x=range(1,6),y=mae_list, ax=ax[i,0])
         ax[i,0].set_title(f'{name_dict[str(i)]} - MAE por semana prevista')
         ax[i,0].set_xticks([1,2,3,4,5])
-        scores = (r'$MAE={:.2f} \pm {:.2f}$').format(np.mean(mae_list),np.std(mae_list))
+        scores = (r'$MAE={:.2f} \pm {:.2f}$').format(np.mean(mae_list),
+                                                    np.std(mae_list))
         ax[i,0].legend([extra], [scores], loc='lower right')
+        
         # plot mape by week
         sns.lineplot(x=range(1,6),y=mape_list, ax=ax[i,1])
         ax[i,1].set_title(f'{name_dict[str(i)]} - MAPE por semana prevista')
         ax[i,1].set_xticks([1,2,3,4,5])
-        scores = (r'$MAPE={:.2f} \pm {:.2f}$').format(np.mean(mape_list),np.std(mape_list))
+        scores = (r'$MAPE={:.2f} \pm {:.2f}$').format(np.mean(mape_list),
+                                                      np.std(mape_list))
         ax[i,1].legend([extra], [scores], loc='lower right')
+                
         # plot MSE by week
         sns.lineplot(x=range(1,6),y=mse_list, ax=ax[i,2])
         ax[i,2].set_title(f'{name_dict[str(i)]} - MSE por semana prevista')
         ax[i,2].set_xticks([1,2,3,4,5])
-        scores = (r'$MSE={:.2f} \pm {:.2f}$').format(np.mean(mse_list),np.std(mse_list))
+        scores = (r'$MSE={:.2f} \pm {:.2f}$').format(np.mean(mse_list), 
+                                                      np.std(mse_list))
         ax[i,2].legend([extra], [scores], loc='lower right')
 
     if save:
         fig.savefig(f"valuation/metrics_semana{id}.png")
     if plot:
       plt.show()
+    return metrics_df_list
 
 
-def sazonality(df,id=1,model='aditive',save=False):
+def plot_sazonality(df,id=1,model='aditive',save=False):
     assert model in ['aditive', 'multiplicative']
     mean_load_week = df.groupby(by=['semana'])['val_cargaenergiamwmed'].mean()  
     date_week = df.groupby(by=['semana'])['din_instante'].min()
@@ -193,7 +241,7 @@ def create_target_df(df, df_target_path, baseline_size=1):
     df_target.to_csv(df_target_path)
 
 
-def plot_res(df_target,pred_list, date_list,id, save=False, plot=False):
+def plot_residual_error(df_target,pred_list, date_list,id, save=False, plot=False):
     # variation from one week to the next
     res_baseline = df_target['Resíduo'] #- df_target['Resíduo'].mean())/df_target['Resíduo'].max()
     # prediction residues

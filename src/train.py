@@ -1,5 +1,18 @@
+import mlflow
+import os
+from vault_dagshub import *
+
+os.environ["MLFLOW_TRACKING_USERNAME"] = DAGSHUB_USERNAME
+os.environ["MLFLOW_TRACKING_PASSWORD"] = DAGSHUB_PASSWORD
+os.environ["MLFLOW_TRACKING_URI"]  = "https://dagshub.com/marcos-mansur/load-forecast.mlflow"
+
+#mlflow.tensorflow.
+mlflow.tensorflow.autolog()
+
+
 import tensorflow as tf
 import pandas as pd
+import numpy as np
 from const import * 
 from utils import *
 
@@ -33,10 +46,11 @@ def create_model(neurons:list):
     # LSTM
     model = tf.keras.models.Sequential([
         tf.keras.layers.Lambda(lambda x: tf.expand_dims(x, axis = -1), input_shape=[None]),
-        tf.keras.layers.BatchNormalization(),
-        tf.keras.layers.LSTM(neurons[0], return_sequences=False, activation ='tanh'),
-        tf.keras.layers.Dense(1),
-        tf.keras.layers.Lambda(lambda x: x * 10000.0)])
+        tf.keras.layers.BatchNormalization(),])
+
+    model.add(tf.keras.layers.LSTM(neurons[0], return_sequences=False, activation ='tanh'))
+    model.add(tf.keras.layers.Dense(1))
+    model.add(tf.keras.layers.Lambda(lambda x: x * 10000.0))
 
     return model 
 
@@ -126,64 +140,101 @@ model = create_model(neurons=NEURONS)
 if model:
     print(M_TRAIN_CREATE_MODEL)
 
+with mlflow.start_run():
+    print(M_TRAIN_LOG_START)
 
-history = compile_and_fit(model=model, epochs = EPOCHS, 
-                          data = train_dataset, 
-                          val_data = val_dataset,
-                          optimizer = tf.optimizers.Adam(),
-                          patience = PATIENCE,
-                          filepath = MODEL_PATH)
+    mlflow.log_params(
+        {   
+            'model': 'vanila RNN', 
+            'layers': '[LSTM]',
+            'neurons': NEURONS,
+            'epochs': EPOCHS,
+            'batch size': BATCH_SIZE_PRO,
+            'window size': WINDOW_SIZE_PRO,
+            'Process': HOW_WINDOW_GEN_PRO,
+            'Start year': DATA_YEAR_START_PP,
+            'End year': DATA_YEAR_END_PP,
+            'Folds': FOLDS,
+            'Patience': PATIENCE
+        })
+    print(M_TRAIN_LOG_PARAMS)
 
-print(M_TRAIN_TRAINING)
+    print(M_TRAIN_TRAINING_START)
+    history = compile_and_fit(model=model, epochs = EPOCHS, 
+                            data = train_dataset, 
+                            val_data = val_dataset,
+                            optimizer = tf.optimizers.Adam(),
+                            patience = PATIENCE,
+                            filepath = MODEL_PATH)
+    print(M_TRAIN_TRAINING_END)
 
-# save model to disk
-model.save(MODEL_PATH)
+    # save model to disk
+    model.save(MODEL_PATH)
 
-# make prediction
-train_pred = predict_load(model,train_pred_dataset,
-                        window_size=WINDOW_SIZE_PRO)
-val_pred = predict_load(model,val_dataset,
-                        window_size=WINDOW_SIZE_PRO)
-test_pred = predict_load(model,test_dataset,
-                        window_size=WINDOW_SIZE_PRO)
-print('predictions: done!')
+    # make prediction
+    train_pred = predict_load(model,train_pred_dataset,
+                            window_size=WINDOW_SIZE_PRO)
+    val_pred = predict_load(model,val_dataset,
+                            window_size=WINDOW_SIZE_PRO)
+    test_pred = predict_load(model,test_dataset,
+                            window_size=WINDOW_SIZE_PRO)
+    print(M_TRAIN_PREDICTION)
 
-# unbatch
-pred_list = [unbatch_pred(train_pred), 
-             unbatch_pred(val_pred),
-             unbatch_pred(test_pred)]
+    # unbatch
+    pred_list = [unbatch_pred(train_pred), 
+                unbatch_pred(val_pred),
+                unbatch_pred(test_pred)]
 
 
-# valuation
-learning_curves(
-    history=history, 
-    skip=20, 
-    save=True, 
-    id=RUN_ID
-    )
+    # valuation
+    learning_curves(
+        history=history, 
+        skip=20, 
+        save=True, 
+        id=EX_ID
+        )
 
-plot_pred(  
-    pred_list=pred_list, 
-    date_list=date_list, 
-    df_target=df_target, 
-    baseline=False, 
-    save=True, 
-    id=RUN_ID
-    )
+    # generates the plot of the original and
+    # predicted time series for the 5 weeks
+    plot_predicted_series(  
+        pred_list=pred_list, 
+        date_list=date_list, 
+        df_target=df_target, 
+        baseline=False, 
+        save=True, 
+        id=EX_ID
+        )
 
-metrics_semana(
-    df_target, 
-    pred_list,
-    date_list, 
-    save=True, 
-    id=RUN_ID
-    )
+    # generates metrics for the 5 weeks and plots
+    metricas_semana = generate_metrics_semana(
+                                df_target, 
+                                pred_list,
+                                date_list, 
+                                save=True, 
+                                id=EX_ID
+                                )
 
-plot_res(
-    df_target,
-    pred_list, 
-    date_list, 
-    save=True, 
-    id=RUN_ID
-    )
+    train_semana_metrics = metricas_semana[0].to_dict(orient='dict')
+    val_semana_metrics = metricas_semana[1].to_dict(orient='dict')
+    test_semana_metrics = metricas_semana[2].to_dict(orient='dict')
+    
+    for metrica in ['MAE', 'RMSE', 'MAPE']:
+        mlflow.log_metrics({f'[train] {metrica}: {semana}': carga 
+                    for semana,carga in train_semana_metrics[metrica].items()})
+        mlflow.log_metrics({f'[val] {metrica}:{semana}': carga 
+                    for semana,carga in val_semana_metrics[metrica].items()})
+        mlflow.log_metrics({f'[test] {metrica}:{semana}': carga 
+                    for semana,carga in test_semana_metrics[metrica].items()})
+    print(M_TRAIN_LOG_METRICS)
+
+    # generates the residual plot
+    plot_residual_error(
+        df_target,
+        pred_list, 
+        date_list, 
+        save=True, 
+        id=EX_ID
+        )
+    mlflow.end_run()
+
 print('Bye!')
