@@ -1,0 +1,23 @@
+schema: '2.0'
+stages:
+  preprocess:
+    cmd: python src/preprocess.py
+    deps:
+    - path: data/raw-data
+      md5: 195da5ca95fad28f1cfe6f0f9ca2af8c.dir
+      size: 1109264
+      nfiles: 23
+    - path: src/preprocess.py
+      md5: e8c0e21daa79539b0329f480d7000f57
+      size: 11652
+    params:
+      params.yaml:
+        preprocess.DATA_YEAR_START_PP: 2012
+        preprocess.HOW_IMPUTE_NAN: sazonalidade
+        preprocess.TEST_START_PP: 0.9
+        preprocess.VAL_START_PP: 0.7
+    outs:
+    - path: data/preprocessed
+      md5: eca74d419e2153f1d7d74b2b66c61b23.dir
+      size: 196379
+      nfiles: 3

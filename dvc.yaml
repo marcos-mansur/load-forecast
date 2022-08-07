@@ -1,0 +1,13 @@
+stages:
+  preprocess:
+    cmd: python src/preprocess.py
+    deps:
+    - data/raw-data
+    - src/preprocess.py
+    params:
+    - preprocess.DATA_YEAR_START_PP
+    - preprocess.HOW_IMPUTE_NAN
+    - preprocess.TEST_START_PP
+    - preprocess.VAL_START_PP
+    outs:
+    - data/preprocessed
