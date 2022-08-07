@@ -4,15 +4,6 @@ import os
 SEED = 42
 REGIAO = 'SUDESTE'
 
-# split data (preprocess.py) consts
-DATA_YEAR_START_PP = 2012
-DATA_YEAR_END_PP = 2022
-VAL_START_PP = 0.7
-TEST_START_PP = 0.9     # None if you want 2 folds
-if TEST_START_PP:
-    FOLDS = 3
-else:
-    FOLDS = 2
 
 # process.py const
 BATCH_SIZE_PRO = 32
@@ -57,7 +48,7 @@ M_TRAIN_LOG_METRICS = '[DEBUG] LOGGING METRICS (10/10): DONE!'
 
 
 # preprocess.py output data path const
-TREATED_DATA_PATH = 'data/treated/'
+TREATED_DATA_PATH = 'data/preprocessed/'
 TRAIN_TREATED_DATA_PATH = os.path.join(TREATED_DATA_PATH,'train_preprocessed.csv')
 VAL_TREATED_DATA_PATH = os.path.join(TREATED_DATA_PATH,'val_preprocessed.csv')
 TEST_TREATED_DATA_PATH = os.path.join(TREATED_DATA_PATH,'test_preprocessed.csv')

@@ -4,12 +4,12 @@ import pendulum
 from sklearn.base import BaseEstimator, TransformerMixin
 from const import *
 import os
-
+import yaml
 from utils import create_target_df
 
 class Preprocessor(BaseEstimator, TransformerMixin):
 
-  def __init__(self, regiao=REGIAO):
+  def __init__(self, params, regiao=REGIAO):
     """
     Preprocessor cleans the data to a pd.DataFrame 
     with no NaN, with weeks starting on fridays and 
@@ -17,6 +17,7 @@ class Preprocessor(BaseEstimator, TransformerMixin):
     """
     self.regiao = regiao
     self.missing_days = []
+    self.params = params
     pass
 
 
@@ -35,7 +36,7 @@ class Preprocessor(BaseEstimator, TransformerMixin):
     """ Applies transformations """
     df = df.copy()
     df = self.filter_subsystem(df,regiao = self.regiao)  # filter by subsystem
-    df = self.impute_nan(df)                              # impute/drop NaN values
+    df = self.impute_nan(df,self.params)                              # impute/drop NaN values
     df = self.go_to_friday(df)        # starts the dataset at a friday - the operative week 
     df = self.parse_dates(df)         # create columns parsing the data
     df = self.drop_incomplete_week(df)    # drop last rows so to have full weeks
@@ -61,40 +62,43 @@ class Preprocessor(BaseEstimator, TransformerMixin):
     return df
 
 
-  def impute_nan(self, df):
-    """ impute the 12 NaN values """
-    df = df.copy()
-    if len(self.missing_days) != 0:
-      # If the NaN weren't already dealt with:
-      if df[df['din_instante'] == self.missing_days.iloc[0]].val_cargaenergiamwmed.isna().item():
-        # impute missing day '2013-12-01' with the load from the day before
-        df.at[(df[df.din_instante == self.missing_days.iloc[0]].index.item()), 
-              'val_cargaenergiamwmed'] = df['val_cargaenergiamwmed'].iloc[self.missing_days.index[0] - 1]
-        # impute missing day '2014-02-01' with the load from the day before
-        df.at[(df[df.din_instante == self.missing_days.iloc[1]].index.item()), 
-              'val_cargaenergiamwmed'] = df['val_cargaenergiamwmed'].iloc[self.missing_days.index[1] - 1]
-        
-        # Impute 2015-04-09
-        # variation between april 9 (wednesday) and april 10 (thursday) of 2014
-        var2014 = df[df['din_instante'] == r'2014-04-10'].val_cargaenergiamwmed.item() /  df[df['din_instante'] == r'2014-04-09'].val_cargaenergiamwmed.item()
-        # index of 2015-04-09, the missing day in 2015
-        index_2015 = df[df['din_instante'] == r'2015-04-09'].index.item()
-        # replace the missing day of 2015 with the day before * variation between same days in 2014
-        df.loc[index_2015, 'val_cargaenergiamwmed'] = df[df['din_instante'] == r'2015-04-08'].val_cargaenergiamwmed.item()*var2014
+  def impute_nan(self, df, params):
+    """ Impute missing numbers on the series.
+    """
+    if params['HOW_IMPUTE_NAN'] == 'sazonalidade': 
+      """ impute the 12 NaN values """
+      df = df.copy()
+      if len(self.missing_days) != 0:
+        # If the NaN weren't already dealt with:
+        if df[df['din_instante'] == self.missing_days.iloc[0]].val_cargaenergiamwmed.isna().item():
+          # impute missing day '2013-12-01' with the load from the day before
+          df.at[(df[df.din_instante == self.missing_days.iloc[0]].index.item()), 
+                'val_cargaenergiamwmed'] = df['val_cargaenergiamwmed'].iloc[self.missing_days.index[0] - 1]
+          # impute missing day '2014-02-01' with the load from the day before
+          df.at[(df[df.din_instante == self.missing_days.iloc[1]].index.item()), 
+                'val_cargaenergiamwmed'] = df['val_cargaenergiamwmed'].iloc[self.missing_days.index[1] - 1]
+          
+          # Impute 2015-04-09
+          # variation between april 9 (wednesday) and april 10 (thursday) of 2014
+          var2014 = df[df['din_instante'] == r'2014-04-10'].val_cargaenergiamwmed.item() /  df[df['din_instante'] == r'2014-04-09'].val_cargaenergiamwmed.item()
+          # index of 2015-04-09, the missing day in 2015
+          index_2015 = df[df['din_instante'] == r'2015-04-09'].index.item()
+          # replace the missing day of 2015 with the day before * variation between same days in 2014
+          df.loc[index_2015, 'val_cargaenergiamwmed'] = df[df['din_instante'] == r'2015-04-08'].val_cargaenergiamwmed.item()*var2014
 
-        # Impute missing days from 2016-04-05 to 2016-04-13
-        # list of daily variations between 2015-04-07 and 2015-04-16  
-        var_2015 =[]
-        for dia in range(7,16):
-            var_2015.append(df[df['din_instante'] == r'2015-04-{:0>2d}'.format(dia)].val_cargaenergiamwmed.item() / 
-                        df[df['din_instante'] == r'2015-04-{:0>2d}'.format(dia-1)].val_cargaenergiamwmed.item())
-        # index of 2016-04-05, the begining of the 9 missing days in 2016
-        index_2016 = df[df['din_instante'] == r'2016-04-05'].index.item()
+          # Impute missing days from 2016-04-05 to 2016-04-13
+          # list of daily variations between 2015-04-07 and 2015-04-16  
+          var_2015 =[]
+          for dia in range(7,16):
+              var_2015.append(df[df['din_instante'] == r'2015-04-{:0>2d}'.format(dia)].val_cargaenergiamwmed.item() / 
+                          df[df['din_instante'] == r'2015-04-{:0>2d}'.format(dia-1)].val_cargaenergiamwmed.item())
+          # index of 2016-04-05, the begining of the 9 missing days in 2016
+          index_2016 = df[df['din_instante'] == r'2016-04-05'].index.item()
 
-        for x in range(0,9):
-            df.loc[index_2016 + x,'val_cargaenergiamwmed'] = df[df['din_instante'] == r'2015-04-{:0>2d}'.format(x+7)].val_cargaenergiamwmed.item()*var_2015[x]
-    print(M_PRE_IMPUTE)    
-    return df
+          for x in range(0,9):
+              df.loc[index_2016 + x,'val_cargaenergiamwmed'] = df[df['din_instante'] == r'2015-04-{:0>2d}'.format(x+7)].val_cargaenergiamwmed.item()*var_2015[x]
+      print(M_PRE_IMPUTE)    
+      return df
 
 
   def go_to_friday(self,df): 
@@ -241,14 +245,21 @@ def load_data_pp(start=2009, end=2021):
 
 if __name__ == '__main__':
     
-    df_20XX = load_data_pp(start=DATA_YEAR_START_PP, end=DATA_YEAR_END_PP)
+    params = yaml.safe_load(open("params.yaml"))["preprocess"]
 
-    pp = Preprocessor(regiao=REGIAO)
+    df_20XX = load_data_pp(start=params['DATA_YEAR_START_PP'],
+                           end=2022)
+
+    pp = Preprocessor(regiao=REGIAO, params=params)
     df = pp.fit_transform(df_20XX)
 
-    train_df, val_df, test_df = pp.split_time(df=df,
-                                                val_start=VAL_START_PP, 
-                                                test_start=TEST_START_PP)
+    train_df, val_df, test_df = pp.split_time(
+                                  df=df,
+                                  val_start=params['VAL_START_PP'], 
+                                  test_start=params['TEST_START_PP']
+                  )
+
+    os.makedirs(TREATED_DATA_PATH, exist_ok=True)
 
     train_df.to_csv(TRAIN_TREATED_DATA_PATH) 
     val_df.to_csv(VAL_TREATED_DATA_PATH)
