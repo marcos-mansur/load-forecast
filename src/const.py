@@ -5,21 +5,6 @@ SEED = 42
 REGIAO = 'SUDESTE'
 
 
-# process.py const
-BATCH_SIZE_PRO = 32
-WINDOW_SIZE_PRO = 7
-SUFFLE_BUFFER_PRO = 20
-TARGET_PERIOD_PRO = 1
-HOW_WINDOW_GEN_PRO = 'autorregressivo'
-
-# training conts
-EPOCHS = 150
-PATIENCE = 30
-MODEL_PATH = 'src/model/model_train.h5'
-NEURONS = [32]
-EX_ID = 2
-
-
 # preprocess.py debug msgs const
 M_PRE_FIT = '[DEBUG] PREPROCESS - FIT (2/2): DONE!'
 M_PRE_FIT_FILTER = '[DEBUG] PREPROCESS - FIT: FILTER SUBSYSTEM (1/2): DONE!'
@@ -54,8 +39,8 @@ VAL_TREATED_DATA_PATH = os.path.join(TREATED_DATA_PATH,'val_preprocessed.csv')
 TEST_TREATED_DATA_PATH = os.path.join(TREATED_DATA_PATH,'test_preprocessed.csv')
 # preprocess.py output data path const - target_df
 TARGET_DF_PATH = 'data/target_df.csv'
-# process.py output data path const
-PROCESSED_DATA_PATH = 'data/processed'
+# featurized.py output data path const
+PROCESSED_DATA_PATH = 'data/featurized'
 TRAIN_PROCESSED_DATA_PATH = os.path.join(PROCESSED_DATA_PATH,'train_processed')
 TRAIN_PRED_PROCESSED_DATA_PATH = os.path.join(PROCESSED_DATA_PATH,'train_pred_processed')
 VAL_PROCESSED_DATA_PATH = os.path.join(PROCESSED_DATA_PATH,'val_processed')
@@ -69,3 +54,5 @@ TEST_PROCESSED_DATA_WEEK_PATH = os.path.join(PROCESSED_DATA_PATH,'test_data_week
 PROCESSED_DATA_WEEK_PATHS_LIST = [TRAIN_PRED_PROCESSED_DATA_WEEK_PATH,
                                  VAL_PROCESSED_DATA_WEEK_PATH,
                                  TEST_PROCESSED_DATA_WEEK_PATH]
+
+TRAIN_MODEL_PATH = 'src/model'

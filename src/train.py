@@ -9,7 +9,7 @@ os.environ["MLFLOW_TRACKING_URI"]  = "https://dagshub.com/marcos-mansur/load-for
 #mlflow.tensorflow.
 mlflow.tensorflow.autolog()
 
-
+import yaml
 import tensorflow as tf
 import pandas as pd
 import numpy as np
@@ -96,10 +96,8 @@ def predict_load(model,pred_dataset,window_size):
     return window_pred
 
 def unbatch_pred(window_pred):
-    """
-    Unbatches the multi-step predictions 
-    """
-    # unbatch
+    """ Unbatches the multi-step predictions """
+    
     numpy_pred = [x.numpy() for x in window_pred]  
     pred = numpy_pred[0]
     for batch in numpy_pred[1:]:
@@ -107,6 +105,8 @@ def unbatch_pred(window_pred):
             pred = np.append(pred,item).reshape([-1,5])
     return pred[:-4]
 
+# load params
+params = yaml.safe_load(open("params.yaml"))
 
 # load data
 train_pred_dataset = tf.data.experimental.load(TRAIN_PRED_PROCESSED_DATA_PATH, 
@@ -135,49 +135,50 @@ print(M_TRAIN_LOAD_WEEK_DATA)
 df_target = pd.read_csv(TARGET_DF_PATH)
 print(M_TRAIN_LOAD_TARGET_DATA)
 
-# create model
-model = create_model(neurons=NEURONS)
-if model:
-    print(M_TRAIN_CREATE_MODEL)
 
 with mlflow.start_run():
     print(M_TRAIN_LOG_START)
 
+    # create model
+    model = create_model(neurons= params["train"]['NEURONS'])
+    if model:
+        print(M_TRAIN_CREATE_MODEL)
+
     mlflow.log_params(
         {   
-            'model': 'vanila RNN', 
+            'model': 'vanila', 
             'layers': '[LSTM]',
-            'neurons': NEURONS,
-            'epochs': EPOCHS,
-            'batch size': BATCH_SIZE_PRO,
-            'window size': WINDOW_SIZE_PRO,
-            'Process': HOW_WINDOW_GEN_PRO,
-            'Start year': DATA_YEAR_START_PP,
-            'End year': DATA_YEAR_END_PP,
-            'Folds': FOLDS,
-            'Patience': PATIENCE
+            'Patience': params["train"]['PATIENCE'],
+            'neurons':  params["train"]['NEURONS'],
+            'epochs':  params["train"]['EPOCHS'],
+            'batch size': params['featurize']['BATCH_SIZE_PRO'],
+            'window size': params['featurize']['WINDOW_SIZE_PRO'],
+            'Process': params['featurize']['HOW_WINDOW_GEN_PRO'],
+            'Start year': params['preprocess']['DATA_YEAR_START_PP']
         })
     print(M_TRAIN_LOG_PARAMS)
 
     print(M_TRAIN_TRAINING_START)
-    history = compile_and_fit(model=model, epochs = EPOCHS, 
+    history = compile_and_fit(model=model, epochs = params["train"]['EPOCHS'], 
                             data = train_dataset, 
                             val_data = val_dataset,
                             optimizer = tf.optimizers.Adam(),
-                            patience = PATIENCE,
-                            filepath = MODEL_PATH)
+                            patience = params["train"]['PATIENCE'],
+                            filepath = params["train"]['MODEL_NAME'])
     print(M_TRAIN_TRAINING_END)
 
     # save model to disk
-    model.save(MODEL_PATH)
+    os.makedirs(TRAIN_MODEL_PATH, exist_ok=True)
+    model.save(os.path.join(TRAIN_MODEL_PATH, 
+                            params["train"]['MODEL_NAME']))
 
     # make prediction
     train_pred = predict_load(model,train_pred_dataset,
-                            window_size=WINDOW_SIZE_PRO)
+                            window_size=params['featurize']['WINDOW_SIZE_PRO'])
     val_pred = predict_load(model,val_dataset,
-                            window_size=WINDOW_SIZE_PRO)
+                            window_size=params['featurize']['WINDOW_SIZE_PRO'])
     test_pred = predict_load(model,test_dataset,
-                            window_size=WINDOW_SIZE_PRO)
+                            window_size=params['featurize']['WINDOW_SIZE_PRO'])
     print(M_TRAIN_PREDICTION)
 
     # unbatch
@@ -191,7 +192,7 @@ with mlflow.start_run():
         history=history, 
         skip=20, 
         save=True, 
-        id=EX_ID
+        id=''
         )
 
     # generates the plot of the original and
@@ -202,7 +203,7 @@ with mlflow.start_run():
         df_target=df_target, 
         baseline=False, 
         save=True, 
-        id=EX_ID
+        id=''
         )
 
     # generates metrics for the 5 weeks and plots
@@ -211,19 +212,19 @@ with mlflow.start_run():
                                 pred_list,
                                 date_list, 
                                 save=True, 
-                                id=EX_ID
+                                id=''
                                 )
 
     train_semana_metrics = metricas_semana[0].to_dict(orient='dict')
     val_semana_metrics = metricas_semana[1].to_dict(orient='dict')
     test_semana_metrics = metricas_semana[2].to_dict(orient='dict')
     
-    for metrica in ['MAE', 'RMSE', 'MAPE']:
-        mlflow.log_metrics({f'[train] {metrica}: {semana}': carga 
+    metrica ='RMSE' #, 'MAE', 'MAPE']:
+    mlflow.log_metrics({f'[train] {metrica}: {semana}': carga 
                     for semana,carga in train_semana_metrics[metrica].items()})
-        mlflow.log_metrics({f'[val] {metrica}:{semana}': carga 
+    mlflow.log_metrics({f'[val] {metrica}:{semana}': carga 
                     for semana,carga in val_semana_metrics[metrica].items()})
-        mlflow.log_metrics({f'[test] {metrica}:{semana}': carga 
+    mlflow.log_metrics({f'[test] {metrica}:{semana}': carga 
                     for semana,carga in test_semana_metrics[metrica].items()})
     print(M_TRAIN_LOG_METRICS)
 
@@ -233,7 +234,7 @@ with mlflow.start_run():
         pred_list, 
         date_list, 
         save=True, 
-        id=EX_ID
+        id=''
         )
     mlflow.end_run()
 

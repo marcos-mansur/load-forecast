@@ -43,3 +43,25 @@ stages:
       md5: ba889b0f2f33aa0ef683858f1a6e320e.dir
       size: 71822
       nfiles: 16
+  train:
+    cmd: python src/train.py
+    deps:
+    - path: data/featurized
+      md5: ba889b0f2f33aa0ef683858f1a6e320e.dir
+      size: 71822
+      nfiles: 16
+    - path: src/train.py
+      md5: 1a284899a6fefd7427b0c251900b3044
+      size: 9263
+    params:
+      params.yaml:
+        train.EPOCHS: 150
+        train.MODEL_NAME: model_train.h5
+        train.NEURONS:
+        - 32
+        train.PATIENCE: 30
+    outs:
+    - path: src/model
+      md5: b95efa75a9280e369101422695298d2d.dir
+      size: 94864
+      nfiles: 1

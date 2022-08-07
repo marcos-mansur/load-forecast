@@ -24,4 +24,16 @@ stages:
     - featurize.HOW_WINDOW_GEN_PRO
     outs:
     - data/featurized
-
+  train: 
+    cmd: python src/train.py
+    deps:
+    - data/featurized
+    - src/train.py
+    params:
+    - train.EPOCHS
+    - train.PATIENCE
+    - train.NEURONS
+    - train.MODEL_NAME
+    outs:
+    - src/model
+  
