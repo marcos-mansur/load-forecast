@@ -21,3 +21,25 @@ stages:
       md5: eca74d419e2153f1d7d74b2b66c61b23.dir
       size: 196379
       nfiles: 3
+  featurize:
+    cmd: python src/featurize.py
+    deps:
+    - path: data/preprocessed
+      md5: eca74d419e2153f1d7d74b2b66c61b23.dir
+      size: 196379
+      nfiles: 3
+    - path: src/featurize.py
+      md5: cb0aca0160ed7ddba114bacb9cb52d72
+      size: 9354
+    params:
+      params.yaml:
+        featurize.BATCH_SIZE_PRO: 32
+        featurize.HOW_WINDOW_GEN_PRO: autorregressivo
+        featurize.SUFFLE_BUFFER_PRO: 20
+        featurize.TARGET_PERIOD_PRO: 1
+        featurize.WINDOW_SIZE_PRO: 7
+    outs:
+    - path: data/featurized
+      md5: ba889b0f2f33aa0ef683858f1a6e320e.dir
+      size: 71822
+      nfiles: 16

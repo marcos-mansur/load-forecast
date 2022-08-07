@@ -1,12 +1,13 @@
 import pandas as pd
 import numpy as np
 import tensorflow as tf
-from sklearn.base import (BaseEstimator, TransformerMixin)
+from sklearn.base import (BaseEstimator)
 try:
     from const import *
 except:
     from src.const import *
 import os
+import yaml 
 
 class Window_Generator(BaseEstimator):
     
@@ -138,11 +139,13 @@ if __name__ == '__main__':
     
     train_df, val_df, test_df = load_data_process()
     
-    wd = Window_Generator(  batch_size = BATCH_SIZE_PRO, 
-                            window_size = WINDOW_SIZE_PRO,
-                            shuffle_buffer = SUFFLE_BUFFER_PRO, 
-                            target_period = TARGET_PERIOD_PRO, 
-                            how = HOW_WINDOW_GEN_PRO,
+    params = yaml.safe_load(open("params.yaml"))["featurize"]
+
+    wd = Window_Generator(  batch_size = params['BATCH_SIZE_PRO'], 
+                            window_size = params['WINDOW_SIZE_PRO'],
+                            shuffle_buffer = params['SUFFLE_BUFFER_PRO'], 
+                            target_period = params['TARGET_PERIOD_PRO'], 
+                            how = params['HOW_WINDOW_GEN_PRO'],
                             SEED = SEED)
     
 
@@ -153,6 +156,9 @@ if __name__ == '__main__':
     # dataset to training
     train_dataset, train_data_week = wd.transform(df = train_df, shuffle=True)
     print(M_PRO_TRANS)
+
+    os.makedirs(PROCESSED_DATA_PATH, exist_ok=True)
+
     # saves datasets to disk
         # dataset for performance evaluation
     tf.data.experimental.save(train_pred_dataset, TRAIN_PRED_PROCESSED_DATA_PATH, 

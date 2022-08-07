@@ -18,10 +18,10 @@ stages:
     - src/featurize.py
     params:
     - featurize.BATCH_SIZE_PRO
-    - featurized.WINDOW_SIZE_PRO
-    - featurized.SUFFLE_BUFFER_PRO
-    - featurized.TARGET_PERIOD_PRO
-    - featurized.HOW_WINDOW_GEN_PRO
+    - featurize.WINDOW_SIZE_PRO
+    - featurize.SUFFLE_BUFFER_PRO
+    - featurize.TARGET_PERIOD_PRO
+    - featurize.HOW_WINDOW_GEN_PRO
     outs:
     - data/featurized
 
