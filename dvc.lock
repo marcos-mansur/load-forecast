@@ -51,8 +51,8 @@ stages:
       size: 71822
       nfiles: 16
     - path: src/train.py
-      md5: 1a284899a6fefd7427b0c251900b3044
-      size: 9263
+      md5: 3934c1d53e071d3f4596af890b9ac616
+      size: 9827
     params:
       params.yaml:
         train.EPOCHS: 150
@@ -62,6 +62,10 @@ stages:
         train.PATIENCE: 30
     outs:
     - path: src/model
-      md5: b95efa75a9280e369101422695298d2d.dir
+      md5: 8298e8afc1ba97e5d566912d231d5b0a.dir
       size: 94864
       nfiles: 1
+    - path: src/valuation
+      md5: ac231c23d8c05bc59c5928829811af12.dir
+      size: 1249797
+      nfiles: 4

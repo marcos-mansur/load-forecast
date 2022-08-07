@@ -7,7 +7,7 @@ from sklearn.metrics import mean_absolute_error, mean_absolute_percentage_error,
 from statsmodels.tsa.seasonal import seasonal_decompose
 
 
-def learning_curves(history, skip, id, save=False, plot=False):
+def learning_curves(history, skip, plot=False):
 
   fig,ax = plt.subplots(figsize=(30,6), nrows=1, ncols=3)
   metrics_list = ['loss',
@@ -38,19 +38,20 @@ def learning_curves(history, skip, id, save=False, plot=False):
   ax.ravel()[2].set_title("Learning Curve: RMSE")
   ax.ravel()[2].legend(labels=['Treino', 'Validação'])
 
-  if save:
-    fig.savefig(f"valuation/learning_curves{id}.png")
   if plot:
     plt.show()
+  
+  return fig
+
 
 
 def plot_predicted_series(  date_list, pred_list, 
-                df_target, id, 
+                df_target, 
                 baseline=False, 
-                save=False, plot=False):
+                plot=False):
 
     colors = ['orange', 'green', 'purple']
-    _,ax=plt.subplots(figsize=(20,35), ncols=1, nrows=5)
+    fig,ax=plt.subplots(figsize=(20,35), ncols=1, nrows=5)
     extra = plt.Rectangle((0, 0), 0, 0, fc="none",
                             fill=False, ec='none', linewidth=0)
 
@@ -94,13 +95,13 @@ def plot_predicted_series(  date_list, pred_list,
                 #                                     pred_list[2][:,x]).numpy() 
                 )
         np.ravel(ax)[x].legend([extra], [scores], loc='lower right')
-    if save:
-        plt.savefig(f"valuation/prediction_series{id}.png")
+
     if plot:
       plt.show()
+    return fig 
 
 
-def generate_metrics_semana(df_target, pred_list,date_list,id, save=False, plot=False):
+def generate_metrics_semana(df_target, pred_list,date_list, plot=False):
     """Generates metrics for prediction performance of the 5 predicted weeks
     and generates plot for such metrics 
 
@@ -197,14 +198,12 @@ def generate_metrics_semana(df_target, pred_list,date_list,id, save=False, plot=
                                                       np.std(mse_list))
         ax[i,2].legend([extra], [scores], loc='lower right')
 
-    if save:
-        fig.savefig(f"valuation/metrics_semana{id}.png")
     if plot:
       plt.show()
-    return metrics_df_list
+    return metrics_df_list, fig
 
 
-def plot_sazonality(df,id=1,model='aditive',save=False):
+def plot_sazonality(df,model='aditive'):
     assert model in ['aditive', 'multiplicative']
     mean_load_week = df.groupby(by=['semana'])['val_cargaenergiamwmed'].mean()  
     date_week = df.groupby(by=['semana'])['din_instante'].min()
@@ -218,8 +217,7 @@ def plot_sazonality(df,id=1,model='aditive',save=False):
 
     fig = decompose_result_mult.plot();
     fig.set_size_inches((20, 9))
-    if save:
-        fig.savefig(f'valuation/sazonalidade_{id}_{model}.png')
+
 
 
 def create_target_df(df, df_target_path, baseline_size=1):
@@ -241,7 +239,7 @@ def create_target_df(df, df_target_path, baseline_size=1):
     df_target.to_csv(df_target_path)
 
 
-def plot_residual_error(df_target,pred_list, date_list,id, save=False, plot=False):
+def plot_residual_error(df_target,pred_list, date_list, plot=False):
     # variation from one week to the next
     res_baseline = df_target['Resíduo'] #- df_target['Resíduo'].mean())/df_target['Resíduo'].max()
     # prediction residues
@@ -259,7 +257,7 @@ def plot_residual_error(df_target,pred_list, date_list,id, save=False, plot=Fals
 
     ax.set_title("Resíduo - Semana 1")
     ax.legend('')
-    if save:
-        fig.savefig(f"valuation/residuo{id}.png")
+
     if plot:
       plt.show()
+    return fig
