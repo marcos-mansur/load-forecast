@@ -36,4 +36,5 @@ stages:
     - train.MODEL_NAME
     outs:
     - src/model
+    - src/valuation
   

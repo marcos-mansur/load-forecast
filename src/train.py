@@ -188,6 +188,8 @@ with mlflow.start_run():
 
 
     # valuation
+    os.makedirs(VALUATION_PATH, exist_ok=True)
+
     learning_curves(
         history=history, 
         skip=20, 
