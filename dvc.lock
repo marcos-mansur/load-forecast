@@ -58,14 +58,14 @@ stages:
         train.EPOCHS: 150
         train.MODEL_NAME: model_train.h5
         train.NEURONS:
-        - 200
+        - 8
         train.PATIENCE: 30
     outs:
     - path: src/model
-      md5: c3f35c02521e03324f881dac0223b02c.dir
-      size: 1984680
+      md5: eddcd0edde61d770d3ff60c21aec2dfe.dir
+      size: 45712
       nfiles: 1
     - path: src/valuation
-      md5: 0f54570f722ccc5285f8eff1f045cf05.dir
-      size: 1246513
+      md5: b336f71c35a57fa1ea3f6421c87c8648.dir
+      size: 1246549
       nfiles: 4
