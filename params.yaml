@@ -16,4 +16,3 @@ train:
   PATIENCE: 30
   NEURONS: [32]
   MODEL_NAME: 'model_train.h5'
-  EX_ID: 2
