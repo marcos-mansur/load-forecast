@@ -6,7 +6,7 @@ preprocess:
 
 featurize:
   BATCH_SIZE_PRO: 32
-  WINDOW_SIZE_PRO: 5
+  WINDOW_SIZE_PRO: 35
   SUFFLE_BUFFER_PRO: 20
   TARGET_PERIOD_PRO: 1
   HOW_WINDOW_GEN_PRO: 'autorregressivo'
