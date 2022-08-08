@@ -37,18 +37,18 @@ stages:
         featurize.HOW_WINDOW_GEN_PRO: autorregressivo
         featurize.SUFFLE_BUFFER_PRO: 20
         featurize.TARGET_PERIOD_PRO: 1
-        featurize.WINDOW_SIZE_PRO: 7
+        featurize.WINDOW_SIZE_PRO: 5
     outs:
     - path: data/featurized
-      md5: 931d02b6c13e08590f1d3d46e219b7fc.dir
-      size: 71341
+      md5: 2e548c9311d838ba40a63dd6047b98cc.dir
+      size: 57929
       nfiles: 16
   train:
     cmd: python src/train.py
     deps:
     - path: data/featurized
-      md5: 931d02b6c13e08590f1d3d46e219b7fc.dir
-      size: 71341
+      md5: 2e548c9311d838ba40a63dd6047b98cc.dir
+      size: 57929
       nfiles: 16
     - path: src/train.py
       md5: 3934c1d53e071d3f4596af890b9ac616
@@ -58,14 +58,14 @@ stages:
         train.EPOCHS: 150
         train.MODEL_NAME: model_train.h5
         train.NEURONS:
-        - 20
+        - 32
         train.PATIENCE: 30
     outs:
     - path: src/model
-      md5: cbe53c615e3ff174f3b031f27e35bb23.dir
-      size: 64416
+      md5: d9360ca99261d0a65d29c94415392cb2.dir
+      size: 94864
       nfiles: 1
     - path: src/valuation
-      md5: 615c9846734057ea48e0542d48f9811b.dir
-      size: 1208878
+      md5: e49419eec5cccd237b2577c2b6903114.dir
+      size: 1210998
       nfiles: 4
