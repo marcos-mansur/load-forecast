@@ -40,9 +40,13 @@ class Window_Generator(BaseEstimator):
     
     def map_data(self, dataset):
         """Defines how the data will be processed into features and target.
-        If self.how = 'dia para semana', the features will be in daily load of window_size lenght.
-        If self.how = 'sazonalidade anual', the features will be the last 'sazo_weeks' weeks and the same week from last year.
-        if self.how = 'autorregressivo', the features are deteiled in days until the last 5 week (that becomes 1 input each as the weekly average load). This enables multi-step prediction.
+        If self.how = 'dia para semana', the features will be in daily load 
+                        of window_size lenght.
+        If self.how = 'sazonalidade anual', the features will be the last 
+                        'sazo_weeks' weeks and the same week from last year.
+        if self.how = 'autorregressivo', the features are deteiled in days 
+                        until the last 5 week (that becomes 1 input each as
+                        the weekly average load). This enables multi-step prediction.
 
         Args:
             dataset (tf.data.Dataset): windowed dataset
@@ -53,7 +57,8 @@ class Window_Generator(BaseEstimator):
         if self.how == 'dia para semana':
             """inputs in daily average load, targets in weekly average load"""
             
-            assert self.target_period == 35, f"targe_period = {self.target_period}, deve ser igual a 35 (5 semanas)"
+            assert self.target_period == 35, f"""targe_period = {self.target_period}, 
+                                                deve ser igual a 35 (5 semanas)"""
             dataset = dataset.map(lambda window:(window[:-self.target_period],   #features
                                         [tf.math.reduce_sum(window[-35:-28])/7, # first target week
                                         tf.math.reduce_sum(window[-28:-21])/7, # second target week
@@ -64,14 +69,20 @@ class Window_Generator(BaseEstimator):
                                  )
         
         if self.how == 'sazonalidade anual':
-            """ the inputs are the daily load of the same week in the year before and in the last sazo_weeks from the time window"""
-            assert self.window_size*7 >= 365, "window size menor que 365 dias, não é possível usar how = 'sazonalidade anual'"
-            assert self.target_period == 35, f"targe_period = {self.target_period}, deve ser igual a 35 (5 semanas)"
+            """ the inputs are the daily load of the same week in 
+            the year before and in the last sazo_weeks from the time window"""
+            assert self.window_size*7 >= 365, """window size menor que 365 dias, 
+                                        não é possível usar how = 'sazonalidade anual'"""
+            assert self.target_period == 35, f"""targe_period = {self.target_period},
+                                                deve ser igual a 35 (5 semanas)"""
             dataset = dataset.map(lambda window:(tf.concat(
                 values=
-                    [
-                    tf.math.reduce_mean(window[-364-self.target_period:-357-self.target_period],axis=0),     # week in the year before
-                    tf.math.reduce_mean(window[-(self.sazo_weeks*7)-self.target_period:-self.target_period],axis=0) # last weeks
+                    [   # week in the year before
+                    tf.math.reduce_mean(window[-364-self.target_period:-357-self.target_period],
+                    axis=0), 
+                    # last weeks   
+                    tf.math.reduce_mean(window[-(self.sazo_weeks*7)-self.target_period:-self.target_period],
+                    axis=0) 
                     ], 
                 axis=-1),   #features
                                     [tf.math.reduce_sum(window[-35:-28])/7, # first target week
@@ -83,12 +94,15 @@ class Window_Generator(BaseEstimator):
                                  )
 
         if self.how == 'autorregressivo':
-            """ for multi-step forecasting. target = next week; inputs = last five weeks as weekly average load, before that, in daily load"""
-            assert self.target_period == 7, f"target_periodo = {self.target_period}, deve ser igual = 7 (dias)"
+            """ for multi-step forecasting. target = next week; 
+            inputs = last self.window_size weeks as weekly average load
+            """
+            assert self.target_period == 7, f"""target_periodo = {self.target_period},
+                                                deve ser igual = 7 (dias)"""
             assert self.window_size >= 5, "window_size menor que 5 semanas"
             
             dataset = dataset.map(lambda window:(
-                # input in weeks
+                # transform input to weeks
                 tf.reshape([tf.reshape(tf.math.reduce_mean(window[-x*7-self.target_period:-(x-1)*7-self.target_period],
                                                             axis=0),
                                     shape = [-1]) 
@@ -104,8 +118,9 @@ class Window_Generator(BaseEstimator):
     def transform(self, df, shuffle=True):
         """Transform a preprocessed dataframe in a windowed dataset
         Returns:
-            dataset: a windowed tensorflow.dataset with window_size timesteps for features
-                     and the average daily load for the next five weeks as targets
+            dataset: a windowed tensorflow.dataset with window_size
+                     timesteps for features and the average daily 
+                     load for the next five weeks as targets
         """
         df = df.copy()
         data_week = self.generate_data_week(df)
@@ -114,9 +129,11 @@ class Window_Generator(BaseEstimator):
         dataset = tf.data.Dataset.from_tensor_slices(series)
         
         # create windows 
-        dataset = dataset.window(self.window_size*7 + self.target_period, shift=7, drop_remainder=True)
+        dataset = dataset.window(self.window_size*7 + self.target_period,
+                                 shift=7, drop_remainder=True)
         # make sure every window is the same size / clip NaN at the end
-        dataset = dataset.flat_map(lambda window: window.batch(self.window_size*7 + self.target_period))
+        dataset = dataset.flat_map(lambda window: 
+                    window.batch(self.window_size*7 + self.target_period))
         if shuffle:
             # randomly shuffles the windows instances in the dataset 
             dataset = dataset.shuffle(self.shuffle_buffer,seed=self.SEED)

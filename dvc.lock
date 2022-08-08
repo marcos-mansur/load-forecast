@@ -18,14 +18,17 @@ stages:
         preprocess.VAL_START_PP: '2019-03-01'
     outs:
     - path: data/preprocessed
-      md5: bcd6e8dcb1a7da4d3c75933b4ae6a178.dir
+      md5: de2579600b3d94b31c6c41734e33e3d6.dir
       size: 196379
       nfiles: 3
+    - path: data/target_df.csv
+      md5: 6da79f0ab5c3872f114cafe5a7f93a0d
+      size: 79180
   featurize:
     cmd: python src/featurize.py
     deps:
     - path: data/preprocessed
-      md5: bcd6e8dcb1a7da4d3c75933b4ae6a178.dir
+      md5: de2579600b3d94b31c6c41734e33e3d6.dir
       size: 196379
       nfiles: 3
     - path: src/featurize.py
@@ -40,16 +43,19 @@ stages:
         featurize.WINDOW_SIZE_PRO: 35
     outs:
     - path: data/featurized
-      md5: fbb48513d06ecbb9e8cdbc2dca2f8e0d.dir
-      size: 232005
+      md5: 517c1592a4a69ca0db32764b1609815a.dir
+      size: 223436
       nfiles: 16
   train:
     cmd: python src/train.py
     deps:
     - path: data/featurized
-      md5: fbb48513d06ecbb9e8cdbc2dca2f8e0d.dir
-      size: 232005
+      md5: 517c1592a4a69ca0db32764b1609815a.dir
+      size: 223436
       nfiles: 16
+    - path: data/target_df.csv
+      md5: 6da79f0ab5c3872f114cafe5a7f93a0d
+      size: 79180
     - path: src/train.py
       md5: 3934c1d53e071d3f4596af890b9ac616
       size: 9827
@@ -62,10 +68,10 @@ stages:
         train.PATIENCE: 30
     outs:
     - path: src/model
-      md5: c3ae769a1542d403a88543e4e101b22f.dir
+      md5: a578f296f000db05a8cf56d3f61a3adc.dir
       size: 94864
       nfiles: 1
     - path: src/valuation
-      md5: e47bd1f6bd980f3aa234d9d6062bc4e4.dir
-      size: 1121455
+      md5: c9e12f5abe6e0b33ad1a162e9f87d2b5.dir
+      size: 1148347
       nfiles: 4
