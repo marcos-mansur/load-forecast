@@ -11,6 +11,7 @@ stages:
     - preprocess.VAL_START_PP
     outs:
     - data/preprocessed
+    - data/target/target_df.csv
   featurize:
     cmd: python src/featurize.py
     deps:
@@ -28,6 +29,7 @@ stages:
     cmd: python src/train.py
     deps:
     - data/featurized
+    - data/target/target_df.csv
     - src/train.py
     params:
     - train.EPOCHS

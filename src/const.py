@@ -38,7 +38,7 @@ TRAIN_TREATED_DATA_PATH = os.path.join(TREATED_DATA_PATH,'train_preprocessed.csv
 VAL_TREATED_DATA_PATH = os.path.join(TREATED_DATA_PATH,'val_preprocessed.csv')
 TEST_TREATED_DATA_PATH = os.path.join(TREATED_DATA_PATH,'test_preprocessed.csv')
 # preprocess.py output data path const - target_df
-TARGET_DF_PATH = 'data/target_df.csv'
+TARGET_DF_PATH = 'data/target/target_df.csv'
 # featurized.py output data path const
 PROCESSED_DATA_PATH = 'data/featurized'
 TRAIN_PROCESSED_DATA_PATH = os.path.join(PROCESSED_DATA_PATH,'train_processed')
