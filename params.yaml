@@ -1,7 +1,7 @@
 preprocess:
   DATA_YEAR_START_PP: 2012
-  VAL_START_PP: 0.7
-  TEST_START_PP: 0.9
+  VAL_START_PP: '2019-03-01'
+  TEST_START_PP: '2021-03-12'
   HOW_IMPUTE_NAN: 'sazonalidade'
 
 featurize:
