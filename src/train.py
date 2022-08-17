@@ -7,7 +7,7 @@ os.environ["MLFLOW_TRACKING_PASSWORD"] = DAGSHUB_PASSWORD
 os.environ["MLFLOW_TRACKING_URI"]  = "https://dagshub.com/marcos-mansur/load-forecast.mlflow"
 
 #mlflow.tensorflow.
-mlflow.tensorflow.autolog()
+mlflow.tensorflow.autolog(registered_model_name="model_v1")
 
 import yaml
 import tensorflow as tf
