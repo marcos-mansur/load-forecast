@@ -143,7 +143,7 @@ def generate_metrics_semana(df_target, pred_list,date_list, plot=False):
             # adds mae of each week to mae_list
             mae_list.append(
               mean_absolute_error(
-                      df_set[:,week], 
+                      df_set[:,week],
                       df_target[f'Semana {week+1}'].loc[np.array(data_week.index)]
                   )
               )
