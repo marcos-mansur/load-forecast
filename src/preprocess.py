@@ -200,7 +200,8 @@ class Preprocessor(BaseEstimator, TransformerMixin):
 
     assert type(
       self.params['preprocess']['VAL_START_PP']) == type(
-            self.params['preprocess']['VAL_START_PP']), ""
+            self.params['preprocess']['TEST_START_PP']), """params.VAL_START_PP 
+                type must be iqual to params.TEST_START_PP"""
 
     # if arg val_start is float, process like it's the proportion of dataset 
     if type(val_start) == float:
@@ -221,11 +222,6 @@ class Preprocessor(BaseEstimator, TransformerMixin):
         # day where val_df starts (a friday)
         split_test_day = self.go_to_friday(test_df_temp).din_instante.iloc[0]
 
-        # split datasets into train, validation and test  3 folds
-        if test_start == None:
-            folds=2
-        else:
-            folds=3
 
     # if val_start type is str, treat it like it's a date  
     if type(val_start) == str:
