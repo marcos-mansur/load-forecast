@@ -8,27 +8,24 @@ stages:
       size: 1109264
       nfiles: 23
     - path: src/preprocess.py
-      md5: e8c0e21daa79539b0329f480d7000f57
-      size: 11652
+      md5: 693a07ade9192f28ea526b48d9703e5b
+      size: 13878
     params:
       params.yaml:
         preprocess.DATA_YEAR_START_PP: 2012
         preprocess.HOW_IMPUTE_NAN: sazonalidade
-        preprocess.TEST_START_PP: 0.9
-        preprocess.VAL_START_PP: 0.7
+        preprocess.TEST_START_PP: '2021-03-12'
+        preprocess.VAL_START_PP: '2019-03-01'
     outs:
     - path: data/preprocessed
-      md5: eca74d419e2153f1d7d74b2b66c61b23.dir
+      md5: de2579600b3d94b31c6c41734e33e3d6.dir
       size: 196379
       nfiles: 3
-    - path: data/target/target_df.csv
-      md5: 6da79f0ab5c3872f114cafe5a7f93a0d
-      size: 79180
   featurize:
     cmd: python src/featurize.py
     deps:
     - path: data/preprocessed
-      md5: eca74d419e2153f1d7d74b2b66c61b23.dir
+      md5: de2579600b3d94b31c6c41734e33e3d6.dir
       size: 196379
       nfiles: 3
     - path: src/featurize.py
@@ -40,22 +37,19 @@ stages:
         featurize.HOW_WINDOW_GEN_PRO: autorregressivo
         featurize.SUFFLE_BUFFER_PRO: 20
         featurize.TARGET_PERIOD_PRO: 1
-        featurize.WINDOW_SIZE_PRO: 13
+        featurize.WINDOW_SIZE_PRO: 7
     outs:
     - path: data/featurized
-      md5: 5e179b1ab1856ae9effeb4a1a7b77b9f.dir
-      size: 110760
+      md5: ba889b0f2f33aa0ef683858f1a6e320e.dir
+      size: 71822
       nfiles: 16
   train:
     cmd: python src/train.py
     deps:
     - path: data/featurized
-      md5: 5e179b1ab1856ae9effeb4a1a7b77b9f.dir
-      size: 110760
+      md5: ba889b0f2f33aa0ef683858f1a6e320e.dir
+      size: 71822
       nfiles: 16
-    - path: data/target/target_df.csv
-      md5: 6da79f0ab5c3872f114cafe5a7f93a0d
-      size: 79180
     - path: src/train.py
       md5: 520f1360c393661969a5d800ac33bbea
       size: 9859
@@ -64,7 +58,7 @@ stages:
         train.EPOCHS: 150
         train.MODEL_NAME: model_train.h5
         train.NEURONS:
-        - 28
+        - 8
         train.PATIENCE: 30
     outs:
     - path: src/model
@@ -72,6 +66,6 @@ stages:
       size: 83344
       nfiles: 1
     - path: src/valuation
-      md5: 6e1e483a9cb9521589261b304a10172d.dir
-      size: 1285595
+      md5: b336f71c35a57fa1ea3f6421c87c8648.dir
+      size: 1246549
       nfiles: 4

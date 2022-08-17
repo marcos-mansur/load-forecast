@@ -2,11 +2,11 @@ preprocess:
   DATA_YEAR_START_PP: 2012
   VAL_START_PP: 0.7
   TEST_START_PP: 0.9
-  HOW_IMPUTE_NAN: sazonalidade
+  HOW_IMPUTE_NAN: 'sazonalidade'
 
 featurize:
   BATCH_SIZE_PRO: 32
-  WINDOW_SIZE_PRO: 13
+  WINDOW_SIZE_PRO: 7
   SUFFLE_BUFFER_PRO: 20
   TARGET_PERIOD_PRO: 1
   HOW_WINDOW_GEN_PRO: autorregressivo
@@ -14,5 +14,5 @@ featurize:
 train:
   EPOCHS: 150
   PATIENCE: 30
-  NEURONS: [28]
-  MODEL_NAME: model_train.h5
+  NEURONS: [8]
+  MODEL_NAME: 'model_train.h5'

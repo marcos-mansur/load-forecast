@@ -1,7 +1,6 @@
 import seaborn as sns
 import matplotlib.pyplot as plt
 import pandas as pd
-import tensorflow as tf
 import numpy as np
 from sklearn.metrics import mean_absolute_error, mean_absolute_percentage_error, mean_squared_error
 from statsmodels.tsa.seasonal import seasonal_decompose
@@ -62,39 +61,37 @@ def plot_predicted_series(  date_list, pred_list,
                 ax=np.ravel(ax)[0],
                 color='black')
 
-
-    for x in range(0,5):
+    # loop over 5 weeks
+    for week_count in range(0,5):
         # plot measured data
         sns.lineplot(x = df_target['Data'], 
-                    y = df_target[f'Semana {x+1}'], 
-                    ax=np.ravel(ax)[x], 
+                    y = df_target[f'Semana {week_count+1}'], 
+                    ax=np.ravel(ax)[week_count], 
                     color = 'teal')
 
         # plot predicted data
         for date,pred,color in zip(date_list, 
                                 pred_list,
                                 colors[:len(pred_list)]): 
-            sns.lineplot(x = date.shift(x).din_instante,
-                        y = pred[:,x], 
-                        ax=np.ravel(ax)[x],
+            sns.lineplot(x = date.shift(week_count).din_instante,
+                        y = pred[:,week_count], 
+                        ax=np.ravel(ax)[week_count],
                         color=color)
                         
 
-        np.ravel(ax)[x].set_title(f'Carga real vs Predição em todo o período - Semana {x+1}')
-        # np.ravel(ax)[x].legend(['Real','Previsão no treino','Previsão na validação','Previsão no teste'], loc='upper left')
+        np.ravel(ax)[week_count].set_title(
+          f'Carga real vs Predição em todo o período - Semana {week_count+1}')
+        # np.ravel(ax)[week_count].legend(['Real','Previsão no treino',
+        #     'Previsão na validação','Previsão no teste'], loc='upper left')
 
-        score = [tf.keras.metrics.mean_absolute_error(df_target[f'Semana {x+1}'].loc[np.array(date_list[j].index)],
-                                                    pred_list[j][:,x]).numpy() for j in range(len(pred_list))]
+        score = [mean_squared_error(
+                  pred_list[j][:,week_count],
+                  df_target[f'Semana {week_count+1}'].loc[np.array(date_list[j].index)],
+                  squared=False) for j in range(len(pred_list))
+                            ]
         scores = (r"MAE Train ={:.0f}"+'\n'+r"MAE val ={:.0f}"+"\n"+r"MAE test ={:.0f}").format(
-                *score
-                # tf.keras.metrics.mean_absolute_error(df_target[f'Semana {x+1}'].loc[np.array(date_list[0].index)],
-                #                                     pred_list[0][:,x]).numpy(),
-                # tf.keras.metrics.mean_absolute_error(df_target[f'Semana {x+1}'].loc[np.array(date_list[1].index)],
-                #                                     pred_list[1][:,x]).numpy(),
-                # tf.keras.metrics.mean_absolute_error(df_target[f'Semana {x+1}'].loc[np.array(date_list[2].index)],
-                #                                     pred_list[2][:,x]).numpy() 
-                )
-        np.ravel(ax)[x].legend([extra], [scores], loc='lower right')
+                *score)
+        np.ravel(ax)[week_count].legend([extra], [scores], loc='lower right')
 
     if plot:
       plt.show()

@@ -2,8 +2,8 @@ import os
 
 # global consts
 SEED = 42
+# preprocess consts
 REGIAO = 'SUDESTE'
-
 
 # preprocess.py debug msgs const
 M_PRE_FIT = '[DEBUG] PREPROCESS - FIT (2/2): DONE!'
