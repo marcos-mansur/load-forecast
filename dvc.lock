@@ -8,8 +8,8 @@ stages:
       size: 1109264
       nfiles: 23
     - path: src/preprocess.py
-      md5: 693a07ade9192f28ea526b48d9703e5b
-      size: 13878
+      md5: 9787ac448e68d01240962617b2619425
+      size: 13807
     params:
       params.yaml:
         preprocess.DATA_YEAR_START_PP: 2012
@@ -17,20 +17,33 @@ stages:
         preprocess.TEST_START_PP: '2021-03-12'
         preprocess.VAL_START_PP: '2019-03-01'
     outs:
-    - path: data/preprocessed
-      md5: de2579600b3d94b31c6c41734e33e3d6.dir
-      size: 196379
-      nfiles: 3
+    - path: data/preprocessed/test_preprocessed.csv
+      md5: 1eaccf2923ae752bdb599f904287fb1c
+      size: 22385
+    - path: data/preprocessed/train_preprocessed.csv
+      md5: 48defe12c25e556426996ea782d95e64
+      size: 134521
+    - path: data/preprocessed/val_preprocessed.csv
+      md5: 0a6efe9dd96836286dca472669f84939
+      size: 39473
+    - path: data/target/target_df.csv
+      md5: 6da79f0ab5c3872f114cafe5a7f93a0d
+      size: 79180
   featurize:
     cmd: python src/featurize.py
     deps:
-    - path: data/preprocessed
-      md5: de2579600b3d94b31c6c41734e33e3d6.dir
-      size: 196379
-      nfiles: 3
+    - path: data/preprocessed/test_preprocessed.csv
+      md5: 1eaccf2923ae752bdb599f904287fb1c
+      size: 22385
+    - path: data/preprocessed/train_preprocessed.csv
+      md5: 48defe12c25e556426996ea782d95e64
+      size: 134521
+    - path: data/preprocessed/val_preprocessed.csv
+      md5: 0a6efe9dd96836286dca472669f84939
+      size: 39473
     - path: src/featurize.py
-      md5: cb0aca0160ed7ddba114bacb9cb52d72
-      size: 9354
+      md5: 5ccdbaf1761c1d00e0b34d20a029c91c
+      size: 9846
     params:
       params.yaml:
         featurize.BATCH_SIZE_PRO: 32
@@ -39,33 +52,59 @@ stages:
         featurize.TARGET_PERIOD_PRO: 1
         featurize.WINDOW_SIZE_PRO: 7
     outs:
-    - path: data/featurized
-      md5: ba889b0f2f33aa0ef683858f1a6e320e.dir
-      size: 71822
-      nfiles: 16
+    - path: data/featurized/test_processed
+      md5: e95cd9f1b05a78fd38672e03194f8616.dir
+      size: 3600
+      nfiles: 3
+    - path: data/featurized/train_processed
+      md5: a4e2d060a1abc9cc9ce5d8a2a58646e8.dir
+      size: 23764
+      nfiles: 3
+    - path: data/featurized/val_processed
+      md5: 1a32f04ba2f36ca4841b6f19fbf383d1.dir
+      size: 6660
+      nfiles: 3
   train:
     cmd: python src/train.py
     deps:
-    - path: data/featurized
-      md5: ba889b0f2f33aa0ef683858f1a6e320e.dir
-      size: 71822
-      nfiles: 16
+    - path: data/featurized/test_processed
+      md5: e95cd9f1b05a78fd38672e03194f8616.dir
+      size: 3600
+      nfiles: 3
+    - path: data/featurized/train_processed
+      md5: a4e2d060a1abc9cc9ce5d8a2a58646e8.dir
+      size: 23764
+      nfiles: 3
+    - path: data/featurized/val_processed
+      md5: 1a32f04ba2f36ca4841b6f19fbf383d1.dir
+      size: 6660
+      nfiles: 3
+    - path: data/target/target_df.csv
+      md5: 6da79f0ab5c3872f114cafe5a7f93a0d
+      size: 79180
     - path: src/train.py
-      md5: 520f1360c393661969a5d800ac33bbea
-      size: 9859
+      md5: f19c787a4dba3ba594f6bfedba06cae3
+      size: 10097
     params:
       params.yaml:
         train.EPOCHS: 150
         train.MODEL_NAME: model_train.h5
         train.NEURONS:
         - 8
-        train.PATIENCE: 30
+        train.PATIENCE: 5
     outs:
-    - path: src/model
-      md5: 815540d012462e907bfdf0517db1f320.dir
-      size: 83344
-      nfiles: 1
-    - path: src/valuation
-      md5: b336f71c35a57fa1ea3f6421c87c8648.dir
-      size: 1246549
-      nfiles: 4
+    - path: src/model/model_train.h5
+      md5: 146de9d9f9aeb432b42bc9b497953e4b
+      size: 45712
+    - path: src/valuation/learning_curves.png
+      md5: ab37b694c31b33bb9656d4a3f19936fa
+      size: 73028
+    - path: src/valuation/metrics_semana.png
+      md5: 217af0a280c46921690687fb8f985157
+      size: 147899
+    - path: src/valuation/prediction_series.png
+      md5: 3e04e317210de079ac9de9d568158dd4
+      size: 802262
+    - path: src/valuation/residuo.png
+      md5: 6a9b7ae681bed53f5591defbc8aee589
+      size: 159726

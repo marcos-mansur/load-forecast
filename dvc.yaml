@@ -10,12 +10,16 @@ stages:
     - preprocess.TEST_START_PP
     - preprocess.VAL_START_PP
     outs:
-    - data/preprocessed
+    - data/preprocessed/train_preprocessed.csv
+    - data/preprocessed/val_preprocessed.csv
+    - data/preprocessed/test_preprocessed.csv
     - data/target/target_df.csv
   featurize:
     cmd: python src/featurize.py
     deps:
-    - data/preprocessed
+    - data/preprocessed/train_preprocessed.csv
+    - data/preprocessed/val_preprocessed.csv
+    - data/preprocessed/test_preprocessed.csv
     - src/featurize.py
     params:
     - featurize.BATCH_SIZE_PRO
@@ -24,11 +28,15 @@ stages:
     - featurize.TARGET_PERIOD_PRO
     - featurize.HOW_WINDOW_GEN_PRO
     outs:
-    - data/featurized
+    - data/featurized/train_processed
+    - data/featurized/val_processed
+    - data/featurized/test_processed
   train: 
     cmd: python src/train.py
     deps:
-    - data/featurized
+    - data/featurized/train_processed
+    - data/featurized/val_processed
+    - data/featurized/test_processed
     - data/target/target_df.csv
     - src/train.py
     params:
@@ -37,6 +45,10 @@ stages:
     - train.NEURONS
     - train.MODEL_NAME
     outs:
-    - src/model
-    - src/valuation
+    - src/model/model_train.h5
+    - src/valuation/learning_curves.png
+    - src/valuation/metrics_semana.png
+    - src/valuation/prediction_series.png
+    - src/valuation/residuo.png
+
   
