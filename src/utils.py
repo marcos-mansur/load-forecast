@@ -200,21 +200,19 @@ def generate_metrics_semana(df_target, pred_list,date_list, plot=False):
     return metrics_df_list, fig
 
 
-def plot_sazonality(df,model='aditive'):
+def plot_sazonality(res_list,date_list,model='aditive'):
     assert model in ['aditive', 'multiplicative']
-    mean_load_week = df.groupby(by=['semana'])['val_cargaenergiamwmed'].mean()  
-    date_week = df.groupby(by=['semana'])['din_instante'].min()
-    df_sazo = pd.DataFrame(data=mean_load_week)
-    # data de inicio da semana prevista
-    df_sazo['din_instante'] = date_week
 
-    analysis = df_sazo.set_index('din_instante')[['val_cargaenergiamwmed']].copy()
-
-    decompose_result_mult = seasonal_decompose(analysis, model=model)
-
-    fig = decompose_result_mult.plot();
-    fig.set_size_inches((20, 9))
-
+    analysis = [ pd.Series(data=res_list[c],index=date_list[c]) 
+                              for c in range(len(date_list))
+                              ]
+    
+    fig=[]
+    for i in range(len(date_list)):
+      decompose_result_mult = seasonal_decompose(analysis[i], model=model)
+      fig[i] = decompose_result_mult.plot()
+      #fig[i].set_size_inches((20, 9))
+    return fig
 
 
 def create_target_df(df, df_target_path, baseline_size=1):
@@ -247,14 +245,16 @@ def plot_residual_error(df_target,pred_list, date_list, plot=False):
     # diferença normalizada entre semanas consecutivas
     #sns.lineplot(y=res_baseline, x=df_target['Data'], ax=ax)
 
+    res_list = []
     for pred, date, color in zip(pred_list,date_list,colors[:len(pred_list)]):
         
         res_pred = pred[:,0] - df_target[f'Semana 1'].loc[np.array(date.index)]
         sns.lineplot(y=res_pred, x=df_target['Data'], ax=ax, color= color)
+        res_list.append(res_pred)
 
     ax.set_title("Resíduo - Semana 1")
     ax.legend('')
 
     if plot:
       plt.show()
-    return fig
+    return fig, res_list
