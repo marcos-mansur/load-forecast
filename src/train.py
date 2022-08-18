@@ -231,13 +231,17 @@ with mlflow.start_run():
     print(M_TRAIN_LOG_METRICS)
 
     # generates the residual plot
-    residual_fig = plot_residual_error(
-                            df_target,
-                            pred_list, 
-                            date_list, 
-                            )
+    residual_fig, res_list = plot_residual_error(
+                                        df_target,
+                                        pred_list, 
+                                        date_list, 
+                                        )
     residual_fig.savefig(os.path.join(VALUATION_PATH,
                                         "residuo.png"))
+
+    # sazo_fig = plot_sazonality(res_list, date_list)
+    # sazo_fig.savefig(os.path.join(VALUATION_PATH,
+    #                                     "residuo_sazo.png"))
 
     mlflow.end_run()
 
