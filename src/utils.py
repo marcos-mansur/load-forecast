@@ -8,6 +8,46 @@ from sklearn.metrics import (
     mean_squared_error,
 )
 from statsmodels.tsa.seasonal import seasonal_decompose
+from const import *
+import tensorflow as tf
+
+def load_featurized_data():
+    """
+    load featurized load data, week start data and target data.
+    """
+    # Load energy data
+    train_pred_dataset = tf.data.experimental.load(TRAIN_PRED_PROCESSED_DATA_PATH)
+    train_dataset = tf.data.experimental.load(TRAIN_PROCESSED_DATA_PATH)
+    val_dataset = tf.data.experimental.load(VAL_PROCESSED_DATA_PATH)
+    test_dataset = tf.data.experimental.load(TEST_PROCESSED_DATA_PATH)
+    load_dataset_list = {
+        'train_pred': train_pred_dataset,
+        'val': val_dataset,
+        'test': test_dataset,
+        'train': train_dataset
+    }
+    return load_dataset_list
+
+
+def load_featurized_week_data():
+    # week first days data
+    train_pred_data_week = pd.read_csv(
+        TRAIN_PRED_PROCESSED_DATA_WEEK_PATH, index_col="semana"
+    )
+    train_data_week = pd.read_csv(TRAIN_PROCESSED_DATA_WEEK_PATH, index_col="semana")
+    val_data_week = pd.read_csv(VAL_PROCESSED_DATA_WEEK_PATH, index_col="semana")
+    test_data_week = pd.read_csv(TEST_PROCESSED_DATA_WEEK_PATH, index_col="semana")
+    date_dataset_list = [train_pred_data_week, val_data_week, test_data_week, train_data_week]
+
+    return date_dataset_list
+
+
+def load_prediction_data():
+    return [
+        pd.read_csv(TRAIN_PREDICTION_DATA_PATH),
+        pd.read_csv(VAL_PREDICTION_DATA_WEEK_PATH),
+        pd.read_csv(TEST_PREDICTION_DATA_WEEK_PATH),
+    ]
 
 
 def learning_curves(history, skip, plot=False):
@@ -31,8 +71,8 @@ def learning_curves(history, skip, plot=False):
         else:
             ax1 = ax.ravel()[2]
         sns.lineplot(
-            x=range(skip, len(history.history[metric])),
-            y=history.history[metric][skip:],
+            x=range(skip, len(history[metric])),
+            y=history[metric][skip:],
             ax=ax1,
         )
 
@@ -78,7 +118,7 @@ def plot_predicted_series(date_list, pred_list, df_target, baseline=False, plot=
         for date, pred, color in zip(date_list, pred_list, colors[: len(pred_list)]):
             sns.lineplot(
                 x=date.shift(week_count).din_instante,
-                y=pred[:, week_count],
+                y=pred.loc[:, f"Semana {week_count+1}"],
                 ax=np.ravel(ax)[week_count],
                 color=color,
             )
@@ -91,7 +131,7 @@ def plot_predicted_series(date_list, pred_list, df_target, baseline=False, plot=
 
         score = [
             mean_squared_error(
-                pred_list[j][:, week_count],
+                pred_list[j].loc[:, f"Semana {week_count+1}"],
                 df_target[f"Semana {week_count+1}"].loc[np.array(date_list[j].index)],
                 squared=False,
             )
@@ -151,7 +191,7 @@ def generate_metrics_semana(df_target, pred_list, date_list, plot=False):
             # adds mae of each week to mae_list
             mae_list.append(
                 mean_absolute_error(
-                    df_set[:, week],
+                    df_set.loc[:, f"Semana {week+1}"],
                     df_target[f"Semana {week+1}"].loc[np.array(data_week.index)],
                 )
             )
@@ -159,7 +199,7 @@ def generate_metrics_semana(df_target, pred_list, date_list, plot=False):
             # adds mape of each week to mape_list
             mape_list.append(
                 mean_absolute_percentage_error(
-                    df_set[:, week],
+                    df_set.loc[:, f"Semana {week+1}"],
                     df_target[f"Semana {week+1}"].loc[np.array(data_week.index)],
                 )
                 * 100
@@ -168,7 +208,7 @@ def generate_metrics_semana(df_target, pred_list, date_list, plot=False):
             # adds mse of each week to mse_list
             mse_list.append(
                 mean_squared_error(
-                    df_set[:, week],
+                    df_set.loc[:, f"Semana {week+1}"],
                     df_target[f"Semana {week+1}"].loc[np.array(data_week.index)],
                     squared=False,
                 )
@@ -269,7 +309,7 @@ def plot_residual_error(df_target, pred_list, date_list, plot=False):
     res_list = []
     for pred, date, color in zip(pred_list, date_list, colors[: len(pred_list)]):
 
-        res_pred = pred[:, 0] - df_target[f"Semana 1"].loc[np.array(date.index)]
+        res_pred = pred.loc[:,f"Semana 1"] - df_target[f"Semana 1"].loc[np.array(date.index)]
         sns.lineplot(y=res_pred, x=df_target["Data"], ax=ax, color=color)
         res_list.append(res_pred)
 
