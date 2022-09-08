@@ -7,7 +7,7 @@ It consists of a Long Short-Term Memory Neural Network to predict average energy
 
 The operative week for ONS (Nacional Operator of the Interconnected System) begins at Fridays and ends at Thursdays.  
 
-## Reproducing
+## Reproduce
 
 Fist, tou need to install the dependecies. You can do it with the following command on the root folder:
         
@@ -20,7 +20,7 @@ This projects is structured using [DVC](https://dvc.org/doc). You can control th
 
 DVC will check if the dependecies declared for each step of the pipeline in [dvc.yaml](https://dagshub.com/marcos-mansur/load-forecast/src/main/dvc.yaml) changed vs last run and re-run only the necessary steps. My experiments are tracked through MLFlow and registered in the "Experiments" tab in dagshub project repo. 
 
-Validation graphs are stored to [valuation folder](https://dagshub.com/marcos-mansur/load-forecast/src/main/valuation).
+Validation visuals are stored to [valuation folder](https://dagshub.com/marcos-mansur/load-forecast/src/main/valuation).
 
 
 ## Files Summary
@@ -37,6 +37,6 @@ Validation graphs are stored to [valuation folder](https://dagshub.com/marcos-ma
 
 ### Pipeline
 
-- [params.yaml](https://dagshub.com/marcos-mansur/load-forecast/src/main/params.yaml) - 
-- [dvc.yaml](https://dagshub.com/marcos-mansur/load-forecast/src/main/dvc.yamll) - 
+- [params.yaml](https://dagshub.com/marcos-mansur/load-forecast/src/main/params.yaml) - parameters controling preprocessing, featurizing and model hyper-parameters. 
+- [dvc.yaml](https://dagshub.com/marcos-mansur/load-forecast/src/main/dvc.yamll) - defining dvc pipeline.
  
