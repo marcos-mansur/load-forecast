@@ -9,3 +9,5 @@ sklearn
 tensorflow
 ipykernel
 statsmodels
+black
+isort
