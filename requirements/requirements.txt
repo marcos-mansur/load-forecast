@@ -11,3 +11,4 @@ ipykernel
 statsmodels
 black
 isort
+mkdocs

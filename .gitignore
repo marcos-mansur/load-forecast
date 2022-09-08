@@ -2,3 +2,4 @@ vault_dagshub.py
 mlruns
 __pycache__
 .vscode
+docs/site/
