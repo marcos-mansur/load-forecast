@@ -216,20 +216,17 @@ class Preprocessor(BaseEstimator, TransformerMixin):
 
 
         Args:
-                        df (pd.DataFrame): data
-                        window_size: lenght in weeks of the input window for prediction
-                        val_start (float or str): if val_start type is float, it's the
-                                                                                                                                proportion of the dataset where starts
-                                                                                                                                validation data (a number between 0 and
-                                                                                                                                1, usually 0.7).
-                                                                                                                                if val_start type is str, it must be a
-                                                                                                                                date (YYYY/MM/DD).
-                        test_start (float, optional): the proportion of the dataset where starts
-                                                                                                                        test data (a number between 0 and 1, usually 0.9).
-                        regiao (str, optional): Subsystem to filter data. Defaults to "SUDESTE".
+            df (pd.DataFrame): input data.
+            window_size (int): lenght in weeks of the input window for prediction
+            val_start (float or str): if val_start type is float, it's the
+            proportion of the dataset where starts validation data (a number between 0 and
+            1, usually 0.7). If val_start type is str, it must be a date (YYYY/MM/DD).
+            test_start (float, optional): the proportion of the dataset where starts
+            test data (float): a number between 0 and 1, usually 0.9.
+            regiao (str, optional): Subsystem to filter data. Defaults to "SUDESTE".
 
         Returns:
-                        pd.DataFrame: train data, validation data and test data dataframes
+            pd.DataFrame: train data, validation data and test data dataframes
         """
 
         df = df.copy()
