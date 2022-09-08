@@ -12,3 +12,4 @@ statsmodels
 black
 isort
 mkdocs
+mkdocstrings[python]
