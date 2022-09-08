@@ -7,6 +7,7 @@ import yaml
 from sklearn.base import BaseEstimator, TransformerMixin
 
 from const import *
+from common.logger import get_logger
 from utils import create_target_df
 
 
@@ -32,24 +33,28 @@ class Preprocessor(BaseEstimator, TransformerMixin):
         df = self.filter_subsystem(df, regiao=self.regiao)
         # saves missing days in a variable called missing_days
         self.missing_days = df[pd.isna(df.val_cargaenergiamwmed)].din_instante
-        print(M_PRE_FIT)
+        logger.debug({"fit missing days": self.missing_days})
+        logger.info("PREPROCESS - FIT (1/1): DONE!")
         return self
 
     def transform(self, df: pd.DataFrame):
         """Applies transformations"""
         df = df.copy()
+
         df = self.filter_subsystem(df, regiao=self.regiao)  # filter by subsystem
-        print(M_PRE_FILTER, " (", self.regiao, ")")
+        logger.debug({"filtered subsystem": self.regiao})
+        logger.info(f"PREPROCESS - FILTER SUBSYSTEM (1/6): DONE! ({self.regiao})")
+
         df = self.impute_nan(df)  # impute/drop NaN values
-        print(M_PRE_IMPUTE)
+        logger.info("PREPROCESS - IMPUTE NAN (2/6): DONE!")
         df = self.go_to_friday(
             df
         )  # starts the dataset at a friday - the operative week
-        print(M_PRE_GOTOFRYDAY)
+        logger.info("PREPROCESS - GO TO FRIDAY (3/6): DONE!")
         df = self.parse_dates(df)  # create columns parsing the data
-        print(M_PRE_PARSE)
+        logger.info("PREPROCESS - PARSE DATES (4/6): DONE!")
         df = self.drop_incomplete_week(df)  # drop last rows so to have full weeks
-        print(M_PRE_DROPINC)
+        logger.info("PREPROCESS - DROP INCOMPLETE WEEKS (5/6): DONE!")
         self.check_dq(df)  # prints the NaN values for loadand missing days
         return df
 
@@ -184,20 +189,20 @@ class Preprocessor(BaseEstimator, TransformerMixin):
         # check for NaN values
         nan_data = df[pd.isna(df.val_cargaenergiamwmed)].din_instante
         if len(nan_data) != 0:
-            print("NaN values: ")
-            print(nan_data)
+            logger.debug({"NaN values": nan_data})
+            assert len(nan_data) > 0
         else:
-            print("No missing NaN.")
+            logger.debug("No missing NaN.")
 
         # check for missing days in the series
         missing_days = pd.date_range(
             start=df.din_instante.iloc[0], end=df.din_instante.iloc[-1], freq="D"
         ).difference(df.din_instante)
         if len(missing_days) != 0:
-            print("\nMissing days in the series:")
-            print(missing_days)
+            logger.debug({"Missing days in the series": missing_days})
+            assert len(missing_days) > 0, "Missing data after imputation"
         else:
-            print("No missing days in the series")
+            logger.debug("No missing days in the series")
 
     def split_time(self, df, window_size, val_start=0.7, test_start=None):
         """
@@ -294,19 +299,21 @@ class Preprocessor(BaseEstimator, TransformerMixin):
             assert (
                 test_df["dia semana"].iloc[0] == "Friday"
             ), "[PREPROCESS - SPLIT TIME] test_df doesn't start at a friday."
-            print(
-                f"First day of train_df: {train_df.din_instante.iloc[0]} - ",
-                train_df["dia semana"].iloc[0],
+            logger.debug(
+                f"First day of train_df: {train_df.din_instante.iloc[0]} "
+                + f"- {train_df['dia semana'].iloc[0]}"
             )
-            print(
-                f"First day of val_df: {val_df.din_instante.iloc[0] + window_size_timedelta} - ",
-                val_df["dia semana"].iloc[0],
+            logger.debug(
+                f"First day of val_df: "
+                + f"{val_df.din_instante.iloc[0] + window_size_timedelta} "
+                + f"- {val_df['dia semana'].iloc[0]}"
             )
-            print(
-                f"First day of test_df: {test_df.din_instante.iloc[0] + window_size_timedelta} - ",
-                test_df["dia semana"].iloc[0],
+            logger.debug(
+                f"First day of test_df: "
+                + f"{test_df.din_instante.iloc[0] + window_size_timedelta} "
+                + f"- {test_df['dia semana'].iloc[0]}"
             )
-            print(M_PRE_SPLIT3)
+            logger.info("PREPROCESS - SPLIT DATA INTO 3 FOLDS (6/6): DONE!")
             return train_df, val_df, test_df
 
         # split datasets into train and test - 2 folds
@@ -319,15 +326,15 @@ class Preprocessor(BaseEstimator, TransformerMixin):
             assert (
                 val_df["dia semana"].iloc[0] == "Friday"
             ), "[PREPROCESS - SPLIT TIME] val_df doesn't start at a friday."
-            print(
-                f"First day of train_df: {train_df.din_instante.iloc[0]} - ",
-                train_df["dia semana"].iloc[0],
+            logger.debug(
+                f"First day of train_df: {train_df.din_instante.iloc[0]} - "
+                + f"- {train_df['dia semana'].iloc[0]}"
             )
-            print(
+            logger.debug(
                 f"First day of val_df: {val_df.din_instante.iloc[0] + window_size_timedelta} - ",
                 val_df["dia semana"].iloc[0],
             )
-            print(M_PRE_SPLIT2)
+            logger.info("PREPROCESS - SPLIT DATA INTO 2 FOLDS (6/6): DONE!")
             return train_df, val_df, None
 
 
@@ -356,6 +363,8 @@ def load_data_pp(start=2009, end=2021):
 
 if __name__ == "__main__":
 
+    logger = get_logger(__name__)
+
     params = yaml.safe_load(open("params.yaml"))
 
     df_20XX = load_data_pp(start=params["preprocess"]["DATA_YEAR_START_PP"], end=2022)
@@ -379,4 +388,4 @@ if __name__ == "__main__":
 
     create_target_df(df, df_target_path=TARGET_DF_PATH, baseline_size=5)
 
-    print("CSV files saved to ", TREATED_DATA_PATH)
+    logger.info(f"PREPROCESS - CSV FILES SAVED TO {TREATED_DATA_PATH}")

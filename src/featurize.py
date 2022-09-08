@@ -2,11 +2,8 @@ import numpy as np
 import pandas as pd
 import tensorflow as tf
 from sklearn.base import BaseEstimator
-
-try:
-    from const import *
-except:
-    from src.const import *
+from common.logger import get_logger
+from const import *
 
 import os
 
@@ -196,6 +193,12 @@ class Window_Generator(BaseEstimator):
 
         # batch and prefetch
         dataset = dataset.batch(self.batch_size).prefetch(1)
+
+        for i,t in dataset:
+            logger.info({"input shape": i.shape,
+                "target shape": t.shape}
+            )
+            break
         return dataset, data_week
 
 
@@ -207,6 +210,8 @@ def load_data_process():
 
 
 if __name__ == "__main__":
+    
+    logger = get_logger(__name__)
 
     train_df, val_df, test_df = load_data_process()
 
@@ -227,7 +232,7 @@ if __name__ == "__main__":
     test_dataset, test_data_week = wd.transform(df=test_df, shuffle=False)
     # dataset to training
     train_dataset, train_data_week = wd.transform(df=train_df, shuffle=True)
-    print(M_PRO_TRANS)
+    logger.info("PROCESS: TRASFORMING DATASETS (1/3): DONE!")
 
     os.makedirs(PROCESSED_DATA_PATH, exist_ok=True)
 
@@ -262,7 +267,7 @@ if __name__ == "__main__":
         shard_func=None,
         checkpoint_args=None,
     )
-    print(M_PRO_SAVE_DATA)
+    logger.info("PROCESS: SAVING DATASETS (2/3): DONE!")
 
     # saves datasets week initial day
     # dataset for performance evaluation
@@ -271,4 +276,4 @@ if __name__ == "__main__":
     test_data_week.to_csv(TEST_PROCESSED_DATA_WEEK_PATH)
     # dataset to training
     train_data_week.to_csv(TRAIN_PROCESSED_DATA_WEEK_PATH)
-    print(M_PRO_SAVE_WEEK)
+    logger.info("PROCESS: SAVING WEEK INITIAL DAYS (3/3): DONE!")

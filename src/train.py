@@ -1,25 +1,22 @@
 import os
-
 import mlflow
-
 from vault_dagshub import *
+import numpy as np
+import pandas as pd
+import tensorflow as tf
+import yaml
+from common.logger import get_logger
+from const import *
+from utils import *
 
+
+# mlflow settings
 os.environ["MLFLOW_TRACKING_USERNAME"] = DAGSHUB_USERNAME
 os.environ["MLFLOW_TRACKING_PASSWORD"] = DAGSHUB_PASSWORD
 os.environ[
     "MLFLOW_TRACKING_URI"
 ] = "https://dagshub.com/marcos-mansur/load-forecast.mlflow"
-
-# mlflow.tensorflow.
 mlflow.tensorflow.autolog(registered_model_name=f"{REG_NAME_MODEL}")
-
-import numpy as np
-import pandas as pd
-import tensorflow as tf
-import yaml
-
-from const import *
-from utils import *
 
 
 def compile_and_fit(model, data, val_data, epochs, optimizer, filepath, patience=4):
@@ -130,161 +127,166 @@ def unbatch_pred(window_pred):
     return pred[:-4]
 
 
-# load params
-params = yaml.safe_load(open("params.yaml"))
+if __name__ == "__main__":
+    logger = get_logger(__name__)
+    # load params
+    params = yaml.safe_load(open("params.yaml"))
 
-# load data
-train_pred_dataset = tf.data.experimental.load(
-    TRAIN_PRED_PROCESSED_DATA_PATH,
-    element_spec=None,
-    compression=None,
-    reader_func=None,
-)
-train_dataset = tf.data.experimental.load(
-    TRAIN_PROCESSED_DATA_PATH, element_spec=None, compression=None, reader_func=None
-)
-val_dataset = tf.data.experimental.load(
-    VAL_PROCESSED_DATA_PATH, element_spec=None, compression=None, reader_func=None
-)
-test_dataset = tf.data.experimental.load(
-    TEST_PROCESSED_DATA_PATH, element_spec=None, compression=None, reader_func=None
-)
-print(M_TRAIN_LOAD_DATA)
-
-# load week initial days data
-train_pred_data_week = pd.read_csv(
-    TRAIN_PRED_PROCESSED_DATA_WEEK_PATH, index_col="semana"
-)
-train_data_week = pd.read_csv(TRAIN_PROCESSED_DATA_WEEK_PATH, index_col="semana")
-val_data_week = pd.read_csv(VAL_PROCESSED_DATA_WEEK_PATH, index_col="semana")
-test_data_week = pd.read_csv(TEST_PROCESSED_DATA_WEEK_PATH, index_col="semana")
-date_list = [train_pred_data_week, val_data_week, test_data_week]
-print(M_TRAIN_LOAD_WEEK_DATA)
-
-# load target data
-df_target = pd.read_csv(TARGET_DF_PATH)
-print(M_TRAIN_LOAD_TARGET_DATA)
-
-
-with mlflow.start_run():
-    print(M_TRAIN_LOG_START)
-
-    # create model
-    model = create_model(neurons=params["train"]["NEURONS"])
-    if model:
-        print(M_TRAIN_CREATE_MODEL)
-
-    mlflow.log_params(
-        {
-            "model": "vanila",
-            "layers": "[LSTM]",
-            "Patience": params["train"]["PATIENCE"],
-            "neurons": params["train"]["NEURONS"],
-            "epochs": params["train"]["EPOCHS"],
-            "batch size": params["featurize"]["BATCH_SIZE_PRO"],
-            "window size": params["featurize"]["WINDOW_SIZE_PRO"],
-            "Process": params["featurize"]["HOW_WINDOW_GEN_PRO"],
-            "Start year": params["preprocess"]["DATA_YEAR_START_PP"],
-        }
+    # load data
+    train_pred_dataset = tf.data.experimental.load(
+        TRAIN_PRED_PROCESSED_DATA_PATH,
+        element_spec=None,
+        compression=None,
+        reader_func=None,
     )
-    print(M_TRAIN_LOG_PARAMS)
-
-    print(M_TRAIN_TRAINING_START)
-    history = compile_and_fit(
-        model=model,
-        epochs=params["train"]["EPOCHS"],
-        data=train_dataset,
-        val_data=val_dataset,
-        optimizer=tf.optimizers.Adam(),
-        patience=params["train"]["PATIENCE"],
-        filepath=params["train"]["MODEL_NAME"],
+    train_dataset = tf.data.experimental.load(
+        TRAIN_PROCESSED_DATA_PATH, element_spec=None, compression=None, reader_func=None
     )
-    print(M_TRAIN_TRAINING_END)
-
-    # save model to disk
-    os.makedirs(TRAIN_MODEL_PATH, exist_ok=True)
-    model.save(os.path.join(TRAIN_MODEL_PATH, params["train"]["MODEL_NAME"]))
-
-    # make prediction
-    train_pred = predict_load(
-        model, train_pred_dataset, window_size=params["featurize"]["WINDOW_SIZE_PRO"]
+    val_dataset = tf.data.experimental.load(
+        VAL_PROCESSED_DATA_PATH, element_spec=None, compression=None, reader_func=None
     )
-    val_pred = predict_load(
-        model, val_dataset, window_size=params["featurize"]["WINDOW_SIZE_PRO"]
+    test_dataset = tf.data.experimental.load(
+        TEST_PROCESSED_DATA_PATH, element_spec=None, compression=None, reader_func=None
     )
-    test_pred = predict_load(
-        model, test_dataset, window_size=params["featurize"]["WINDOW_SIZE_PRO"]
+    logger.info("LOAD DATA: DONE!")
+
+    # load week initial days data
+    train_pred_data_week = pd.read_csv(
+        TRAIN_PRED_PROCESSED_DATA_WEEK_PATH, index_col="semana"
     )
-    print(M_TRAIN_PREDICTION)
+    train_data_week = pd.read_csv(TRAIN_PROCESSED_DATA_WEEK_PATH, index_col="semana")
+    val_data_week = pd.read_csv(VAL_PROCESSED_DATA_WEEK_PATH, index_col="semana")
+    test_data_week = pd.read_csv(TEST_PROCESSED_DATA_WEEK_PATH, index_col="semana")
+    date_list = [train_pred_data_week, val_data_week, test_data_week]
+    logger.info("LOAD WEEK DATA: DONE!")
 
-    # unbatch
-    pred_list = [
-        unbatch_pred(train_pred),
-        unbatch_pred(val_pred),
-        unbatch_pred(test_pred),
-    ]
+    # load target data
+    df_target = pd.read_csv(TARGET_DF_PATH)
+    logger.info("LOAD TARGET DATA: DONE!")
 
-    # valuation
-    os.makedirs(VALUATION_PATH, exist_ok=True)
 
-    lc_fig = learning_curves(history=history, skip=20)
-    lc_fig.savefig(os.path.join(VALUATION_PATH, "learning_curves.png"))
+    with mlflow.start_run():
+        logger.info("MLFLOW RUN: STARTED!")
 
-    # generates the plot of the original and
-    # predicted time series for the 5 weeks
-    pred_series_fig = plot_predicted_series(
-        pred_list=pred_list,
-        date_list=date_list,
-        df_target=df_target,
-        baseline=False,
-    )
-    pred_series_fig.savefig(os.path.join(VALUATION_PATH, "prediction_series.png"))
+        # create model
+        model = create_model(neurons=params["train"]["NEURONS"])
+        if model:
+            logger.info("CREATE MODEL: DONE!")
 
-    # generates metrics for the 5 weeks and plots
-    metricas_semana, metricas_fig = generate_metrics_semana(
-        df_target,
-        pred_list,
-        date_list,
-    )
-    metricas_fig.savefig(os.path.join(VALUATION_PATH, "metrics_semana.png"))
+        mlflow.log_params(
+            {
+                "model": "vanila",
+                "layers": "[LSTM]",
+                "Patience": params["train"]["PATIENCE"],
+                "neurons": params["train"]["NEURONS"],
+                "epochs": params["train"]["EPOCHS"],
+                "batch size": params["featurize"]["BATCH_SIZE_PRO"],
+                "window size": params["featurize"]["WINDOW_SIZE_PRO"],
+                "Process": params["featurize"]["HOW_WINDOW_GEN_PRO"],
+                "Start year": params["preprocess"]["DATA_YEAR_START_PP"],
+            }
+        )
+        logger.info("LOGGING PARAMS: DONE!")
 
-    train_semana_metrics = metricas_semana[0].to_dict(orient="dict")
-    val_semana_metrics = metricas_semana[1].to_dict(orient="dict")
-    test_semana_metrics = metricas_semana[2].to_dict(orient="dict")
+        logger.info("MODEL TRAINING: STARTING!")
+        history = compile_and_fit(
+            model=model,
+            epochs=params["train"]["EPOCHS"],
+            data=train_dataset,
+            val_data=val_dataset,
+            optimizer=tf.optimizers.Adam(),
+            patience=params["train"]["PATIENCE"],
+            filepath=params["train"]["MODEL_NAME"],
+        )
+        logger.info("MODEL TRAINING: DONE!")
 
-    metrica = "RMSE"  # , 'MAE', 'MAPE']:
-    mlflow.log_metrics(
-        {
-            f"[train] {metrica}: {semana}": carga
-            for semana, carga in train_semana_metrics[metrica].items()
-        }
-    )
-    mlflow.log_metrics(
-        {
-            f"[val] {metrica}:{semana}": carga
-            for semana, carga in val_semana_metrics[metrica].items()
-        }
-    )
-    mlflow.log_metrics(
-        {
-            f"[test] {metrica}:{semana}": carga
-            for semana, carga in test_semana_metrics[metrica].items()
-        }
-    )
-    print(M_TRAIN_LOG_METRICS)
+        # save model to disk
+        os.makedirs(TRAIN_MODEL_PATH, exist_ok=True)
+        model.save(os.path.join(TRAIN_MODEL_PATH, params["train"]["MODEL_NAME"]))
 
-    # generates the residual plot
-    residual_fig, res_list = plot_residual_error(
-        df_target,
-        pred_list,
-        date_list,
-    )
-    residual_fig.savefig(os.path.join(VALUATION_PATH, "residuo.png"))
+        # make prediction
+        train_pred = predict_load(
+            model, train_pred_dataset, window_size=params["featurize"]["WINDOW_SIZE_PRO"]
+        )
+        val_pred = predict_load(
+            model, val_dataset, window_size=params["featurize"]["WINDOW_SIZE_PRO"]
+        )
+        test_pred = predict_load(
+            model, test_dataset, window_size=params["featurize"]["WINDOW_SIZE_PRO"]
+        )
+        logger.info("PREDICTIONS: DONE!")
 
-    # sazo_fig = plot_sazonality(res_list, date_list)
-    # sazo_fig.savefig(os.path.join(VALUATION_PATH,
-    #                                     "residuo_sazo.png"))
+        if params['featurize']['HOW_WINDOW_GEN_PRO'] == 'autorregressivo':
+            # unbatch
+            pred_list = [
+                unbatch_pred(train_pred),
+                unbatch_pred(val_pred),
+                unbatch_pred(test_pred),
+            ]
+            logger.info("HOW_WINDOW_GEN_PRO = autoregressivo, predictions unbatched.")
+        else:
+            pred_list = [
+                train_pred,
+                val_pred,
+                test_pred,
+            ]
+        # valuation
+        os.makedirs(VALUATION_PATH, exist_ok=True)
+        
+        lc_fig = learning_curves(history=history, skip=20)
+        lc_fig.savefig(os.path.join(VALUATION_PATH, "learning_curves.png"))
+        
+        # generates the plot of the original and
+        # predicted time series for the 5 weeks
+        pred_series_fig = plot_predicted_series(
+            pred_list=pred_list,
+            date_list=date_list,
+            df_target=df_target,
+            baseline=False,
+        )
+        pred_series_fig.savefig(os.path.join(VALUATION_PATH, "prediction_series.png"))
 
-    mlflow.end_run()
+        # generates metrics for the 5 weeks and plots
+        metricas_semana, metricas_fig = generate_metrics_semana(
+            df_target,
+            pred_list,
+            date_list,
+        )
+        metricas_fig.savefig(os.path.join(VALUATION_PATH, "metrics_semana.png"))
 
-print("Bye!")
+        train_semana_metrics = metricas_semana[0].to_dict(orient="dict")
+        val_semana_metrics = metricas_semana[1].to_dict(orient="dict")
+        test_semana_metrics = metricas_semana[2].to_dict(orient="dict")
+
+        metrica = "RMSE"  # , 'MAE', 'MAPE']:
+        mlflow.log_metrics(
+            {
+                f"[train] {metrica}: {semana}": carga
+                for semana, carga in train_semana_metrics[metrica].items()
+            }
+        )
+        mlflow.log_metrics(
+            {
+                f"[val] {metrica}:{semana}": carga
+                for semana, carga in val_semana_metrics[metrica].items()
+            }
+        )
+        mlflow.log_metrics(
+            {
+                f"[test] {metrica}:{semana}": carga
+                for semana, carga in test_semana_metrics[metrica].items()
+            }
+        )
+        logger.info("LOGGING METRICS (10/10): DONE!")
+
+        # generates the residual plot
+        residual_fig, res_list = plot_residual_error(
+            df_target,
+            pred_list,
+            date_list,
+        )
+        residual_fig.savefig(os.path.join(VALUATION_PATH, "residuo.png"))
+
+        mlflow.end_run()
+
+    logger.info("MLFLOW RUN ENDED. END O TRAINING.")
