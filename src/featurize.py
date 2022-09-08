@@ -12,7 +12,7 @@ import yaml
 class Window_Generator(BaseEstimator):
     
     def __init__(self, target_period, window_size, batch_size,shuffle_buffer,
-                 regiao = 'SUDESTE', sazo_weeks=2, SEED=SEED, how = 'dia para semana'):
+                 regiao = 'SUDESTE', sazo_weeks=2, SEED=SEED, how = 'input diário'):
         self.target_period = target_period*7 # in weeks
         self.window_size = window_size # in weeks
         self.batch_size = batch_size
@@ -21,7 +21,7 @@ class Window_Generator(BaseEstimator):
         self.SEED = SEED
         self.how = how
         self.sazo_weeks = sazo_weeks
-        assert self.how in ['dia para semana', 'sazonalidade anual','autorregressivo']
+        assert self.how in ['input diário', 'sazonalidade anual','autorregressivo']
         pass
     
     def generate_data_week(self, df):
@@ -40,13 +40,13 @@ class Window_Generator(BaseEstimator):
     
     def map_data(self, dataset):
         """Defines how the data will be processed into features and target.
-        If self.how = 'dia para semana', the features will be in daily load 
+        If self.how = 'input diário', the features will be in daily load 
                         of window_size lenght.
         If self.how = 'sazonalidade anual', the features will be the last 
                         'sazo_weeks' weeks and the same week from last year.
-        if self.how = 'autorregressivo', the features are deteiled in days 
-                        until the last 5 week (that becomes 1 input each as
-                        the weekly average load). This enables multi-step prediction.
+        if self.how = 'autorregressivo', the features are detailed in weekly 
+                       average load. target window_size = 1. This option 
+                       enables multi-step prediction.
 
         Args:
             dataset (tf.data.Dataset): windowed dataset
@@ -54,7 +54,7 @@ class Window_Generator(BaseEstimator):
         Returns:
             tf.data.Dataset: dataset processed into features and targets
         """
-        if self.how == 'dia para semana':
+        if self.how == 'input diário':
             """inputs in daily average load, targets in weekly average load"""
             
             assert self.target_period == 35, f"""targe_period = {self.target_period}, 

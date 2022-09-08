@@ -1,4 +1,8 @@
 import os 
+import yaml
+
+# registered model name
+REG_NAME_MODEL = yaml.safe_load(open("params.yaml"))['featurize']['HOW_WINDOW_GEN_PRO']
 
 # global consts
 SEED = 42
