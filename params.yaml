@@ -13,6 +13,6 @@ featurize:
 
 train:
   EPOCHS: 150
-  PATIENCE: 30
+  PATIENCE: 8
   NEURONS: [8]
   MODEL_NAME: 'model_train.h5'

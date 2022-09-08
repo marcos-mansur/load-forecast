@@ -8,7 +8,7 @@ import yaml
 from common.logger import get_logger
 from const import *
 from utils import *
-
+import json
 
 # mlflow settings
 os.environ["MLFLOW_TRACKING_USERNAME"] = DAGSHUB_USERNAME
@@ -132,38 +132,8 @@ if __name__ == "__main__":
     # load params
     params = yaml.safe_load(open("params.yaml"))
 
-    # load data
-    train_pred_dataset = tf.data.experimental.load(
-        TRAIN_PRED_PROCESSED_DATA_PATH,
-        element_spec=None,
-        compression=None,
-        reader_func=None,
-    )
-    train_dataset = tf.data.experimental.load(
-        TRAIN_PROCESSED_DATA_PATH, element_spec=None, compression=None, reader_func=None
-    )
-    val_dataset = tf.data.experimental.load(
-        VAL_PROCESSED_DATA_PATH, element_spec=None, compression=None, reader_func=None
-    )
-    test_dataset = tf.data.experimental.load(
-        TEST_PROCESSED_DATA_PATH, element_spec=None, compression=None, reader_func=None
-    )
-    logger.info("LOAD DATA: DONE!")
-
-    # load week initial days data
-    train_pred_data_week = pd.read_csv(
-        TRAIN_PRED_PROCESSED_DATA_WEEK_PATH, index_col="semana"
-    )
-    train_data_week = pd.read_csv(TRAIN_PROCESSED_DATA_WEEK_PATH, index_col="semana")
-    val_data_week = pd.read_csv(VAL_PROCESSED_DATA_WEEK_PATH, index_col="semana")
-    test_data_week = pd.read_csv(TEST_PROCESSED_DATA_WEEK_PATH, index_col="semana")
-    date_list = [train_pred_data_week, val_data_week, test_data_week]
-    logger.info("LOAD WEEK DATA: DONE!")
-
-    # load target data
-    df_target = pd.read_csv(TARGET_DF_PATH)
-    logger.info("LOAD TARGET DATA: DONE!")
-
+    load_dataset_list = load_featurized_data() 
+    date_dataset_list = load_featurized_week_data()
 
     with mlflow.start_run():
         logger.info("MLFLOW RUN: STARTED!")
@@ -192,27 +162,34 @@ if __name__ == "__main__":
         history = compile_and_fit(
             model=model,
             epochs=params["train"]["EPOCHS"],
-            data=train_dataset,
-            val_data=val_dataset,
+            data=load_dataset_list['train'],
+            val_data=load_dataset_list['val'],
             optimizer=tf.optimizers.Adam(),
             patience=params["train"]["PATIENCE"],
             filepath=params["train"]["MODEL_NAME"],
         )
         logger.info("MODEL TRAINING: DONE!")
+        
+        with open(HISTORY_PATH,'w') as history_file:
+            json.dump(history.history,history_file)
+        with open(HISTORY_PARAMS_PATH,'w') as history_params_file:
+            json.dump(history.params,history_params_file)
+        logger.info("TRAIN HISTORY STORED TO DISK")
 
         # save model to disk
         os.makedirs(TRAIN_MODEL_PATH, exist_ok=True)
         model.save(os.path.join(TRAIN_MODEL_PATH, params["train"]["MODEL_NAME"]))
+        logger.info("TRAINED MODEL STORED TO DISK")
 
         # make prediction
         train_pred = predict_load(
-            model, train_pred_dataset, window_size=params["featurize"]["WINDOW_SIZE_PRO"]
+            model, load_dataset_list['train_pred'], window_size=params["featurize"]["WINDOW_SIZE_PRO"]
         )
         val_pred = predict_load(
-            model, val_dataset, window_size=params["featurize"]["WINDOW_SIZE_PRO"]
+            model, load_dataset_list['val'], window_size=params["featurize"]["WINDOW_SIZE_PRO"]
         )
         test_pred = predict_load(
-            model, test_dataset, window_size=params["featurize"]["WINDOW_SIZE_PRO"]
+            model, load_dataset_list['test'], window_size=params["featurize"]["WINDOW_SIZE_PRO"]
         )
         logger.info("PREDICTIONS: DONE!")
 
@@ -230,63 +207,12 @@ if __name__ == "__main__":
                 val_pred,
                 test_pred,
             ]
-        # valuation
-        os.makedirs(VALUATION_PATH, exist_ok=True)
-        
-        lc_fig = learning_curves(history=history, skip=20)
-        lc_fig.savefig(os.path.join(VALUATION_PATH, "learning_curves.png"))
-        
-        # generates the plot of the original and
-        # predicted time series for the 5 weeks
-        pred_series_fig = plot_predicted_series(
-            pred_list=pred_list,
-            date_list=date_list,
-            df_target=df_target,
-            baseline=False,
-        )
-        pred_series_fig.savefig(os.path.join(VALUATION_PATH, "prediction_series.png"))
-
-        # generates metrics for the 5 weeks and plots
-        metricas_semana, metricas_fig = generate_metrics_semana(
-            df_target,
-            pred_list,
-            date_list,
-        )
-        metricas_fig.savefig(os.path.join(VALUATION_PATH, "metrics_semana.png"))
-
-        train_semana_metrics = metricas_semana[0].to_dict(orient="dict")
-        val_semana_metrics = metricas_semana[1].to_dict(orient="dict")
-        test_semana_metrics = metricas_semana[2].to_dict(orient="dict")
-
-        metrica = "RMSE"  # , 'MAE', 'MAPE']:
-        mlflow.log_metrics(
-            {
-                f"[train] {metrica}: {semana}": carga
-                for semana, carga in train_semana_metrics[metrica].items()
-            }
-        )
-        mlflow.log_metrics(
-            {
-                f"[val] {metrica}:{semana}": carga
-                for semana, carga in val_semana_metrics[metrica].items()
-            }
-        )
-        mlflow.log_metrics(
-            {
-                f"[test] {metrica}:{semana}": carga
-                for semana, carga in test_semana_metrics[metrica].items()
-            }
-        )
-        logger.info("LOGGING METRICS (10/10): DONE!")
-
-        # generates the residual plot
-        residual_fig, res_list = plot_residual_error(
-            df_target,
-            pred_list,
-            date_list,
-        )
-        residual_fig.savefig(os.path.join(VALUATION_PATH, "residuo.png"))
+        df_columns = ['Semana 1','Semana 2','Semana 3','Semana 4','Semana 5']
+        pd.DataFrame(pred_list[0], columns=df_columns).to_csv(TRAIN_PREDICTION_DATA_PATH)
+        pd.DataFrame(pred_list[1], columns=df_columns).to_csv(VAL_PREDICTION_DATA_WEEK_PATH)
+        pd.DataFrame(pred_list[2], columns=df_columns).to_csv(TEST_PREDICTION_DATA_WEEK_PATH)
+        logger.info('PREDICTIONS SAVED TO DISK')
 
         mlflow.end_run()
 
-    logger.info("MLFLOW RUN ENDED. END O TRAINING.")
+    logger.info("MLFLOW RUN ENDED. END OF TRAINING.")

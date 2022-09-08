@@ -1,5 +1,6 @@
 # Energy Load Forecast documentation
-
+.. image:: https://img.shields.io/badge/code%20style-black-000000.svg
+    :target: https://github.com/psf/black
 
 This repo contains the final project (currently under development) for my college degree as Bachelor of Production Engineering.
 
