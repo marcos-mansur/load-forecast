@@ -78,9 +78,7 @@ def learning_curves(history, skip, plot=False):
         else:
             ax1 = ax.ravel()[2]
         sns.lineplot(
-            x=range(skip, len(history[metric])),
-            y=history[metric][skip:],
-            ax=ax1,
+            x=range(skip, len(history[metric])), y=history[metric][skip:], ax=ax1,
         )
 
     ax.ravel()[0].set_title("Learning Curve: MSE - loss")

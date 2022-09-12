@@ -38,9 +38,7 @@ if __name__ == "__main__":
 
     # generates metrics for the 5 weeks and plots
     metricas_semana, metricas_fig = generate_metrics_semana(
-        df_target,
-        pred_list,
-        date_dataset_list,
+        df_target, pred_list, date_dataset_list,
     )
     metricas_fig.savefig(os.path.join(VALUATION_PATH, "metrics_semana.png"))
 
@@ -50,8 +48,6 @@ if __name__ == "__main__":
 
     # generates the residual plot
     residual_fig, res_list = plot_residual_error(
-        df_target,
-        pred_list,
-        date_dataset_list,
+        df_target, pred_list, date_dataset_list,
     )
     residual_fig.savefig(os.path.join(VALUATION_PATH, "residuo.png"))

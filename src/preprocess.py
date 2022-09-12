@@ -24,8 +24,7 @@ class Preprocessor(BaseEstimator, TransformerMixin):
         pass
 
     def fit(
-        self,
-        df: pd.DataFrame,
+        self, df: pd.DataFrame,
     ):
         """Learns the missing days"""
         df = df.copy()
