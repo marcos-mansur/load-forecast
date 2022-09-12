@@ -1,13 +1,13 @@
+import os
+
 import numpy as np
 import pandas as pd
 import tensorflow as tf
+import yaml
 from sklearn.base import BaseEstimator
+
 from common.logger import get_logger
 from const import *
-
-import os
-
-import yaml
 
 
 class Window_Generator(BaseEstimator):
@@ -194,10 +194,8 @@ class Window_Generator(BaseEstimator):
         # batch and prefetch
         dataset = dataset.batch(self.batch_size).prefetch(1)
 
-        for i,t in dataset:
-            logger.info({"input shape": i.shape,
-                "target shape": t.shape}
-            )
+        for i, t in dataset:
+            logger.info({"input shape": i.shape, "target shape": t.shape})
             break
         return dataset, data_week
 
@@ -210,7 +208,7 @@ def load_data_process():
 
 
 if __name__ == "__main__":
-    
+
     logger = get_logger(__name__)
 
     train_df, val_df, test_df = load_data_process()

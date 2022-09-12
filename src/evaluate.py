@@ -1,18 +1,20 @@
-import os
 import json
+import os
+
 import tensorflow
-from utils import *
-from const import *
+
 from common.logger import get_logger
+from const import *
+from utils import *
 
 # valuation
 if __name__ == "__main__":
 
     logger = get_logger(__name__)
-    
-    with open(HISTORY_PATH,'r') as history_file:
+
+    with open(HISTORY_PATH, "r") as history_file:
         history = json.load(history_file)
-    
+
     pred_list = load_prediction_data()
     logger.info("LOAD ENERGY DATA: DONE!")
     date_dataset_list = load_featurized_week_data()

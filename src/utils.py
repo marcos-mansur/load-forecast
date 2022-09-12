@@ -2,14 +2,16 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
+import tensorflow as tf
 from sklearn.metrics import (
     mean_absolute_error,
     mean_absolute_percentage_error,
     mean_squared_error,
 )
 from statsmodels.tsa.seasonal import seasonal_decompose
+
 from const import *
-import tensorflow as tf
+
 
 def load_featurized_data():
     """
@@ -21,10 +23,10 @@ def load_featurized_data():
     val_dataset = tf.data.experimental.load(VAL_PROCESSED_DATA_PATH)
     test_dataset = tf.data.experimental.load(TEST_PROCESSED_DATA_PATH)
     load_dataset_list = {
-        'train_pred': train_pred_dataset,
-        'val': val_dataset,
-        'test': test_dataset,
-        'train': train_dataset
+        "train_pred": train_pred_dataset,
+        "val": val_dataset,
+        "test": test_dataset,
+        "train": train_dataset,
     }
     return load_dataset_list
 
@@ -37,7 +39,12 @@ def load_featurized_week_data():
     train_data_week = pd.read_csv(TRAIN_PROCESSED_DATA_WEEK_PATH, index_col="semana")
     val_data_week = pd.read_csv(VAL_PROCESSED_DATA_WEEK_PATH, index_col="semana")
     test_data_week = pd.read_csv(TEST_PROCESSED_DATA_WEEK_PATH, index_col="semana")
-    date_dataset_list = [train_pred_data_week, val_data_week, test_data_week, train_data_week]
+    date_dataset_list = [
+        train_pred_data_week,
+        val_data_week,
+        test_data_week,
+        train_data_week,
+    ]
 
     return date_dataset_list
 
@@ -309,7 +316,9 @@ def plot_residual_error(df_target, pred_list, date_list, plot=False):
     res_list = []
     for pred, date, color in zip(pred_list, date_list, colors[: len(pred_list)]):
 
-        res_pred = pred.loc[:,f"Semana 1"] - df_target[f"Semana 1"].loc[np.array(date.index)]
+        res_pred = (
+            pred.loc[:, f"Semana 1"] - df_target[f"Semana 1"].loc[np.array(date.index)]
+        )
         sns.lineplot(y=res_pred, x=df_target["Data"], ax=ax, color=color)
         res_list.append(res_pred)
 

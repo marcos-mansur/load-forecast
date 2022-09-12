@@ -1,14 +1,16 @@
+import json
 import os
+
 import mlflow
-from vault_dagshub import *
 import numpy as np
 import pandas as pd
 import tensorflow as tf
 import yaml
+
 from common.logger import get_logger
 from const import *
 from utils import *
-import json
+from vault_dagshub import *
 
 # mlflow settings
 os.environ["MLFLOW_TRACKING_USERNAME"] = DAGSHUB_USERNAME
@@ -132,7 +134,7 @@ if __name__ == "__main__":
     # load params
     params = yaml.safe_load(open("params.yaml"))
 
-    load_dataset_list = load_featurized_data() 
+    load_dataset_list = load_featurized_data()
     date_dataset_list = load_featurized_week_data()
 
     with mlflow.start_run():
@@ -162,18 +164,18 @@ if __name__ == "__main__":
         history = compile_and_fit(
             model=model,
             epochs=params["train"]["EPOCHS"],
-            data=load_dataset_list['train'],
-            val_data=load_dataset_list['val'],
+            data=load_dataset_list["train"],
+            val_data=load_dataset_list["val"],
             optimizer=tf.optimizers.Adam(),
             patience=params["train"]["PATIENCE"],
             filepath=params["train"]["MODEL_NAME"],
         )
         logger.info("MODEL TRAINING: DONE!")
-        
-        with open(HISTORY_PATH,'w') as history_file:
-            json.dump(history.history,history_file)
-        with open(HISTORY_PARAMS_PATH,'w') as history_params_file:
-            json.dump(history.params,history_params_file)
+
+        with open(HISTORY_PATH, "w") as history_file:
+            json.dump(history.history, history_file)
+        with open(HISTORY_PARAMS_PATH, "w") as history_params_file:
+            json.dump(history.params, history_params_file)
         logger.info("TRAIN HISTORY STORED TO DISK")
 
         # save model to disk
@@ -183,17 +185,23 @@ if __name__ == "__main__":
 
         # make prediction
         train_pred = predict_load(
-            model, load_dataset_list['train_pred'], window_size=params["featurize"]["WINDOW_SIZE_PRO"]
+            model,
+            load_dataset_list["train_pred"],
+            window_size=params["featurize"]["WINDOW_SIZE_PRO"],
         )
         val_pred = predict_load(
-            model, load_dataset_list['val'], window_size=params["featurize"]["WINDOW_SIZE_PRO"]
+            model,
+            load_dataset_list["val"],
+            window_size=params["featurize"]["WINDOW_SIZE_PRO"],
         )
         test_pred = predict_load(
-            model, load_dataset_list['test'], window_size=params["featurize"]["WINDOW_SIZE_PRO"]
+            model,
+            load_dataset_list["test"],
+            window_size=params["featurize"]["WINDOW_SIZE_PRO"],
         )
         logger.info("PREDICTIONS: DONE!")
 
-        if params['featurize']['HOW_WINDOW_GEN_PRO'] == 'autorregressivo':
+        if params["featurize"]["HOW_WINDOW_GEN_PRO"] == "autorregressivo":
             # unbatch
             pred_list = [
                 unbatch_pred(train_pred),
@@ -207,11 +215,17 @@ if __name__ == "__main__":
                 val_pred,
                 test_pred,
             ]
-        df_columns = ['Semana 1','Semana 2','Semana 3','Semana 4','Semana 5']
-        pd.DataFrame(pred_list[0], columns=df_columns).to_csv(TRAIN_PREDICTION_DATA_PATH)
-        pd.DataFrame(pred_list[1], columns=df_columns).to_csv(VAL_PREDICTION_DATA_WEEK_PATH)
-        pd.DataFrame(pred_list[2], columns=df_columns).to_csv(TEST_PREDICTION_DATA_WEEK_PATH)
-        logger.info('PREDICTIONS SAVED TO DISK')
+        df_columns = ["Semana 1", "Semana 2", "Semana 3", "Semana 4", "Semana 5"]
+        pd.DataFrame(pred_list[0], columns=df_columns).to_csv(
+            TRAIN_PREDICTION_DATA_PATH
+        )
+        pd.DataFrame(pred_list[1], columns=df_columns).to_csv(
+            VAL_PREDICTION_DATA_WEEK_PATH
+        )
+        pd.DataFrame(pred_list[2], columns=df_columns).to_csv(
+            TEST_PREDICTION_DATA_WEEK_PATH
+        )
+        logger.info("PREDICTIONS SAVED TO DISK")
 
         mlflow.end_run()
 

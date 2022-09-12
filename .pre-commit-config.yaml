@@ -1,0 +1,42 @@
+repos:
+  - repo: local
+    hooks:
+      - id: isort
+        name: isort
+        stages: [commit]
+        language: system
+        entry: isort .
+        types: [python]
+      - id: black
+        name: black
+        stages: [commit]
+        language: system
+        entry: black .
+        types: [python]
+      - id: pylint
+        name: pylint
+        stages: [commit]
+        language: system
+        entry: pylint job
+        types: [python]
+        pass_filenames: false
+      - id: flake8
+        name: flake8
+        stages: [commit]
+        language: system
+        entry: flake8 job
+        types: [python]
+      - id: mypy
+        name: mypy
+        stages: [commit]
+        language: system
+        entry: mypy job
+        types: [python]
+        pass_filenames: false
+      - id: pytest
+        name: pytest
+        stages: [commit]
+        language: system
+        entry: pytest --cov job
+        types: [python]
+        pass_filenames: false
