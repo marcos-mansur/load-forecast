@@ -10,6 +10,7 @@ import yaml
 from common.logger import get_logger
 from const import *
 from utils import *
+from utils_tf import load_featurized_data
 from vault_dagshub import *
 
 # mlflow settings
