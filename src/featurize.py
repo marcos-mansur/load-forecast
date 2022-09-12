@@ -195,7 +195,7 @@ class Window_Generator(BaseEstimator):
         dataset = dataset.batch(self.batch_size).prefetch(1)
 
         for i, t in dataset:
-            logger.info({"input shape": i.shape, "target shape": t.shape})
+            logger.debug({"input shape": i.shape, "target shape": t.shape})
             break
         return dataset, data_week
 
