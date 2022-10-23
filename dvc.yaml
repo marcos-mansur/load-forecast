@@ -45,9 +45,6 @@ stages:
     - train.MODEL_NAME
     outs:
     - src/model/model_train.h5
-    - data/predicted/train.csv
-    - data/predicted/val.csv
-    - data/predicted/test.csv
     - evaluation/history.json
     - evaluation/history_params.json
   evaluate:
@@ -56,9 +53,6 @@ stages:
     - src/evaluate.py
     - src/model/model_train.h5
     - data/target/target_df.csv
-    - data/predicted/train.csv
-    - data/predicted/val.csv
-    - data/predicted/test.csv
     - evaluation/history.json
     outs:
     - evaluation/learning_curves.png

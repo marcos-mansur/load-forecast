@@ -77,57 +77,6 @@ def create_model(neurons: list):
     return model
 
 
-def predict_load(model, pred_dataset, window_size):
-    """
-    This method produces multi-step (autorecursive)
-    predictions for the avg energy load of the next five weeks.
-    The input data has a number of time steps (columns)
-    defined by the arg window_size. predict_load() loops
-    over the data batches, make predictions for the
-    next week, add the predictions as a column to
-    the right (most recent) of the input data. Then, it
-    uses the most recent (window_size value) columns
-    to predict next week (five times).
-
-    Args:
-        model (keras.engine.sequential.Sequential): predictive model
-        pred_dataset (tf.python.data.experimental.ops.io._LoadDataset):
-                    input data
-        window_size (int): the amount of time steps used for forecasting
-
-    Returns:
-        list: next five weeks predictions
-              for each window (time series) of data
-    """
-
-    window_pred = []
-    # loop the batches of data
-    for batch_window, batch_target in pred_dataset:
-        # make a copy of the window to edit
-        window = batch_window
-        # loop the 5 weeks we want to predict
-        for week in range(0, 5):
-            # predict using the most recent (window_size value) inputs
-            forecast = model.predict(window[:, -window_size:], verbose=0)
-            # append the prediction to the input window
-            window = tf.concat(values=[window, forecast], axis=-1)
-            # remove the oldest input,
-            # the window_size "frame" moves one week forward (to the right)
-            window = window[:, -window_size:]
-        # saves only the predictions (last five columns)
-        window_pred.append(window[:, -5:])
-    return window_pred
-
-
-def unbatch_pred(window_pred):
-    """Unbatches the multi-step predictions"""
-
-    numpy_pred = [x.numpy() for x in window_pred]
-    pred = numpy_pred[0]
-    for batch in numpy_pred[1:]:
-        for item in batch:
-            pred = np.append(pred, item).reshape([-1, 5])
-    return pred[:-4]
 
 
 if __name__ == "__main__":
@@ -184,49 +133,6 @@ if __name__ == "__main__":
         model.save(os.path.join(TRAIN_MODEL_PATH, params["train"]["MODEL_NAME"]))
         logger.info("TRAINED MODEL STORED TO DISK")
 
-        # make prediction
-        train_pred = predict_load(
-            model,
-            load_dataset_list["train_pred"],
-            window_size=params["featurize"]["WINDOW_SIZE_PRO"],
-        )
-        val_pred = predict_load(
-            model,
-            load_dataset_list["val"],
-            window_size=params["featurize"]["WINDOW_SIZE_PRO"],
-        )
-        test_pred = predict_load(
-            model,
-            load_dataset_list["test"],
-            window_size=params["featurize"]["WINDOW_SIZE_PRO"],
-        )
-        logger.info("PREDICTIONS: DONE!")
-
-        if params["featurize"]["HOW_WINDOW_GEN_PRO"] == "autorregressivo":
-            # unbatch
-            pred_list = [
-                unbatch_pred(train_pred),
-                unbatch_pred(val_pred),
-                unbatch_pred(test_pred),
-            ]
-            logger.info("HOW_WINDOW_GEN_PRO = autoregressivo, predictions unbatched.")
-        else:
-            pred_list = [
-                train_pred,
-                val_pred,
-                test_pred,
-            ]
-        df_columns = ["Semana 1", "Semana 2", "Semana 3", "Semana 4", "Semana 5"]
-        pd.DataFrame(pred_list[0], columns=df_columns).to_csv(
-            TRAIN_PREDICTION_DATA_PATH
-        )
-        pd.DataFrame(pred_list[1], columns=df_columns).to_csv(
-            VAL_PREDICTION_DATA_WEEK_PATH
-        )
-        pd.DataFrame(pred_list[2], columns=df_columns).to_csv(
-            TEST_PREDICTION_DATA_WEEK_PATH
-        )
-        logger.info("PREDICTIONS SAVED TO DISK")
 
         mlflow.end_run()
 

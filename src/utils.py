@@ -76,20 +76,12 @@ def learning_curves(history, skip, plot=False):
     return fig
 
 
-def plot_predicted_series(date_list, pred_list, df_target, baseline=False, plot=False):
+def plot_predicted_series(date_list, pred_list, df_target, plot=False):
 
     colors = ["orange", "green", "purple"]
     fig, ax = plt.subplots(figsize=(20, 35), ncols=1, nrows=5)
     extra = plt.Rectangle((0, 0), 0, 0, fc="none", fill=False, ec="none", linewidth=0)
 
-    # plot baseline
-    if baseline == True:
-        sns.lineplot(
-            x=df_target["Data"],
-            y=df_target["Média Móvel"],
-            ax=np.ravel(ax)[0],
-            color="black",
-        )
 
     # loop over 5 weeks
     for week_count in range(0, 5):
@@ -103,9 +95,11 @@ def plot_predicted_series(date_list, pred_list, df_target, baseline=False, plot=
 
         # plot predicted data
         for date, pred, color in zip(date_list, pred_list, colors[: len(pred_list)]):
+            x_value = date.shift(week_count).reset_index(drop=True)
+            y_value = pred.loc[:, f"Semana {week_count+1}"]
             sns.lineplot(
-                x=date.shift(week_count).din_instante,
-                y=pred.loc[:, f"Semana {week_count+1}"],
+                x=['2020-02-01','2020-02-02'],
+                y=[37000,37500],
                 ax=np.ravel(ax)[week_count],
                 color=color,
             )
