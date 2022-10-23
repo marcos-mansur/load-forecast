@@ -1,12 +1,11 @@
 import json
 import os
 
-import tensorflow
 
-from common.logger import get_logger
-from const import *
-from utils import *
-from utils_tf import *
+from src.common.logger import get_logger
+from src.const import *
+from src.utils import *
+from src.utils_tf import *
 
 
 def predict_load(model, pred_dataset, window_size):

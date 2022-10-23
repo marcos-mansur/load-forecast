@@ -1,5 +1,5 @@
 import tensorflow as tf
-from const import *
+from src.const import *
 
 def load_featurized_data():
     """

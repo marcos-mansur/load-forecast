@@ -10,7 +10,7 @@ from sklearn.metrics import (
 )
 from statsmodels.tsa.seasonal import seasonal_decompose
 
-from const import *
+from src.const import *
 
 
 def load_featurized_week_data():
@@ -96,10 +96,11 @@ def plot_predicted_series(date_list, pred_list, df_target, plot=False):
         # plot predicted data
         for date, pred, color in zip(date_list, pred_list, colors[: len(pred_list)]):
             x_value = date.shift(week_count).reset_index(drop=True)
+            x_value_flat = [item for sublist in x_value.values for item in sublist]
             y_value = pred.loc[:, f"Semana {week_count+1}"]
             sns.lineplot(
-                x=['2020-02-01','2020-02-02'],
-                y=[37000,37500],
+                x=x_value_flat,
+                y=y_value.values,
                 ax=np.ravel(ax)[week_count],
                 color=color,
             )
