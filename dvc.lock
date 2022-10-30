@@ -8,8 +8,8 @@ stages:
       size: 1109264
       nfiles: 23
     - path: src/preprocess.py
-      md5: 6221710f416c69e112322f904eead1cf
-      size: 16424
+      md5: a815fb56557110516023c549b709f919
+      size: 16025
     params:
       params.yaml:
         preprocess.DATA_YEAR_START_PP: 2012
@@ -42,8 +42,8 @@ stages:
       md5: 0a6efe9dd96836286dca472669f84939
       size: 39473
     - path: src/featurize.py
-      md5: ea559c8e6f46af8a6701a8062975c984
-      size: 10979
+      md5: 650109edffb70efe74c4ba535e720e02
+      size: 10654
     params:
       params.yaml:
         featurize.BATCH_SIZE_PRO: 32
@@ -53,35 +53,35 @@ stages:
         featurize.WINDOW_SIZE_PRO: 7
     outs:
     - path: data/featurized/test_processed
-      md5: 6c8a39d0d2fb47adf558df46b9ab02bb.dir
-      size: 3600
+      md5: 9471180232dfa7a21675059326824a2b.dir
+      size: 3601
       nfiles: 3
     - path: data/featurized/train_processed
-      md5: 0be04e9486cf581ed8ee8b4bba60e5c9.dir
+      md5: 8d6ac44990e7a74b2c8f3c84dbb8bc7c.dir
       size: 23764
       nfiles: 3
     - path: data/featurized/val_processed
-      md5: 7112160a1543052e1c6fae93cefa067c.dir
-      size: 6660
+      md5: 6a9d89a536fe0f3e449ae5117f5cd8e2.dir
+      size: 6659
       nfiles: 3
   train:
     cmd: python src/train.py
     deps:
     - path: data/featurized/test_processed
-      md5: 6c8a39d0d2fb47adf558df46b9ab02bb.dir
-      size: 3600
+      md5: 9471180232dfa7a21675059326824a2b.dir
+      size: 3601
       nfiles: 3
     - path: data/featurized/train_processed
-      md5: 0be04e9486cf581ed8ee8b4bba60e5c9.dir
+      md5: 8d6ac44990e7a74b2c8f3c84dbb8bc7c.dir
       size: 23764
       nfiles: 3
     - path: data/featurized/val_processed
-      md5: 7112160a1543052e1c6fae93cefa067c.dir
-      size: 6660
+      md5: 6a9d89a536fe0f3e449ae5117f5cd8e2.dir
+      size: 6659
       nfiles: 3
     - path: src/train.py
-      md5: 713e05ecb9a925f5bc63be5dfa004954
-      size: 7796
+      md5: c533af70d7dd55798967d3200a40889c
+      size: 4219
     params:
       params.yaml:
         train.EPOCHS: 150
@@ -90,21 +90,12 @@ stages:
         - 8
         train.PATIENCE: 8
     outs:
-    - path: data/predicted/test.csv
-      md5: 65c5fa71c46ff78f9118def1da9296c0
-      size: 3671
-    - path: data/predicted/train.csv
-      md5: 1cf0a2e5b3e130ded6536e5eb91c66ee
-      size: 26730
-    - path: data/predicted/val.csv
-      md5: 5a636bcf7fa79414537f1bfeb9e2a1bd
-      size: 7137
     - path: evaluation/history.json
-      md5: a80f3ad4bcae6b4f1c4e93b3ee79fa32
-      size: 20702
+      md5: dc95923b06789827012a3a581b1cb9b3
+      size: 20770
     - path: evaluation/history_params.json
       md5: 41d9ece2f55379dc8101177ded15e2d1
       size: 42
     - path: src/model/model_train.h5
-      md5: 553765ca8c8435129e9d2c11d6d4f3b7
+      md5: e734955b4d278d0c4fe5e46a10b93813
       size: 45712

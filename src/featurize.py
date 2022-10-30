@@ -45,7 +45,7 @@ class Window_Generator(BaseEstimator):
         # get first day of each week and  removes the last 4 rows
         # because we want to save the first day of the first target week
         # so we drop the last target 4 weeks
-        return df_grouped.min()[:-4]
+        return df_grouped.min().iloc[:-4]
 
     def map_data(self, dataset):
         """Defines how the data will be processed into features and target.
@@ -236,21 +236,21 @@ if __name__ == "__main__":
 
     # saves datasets to disk
     # dataset for performance evaluation
-    tf.data.experimental.save(
+    tf.data.Dataset.save(
         train_pred_dataset,
         TRAIN_PRED_PROCESSED_DATA_PATH,
         compression=None,
         shard_func=None,
         checkpoint_args=None,
     )
-    tf.data.experimental.save(
+    tf.data.Dataset.save(
         val_dataset,
         VAL_PROCESSED_DATA_PATH,
         compression=None,
         shard_func=None,
         checkpoint_args=None,
     )
-    tf.data.experimental.save(
+    tf.data.Dataset.save(
         test_dataset,
         TEST_PROCESSED_DATA_PATH,
         compression=None,
@@ -258,7 +258,7 @@ if __name__ == "__main__":
         checkpoint_args=None,
     )
     # dataset to training
-    tf.data.experimental.save(
+    tf.data.Dataset.save(
         train_dataset,
         TRAIN_PROCESSED_DATA_PATH,
         compression=None,
