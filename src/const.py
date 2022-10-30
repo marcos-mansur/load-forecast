@@ -3,7 +3,7 @@ import os
 import yaml
 
 # registered model name
-REG_NAME_MODEL = yaml.safe_load(open("params.yaml"))["featurize"]["HOW_WINDOW_GEN_PRO"]
+REG_NAME_MODEL = 'temp'
 
 # global consts
 SEED = 42
@@ -19,12 +19,12 @@ TEST_TREATED_DATA_PATH = os.path.join(TREATED_DATA_PATH, "test_preprocessed.csv"
 TARGET_DF_PATH = "data/target/target_df.csv"
 # featurized.py output data path const
 PROCESSED_DATA_PATH = "data/featurized"
-TRAIN_PROCESSED_DATA_PATH = os.path.join(PROCESSED_DATA_PATH, "train_processed")
+TRAIN_PROCESSED_DATA_PATH = os.path.join(PROCESSED_DATA_PATH, "train_processed.csv")
 TRAIN_PRED_PROCESSED_DATA_PATH = os.path.join(
-    PROCESSED_DATA_PATH, "train_pred_processed"
+    PROCESSED_DATA_PATH, "train_pred_processed.csv"
 )
-VAL_PROCESSED_DATA_PATH = os.path.join(PROCESSED_DATA_PATH, "val_processed")
-TEST_PROCESSED_DATA_PATH = os.path.join(PROCESSED_DATA_PATH, "test_processed")
+VAL_PROCESSED_DATA_PATH = os.path.join(PROCESSED_DATA_PATH, "val_processed.csv")
+TEST_PROCESSED_DATA_PATH = os.path.join(PROCESSED_DATA_PATH, "test_processed.csv")
 # process.py output week start day path const
 TRAIN_PROCESSED_DATA_WEEK_PATH = os.path.join(
     PROCESSED_DATA_PATH, "train_data_week.csv"
