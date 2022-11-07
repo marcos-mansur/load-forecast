@@ -28,15 +28,15 @@ stages:
     - featurize.TARGET_PERIOD_PRO
     - featurize.HOW_WINDOW_GEN_PRO
     outs:
-    - data/featurized/train_processed
-    - data/featurized/val_processed
-    - data/featurized/test_processed
+    - data/featurized/train_processed.csv
+    - data/featurized/val_processed.csv
+    - data/featurized/test_processed.csv
   train: 
     cmd: python src/train.py
     deps:
-    - data/featurized/train_processed
-    - data/featurized/val_processed
-    - data/featurized/test_processed
+    - data/featurized/train_processed.csv
+    - data/featurized/val_processed.csv
+    - data/featurized/test_processed.csv
     - src/train.py
     params:
     - train.EPOCHS
