@@ -11,5 +11,8 @@ ipykernel
 statsmodels
 black
 isort
+pylint
+mypy
+flake8
 mkdocs
 mkdocstrings[python]
