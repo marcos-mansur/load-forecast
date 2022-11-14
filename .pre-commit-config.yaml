@@ -17,26 +17,26 @@ repos:
         name: pylint
         stages: [commit]
         language: system
-        entry: pylint job
+        entry: pylint src
         types: [python]
         pass_filenames: false
       - id: flake8
         name: flake8
         stages: [commit]
         language: system
-        entry: flake8 job
+        entry: flake8 src
         types: [python]
       - id: mypy
         name: mypy
         stages: [commit]
         language: system
-        entry: mypy job
+        entry: mypy src
         types: [python]
         pass_filenames: false
       - id: pytest
         name: pytest
         stages: [commit]
         language: system
-        entry: pytest --cov job
+        entry: pytest --cov src
         types: [python]
         pass_filenames: false

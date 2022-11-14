@@ -13,6 +13,8 @@ black
 isort
 pylint
 mypy
+types-PyYAML
 flake8
 mkdocs
+pre-commit
 mkdocstrings[python]
