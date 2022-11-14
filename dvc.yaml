@@ -1,6 +1,6 @@
 stages:
   preprocess:
-    cmd: python src/preprocess.py
+    cmd: python -m src.preprocess
     deps:
     - data/raw-data
     - src/preprocess.py
@@ -15,7 +15,7 @@ stages:
     - data/preprocessed/test_preprocessed.csv
     - data/target/target_df.csv
   featurize:
-    cmd: python src/featurize.py
+    cmd: python -m src.featurize
     deps:
     - data/preprocessed/train_preprocessed.csv
     - data/preprocessed/val_preprocessed.csv
@@ -23,16 +23,17 @@ stages:
     - src/featurize.py
     params:
     - featurize.BATCH_SIZE_PRO
-    - featurize.WINDOW_SIZE_PRO
+    - featurize.WINDOW_SIZE
     - featurize.SUFFLE_BUFFER_PRO
-    - featurize.TARGET_PERIOD_PRO
-    - featurize.HOW_WINDOW_GEN_PRO
+    - featurize.TARGET_PERIOD
+    - featurize.HOW_INPUT_WINDOW_GEN
+    - featurize.HOW_TARGET_WINDOW_GEN
     outs:
     - data/featurized/train_processed.csv
     - data/featurized/val_processed.csv
     - data/featurized/test_processed.csv
   train: 
-    cmd: python src/train.py
+    cmd: python -m src.train
     deps:
     - data/featurized/train_processed.csv
     - data/featurized/val_processed.csv
@@ -48,7 +49,7 @@ stages:
     - evaluation/history.json
     - evaluation/history_params.json
   evaluate:
-    cmd: python src/evaluate.py
+    cmd: python -m src.evaluate
     deps:
     - src/evaluate.py
     - src/model/model_train.h5
@@ -59,4 +60,3 @@ stages:
     - evaluation/metrics_semana.png
     - evaluation/prediction_series.png
     - evaluation/residuo.png
-  

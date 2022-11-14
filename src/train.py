@@ -7,11 +7,10 @@ import pandas as pd
 import tensorflow as tf
 import yaml
 
-from common.logger import get_logger
-from const import *
-from utils import *
-from utils_tf import load_featurized_data
-from vault_dagshub import *
+from src.common.logger import get_logger
+from src.const import *
+from src.utils import *
+from src.vault_dagshub import *
 
 # mlflow settings
 os.environ["MLFLOW_TRACKING_USERNAME"] = DAGSHUB_USERNAME
@@ -22,7 +21,17 @@ os.environ[
 mlflow.tensorflow.autolog(registered_model_name=f"{REG_NAME_MODEL}")
 
 
-def compile_and_fit(model, data, val_data, epochs, optimizer, filepath, patience=4):
+def compile_and_fit(
+    x: pd.DataFrame,
+    y: pd.DataFrame,
+    val_data: pd.DataFrame,
+    model,
+    epochs: int,
+    optimizer: tf.keras.optimizers,
+    filepath: str,
+    batch_size: int,
+    patience: int = 4,
+):
     # early stopping callback
     early_stopping = tf.keras.callbacks.EarlyStopping(
         monitor="val_loss", patience=patience, mode="min"
@@ -44,11 +53,13 @@ def compile_and_fit(model, data, val_data, epochs, optimizer, filepath, patience
     )
     # fit data
     history = model.fit(
-        data,
+        x=x,
+        y=y,
         epochs=epochs,
         verbose=0,
-        validation_data=val_data,
+        validation_data=(val_data[0], val_data[1]),
         callbacks=[early_stopping],  # , checkpoint
+        batch_size=batch_size,
     )
     return history
 
@@ -77,15 +88,12 @@ def create_model(neurons: list):
     return model
 
 
-
-
 if __name__ == "__main__":
     logger = get_logger(__name__)
     # load params
     params = yaml.safe_load(open("params.yaml"))
 
     load_dataset_list = load_featurized_data()
-    date_dataset_list = load_featurized_week_data()
 
     with mlflow.start_run():
         logger.info("MLFLOW RUN: STARTED!")
@@ -103,8 +111,9 @@ if __name__ == "__main__":
                 "neurons": params["train"]["NEURONS"],
                 "epochs": params["train"]["EPOCHS"],
                 "batch size": params["featurize"]["BATCH_SIZE_PRO"],
-                "window size": params["featurize"]["WINDOW_SIZE_PRO"],
-                "Process": params["featurize"]["HOW_WINDOW_GEN_PRO"],
+                "window size": params["featurize"]["WINDOW_SIZE"],
+                "window_input_pp": params["featurize"]["HOW_INPUT_WINDOW_GEN"],
+                "window_target_pp": params["featurize"]["HOW_TARGET_WINDOW_GEN"],
                 "Start year": params["preprocess"]["DATA_YEAR_START_PP"],
             }
         )
@@ -112,13 +121,15 @@ if __name__ == "__main__":
 
         logger.info("MODEL TRAINING: STARTING!")
         history = compile_and_fit(
+            x=load_dataset_list["train"][0],
+            y=load_dataset_list["train"][1],
             model=model,
             epochs=params["train"]["EPOCHS"],
-            data=load_dataset_list["train"],
             val_data=load_dataset_list["val"],
             optimizer=tf.optimizers.Adam(),
             patience=params["train"]["PATIENCE"],
             filepath=params["train"]["MODEL_NAME"],
+            batch_size=params["featurize"]["BATCH_SIZE_PRO"],
         )
         logger.info("MODEL TRAINING: DONE!")
 
@@ -132,7 +143,6 @@ if __name__ == "__main__":
         os.makedirs(TRAIN_MODEL_PATH, exist_ok=True)
         model.save(os.path.join(TRAIN_MODEL_PATH, params["train"]["MODEL_NAME"]))
         logger.info("TRAINED MODEL STORED TO DISK")
-
 
         mlflow.end_run()
 

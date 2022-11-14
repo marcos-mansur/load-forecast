@@ -1,1 +1,1 @@
-" Module with the project core code."
+""" Module with the project core code."""

@@ -1,3 +1,5 @@
+import datetime
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -11,24 +13,6 @@ from sklearn.metrics import (
 from statsmodels.tsa.seasonal import seasonal_decompose
 
 from src.const import *
-
-
-def load_featurized_week_data():
-    # week first days data
-    train_pred_data_week = pd.read_csv(
-        TRAIN_PRED_PROCESSED_DATA_WEEK_PATH, index_col="semana"
-    )
-    train_data_week = pd.read_csv(TRAIN_PROCESSED_DATA_WEEK_PATH, index_col="semana")
-    val_data_week = pd.read_csv(VAL_PROCESSED_DATA_WEEK_PATH, index_col="semana")
-    test_data_week = pd.read_csv(TEST_PROCESSED_DATA_WEEK_PATH, index_col="semana")
-    date_dataset_list = [
-        train_pred_data_week,
-        val_data_week,
-        test_data_week,
-        train_data_week,
-    ]
-
-    return date_dataset_list
 
 
 def load_prediction_data():
@@ -60,7 +44,9 @@ def learning_curves(history, skip, plot=False):
         else:
             ax1 = ax.ravel()[2]
         sns.lineplot(
-            x=range(skip, len(history[metric])), y=history[metric][skip:], ax=ax1,
+            x=range(skip, len(history[metric])),
+            y=history[metric][skip:],
+            ax=ax1,
         )
 
     ax.ravel()[0].set_title("Learning Curve: MSE - loss")
@@ -76,12 +62,11 @@ def learning_curves(history, skip, plot=False):
     return fig
 
 
-def plot_predicted_series(date_list, pred_list, df_target, plot=False):
+def plot_predicted_series(pred_list, df_target, plot=False):
 
     colors = ["orange", "green", "purple"]
     fig, ax = plt.subplots(figsize=(20, 35), ncols=1, nrows=5)
     extra = plt.Rectangle((0, 0), 0, 0, fc="none", fill=False, ec="none", linewidth=0)
-
 
     # loop over 5 weeks
     for week_count in range(0, 5):
@@ -94,12 +79,20 @@ def plot_predicted_series(date_list, pred_list, df_target, plot=False):
         )
 
         # plot predicted data
-        for date, pred, color in zip(date_list, pred_list, colors[: len(pred_list)]):
-            x_value = date.shift(week_count).reset_index(drop=True)
-            x_value_flat = [item for sublist in x_value.values for item in sublist]
-            y_value = pred.loc[:, f"Semana {week_count+1}"]
+        for pred, color in zip(pred_list, colors[: len(pred_list)]):
+            true_index = pred.index[week_count:]
+            for _date_to_add_at_the_end in range(week_count + 1):
+                np.append(
+                    true_index,
+                    (pd.Index([true_index[-1] + pd.Timedelta(value=7, unit="d")])),
+                )
+            y_value = pred.loc[:, f"previsão semana {week_count+1}"]
             sns.lineplot(
-                x=x_value_flat,
+                x=[
+                    pd.Timestamp(item, tz="UTC")
+                    for sublist in true_index.to_frame().values
+                    for item in sublist
+                ],
                 y=y_value.values,
                 ax=np.ravel(ax)[week_count],
                 color=color,
@@ -110,22 +103,31 @@ def plot_predicted_series(date_list, pred_list, df_target, plot=False):
         )
         # np.ravel(ax)[week_count].legend(['Real','Previsão no treino',
         #     'Previsão na validação','Previsão no teste'], loc='upper left')
+        score_list_by_dataset = []
+        for pred_set in range(pred_list):
 
-        score = [
-            mean_squared_error(
-                pred_list[j].loc[:, f"Semana {week_count+1}"],
-                df_target[f"Semana {week_count+1}"].loc[np.array(date_list[j].index)],
-                squared=False,
+            # generate true date index
+            true_index = pred.index[week_count:]
+            for _date_to_add_at_the_end in range(week_count):
+                true_index.append(
+                    pd.Index([x_value[-1] + pd.Timedelta(value=7, unit="d")])
+                )
+
+            score_list_by_dataset.append(
+                mean_squared_error(
+                    pred_set.loc[:, f"previsão semana {week_count+1}"],
+                    df_target[f"Semana {week_count+1}"].loc[true_index],
+                    squared=False,
+                )
             )
-            for j in range(len(pred_list))
-        ]
+
         scores = (
             r"MAE Train ={:.0f}"
             + "\n"
             + r"MAE val ={:.0f}"
             + "\n"
             + r"MAE test ={:.0f}"
-        ).format(*score)
+        ).format(*score_list_by_dataset)
         np.ravel(ax)[week_count].legend([extra], [scores], loc="lower right")
 
     if plot:
@@ -303,3 +305,45 @@ def plot_residual_error(df_target, pred_list, date_list, plot=False):
     if plot:
         plt.show()
     return fig, res_list
+
+
+def load_featurized_data():
+    """
+    load featurized load data, week start data and target data.
+    """
+    # Load energy data
+    train_pred_dataset_x = pd.read_csv(
+        TRAIN_PRED_PROCESSED_DATA_PATH, index_col="din_instante", parse_dates=True
+    ).filter(like="input semana")
+    train_pred_dataset_y = pd.read_csv(
+        TRAIN_PRED_PROCESSED_DATA_PATH, index_col="din_instante", parse_dates=True
+    ).filter(like="target semana")
+
+    train_dataset_x = pd.read_csv(
+        TRAIN_PROCESSED_DATA_PATH, index_col="din_instante", parse_dates=True
+    ).filter(like="input semana")
+    train_dataset_y = pd.read_csv(
+        TRAIN_PROCESSED_DATA_PATH, index_col="din_instante", parse_dates=True
+    ).filter(like="target semana")
+
+    val_dataset_x = pd.read_csv(
+        VAL_PROCESSED_DATA_PATH, index_col="din_instante", parse_dates=True
+    ).filter(like="input semana")
+    val_dataset_y = pd.read_csv(
+        VAL_PROCESSED_DATA_PATH, index_col="din_instante", parse_dates=True
+    ).filter(like="target semana")
+
+    test_dataset_x = pd.read_csv(
+        TEST_PROCESSED_DATA_PATH, index_col="din_instante", parse_dates=True
+    ).filter(like="input semana")
+    test_dataset_y = pd.read_csv(
+        TEST_PROCESSED_DATA_PATH, index_col="din_instante", parse_dates=True
+    ).filter(like="target semana")
+
+    load_dataset_list = {
+        "train_pred": [train_pred_dataset_x, train_pred_dataset_y],
+        "val": [val_dataset_x, val_dataset_y],
+        "test": [test_dataset_x, test_dataset_y],
+        "train": [train_dataset_x, train_dataset_y],
+    }
+    return load_dataset_list

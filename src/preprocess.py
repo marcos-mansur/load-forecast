@@ -6,9 +6,16 @@ import pendulum
 import yaml
 from sklearn.base import BaseEstimator, TransformerMixin
 
-from common.logger import get_logger
-from const import *
-from utils import create_target_df
+from src.common.logger import get_logger
+from src.const import (
+    REGIAO,
+    TARGET_DF_PATH,
+    TEST_TREATED_DATA_PATH,
+    TRAIN_TREATED_DATA_PATH,
+    TREATED_DATA_PATH,
+    VAL_TREATED_DATA_PATH,
+)
+from src.utils import create_target_df
 
 
 class Preprocessor(BaseEstimator, TransformerMixin):
@@ -24,7 +31,8 @@ class Preprocessor(BaseEstimator, TransformerMixin):
         pass
 
     def fit(
-        self, df: pd.DataFrame,
+        self,
+        df: pd.DataFrame,
     ):
         """Learns the missing days"""
         df = df.copy()
@@ -375,15 +383,19 @@ if __name__ == "__main__":
         df=df,
         val_start=params["preprocess"]["VAL_START_PP"],
         test_start=params["preprocess"]["TEST_START_PP"],
-        window_size=params["featurize"]["WINDOW_SIZE_PRO"],
+        window_size=params["featurize"]["WINDOW_SIZE"],
     )
 
     os.makedirs(TREATED_DATA_PATH, exist_ok=True)
 
-    train_df.to_csv(TRAIN_TREATED_DATA_PATH)
-    val_df.to_csv(VAL_TREATED_DATA_PATH)
+    train_df.set_index("din_instante").to_csv(
+        TRAIN_TREATED_DATA_PATH, index="din_instante"
+    )
+    val_df.set_index("din_instante").to_csv(VAL_TREATED_DATA_PATH, index="din_instante")
     if params["preprocess"]["TEST_START_PP"]:
-        test_df.to_csv(TEST_TREATED_DATA_PATH)
+        test_df.set_index("din_instante").to_csv(
+            TEST_TREATED_DATA_PATH, index="din_instante"
+        )
 
     create_target_df(df, df_target_path=TARGET_DF_PATH, baseline_size=5)
 
