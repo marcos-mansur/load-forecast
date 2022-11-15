@@ -2,15 +2,23 @@
 import os
 
 import pandas as pd
-import tensorflow as tf
 import yaml
 from sklearn.base import BaseEstimator
 
+from src.common.load_data import load_processed_data
 from src.common.logger import get_logger
-from src.const import *
+from src.config.const import (
+    PROCESSED_DATA_PATH,
+    TEST_PROCESSED_DATA_PATH,
+    TRAIN_PRED_PROCESSED_DATA_PATH,
+    TRAIN_PROCESSED_DATA_PATH,
+    VAL_PROCESSED_DATA_PATH,
+)
 
 
-class Window_Generator(BaseEstimator):
+class WindowGenerator(BaseEstimator):
+    """Class for generating windowed dataframes for time series prediction"""
+
     def __init__(
         self,
         target_period,
@@ -19,7 +27,6 @@ class Window_Generator(BaseEstimator):
         shuffle_buffer,
         regiao="SUDESTE",
         sazo_weeks=2,
-        SEED=SEED,
         how_input="weekly",
         how_target="weekly",
     ):
@@ -37,8 +44,6 @@ class Window_Generator(BaseEstimator):
         self.target_period_mod = target_period
         self.window_size_mod = window_size
 
-        self.SEED = SEED
-
         # creates modfied params
         if self.how_input == "weekly":
             self.window_size_mod = self.window_size * 7
@@ -53,11 +58,11 @@ class Window_Generator(BaseEstimator):
         assert self.how_input in [
             "daily",
             "weekly",
-        ], f"how_input only accepts 'daily' or 'weekly"
+        ], "how_input only accepts 'daily' or 'weekly"
         assert self.how_target in [
             "daily",
             "weekly",
-        ], f"how_target only accepts 'daily' or 'weekly"
+        ], "how_target only accepts 'daily' or 'weekly"
 
         pass
 
@@ -89,19 +94,17 @@ class Window_Generator(BaseEstimator):
         return group_df_mais_dia
 
     def create_input_window(
-        self, 
-        df: pd.DataFrame, 
-        df_weekly: pd.DataFrame
+        self, df: pd.DataFrame, df_weekly: pd.DataFrame
     ) -> pd.DataFrame:
-        """ Creates a input window dataframe from a series. 
+        """Creates a input window dataframe from a series.
 
         Args:
             df (pd.DataFrame): input data series dataframe
-            df_weekly (pd.DataFrame): input data series dataframe 
+            df_weekly (pd.DataFrame): input data series dataframe
                 aggregated by average weekly load
 
         Returns:
-            pd.DataFrame: a windowed input dataframe with shifted values. 
+            pd.DataFrame: a windowed input dataframe with shifted values.
         """
 
         if self.how_input == "daily":
@@ -123,21 +126,19 @@ class Window_Generator(BaseEstimator):
         return df_shift
 
     def create_target_window(
-        self, 
-        df: pd.DataFrame, 
-        df_weekly: pd.DataFrame
+        self, df: pd.DataFrame, df_weekly: pd.DataFrame
     ) -> pd.DataFrame:
-        """ Creates a target window dataframe from a series. 
+        """Creates a target window dataframe from a series.
 
         Args:
             df (pd.DataFrame): data series dataframe
-            df_weekly (pd.DataFrame): data series dataframe 
+            df_weekly (pd.DataFrame): data series dataframe
                 aggregated by average weekly load
 
         Returns:
-            pd.DataFrame: a windowed dataframe with shifted values for target. 
+            pd.DataFrame: a windowed dataframe with shifted values for target.
         """
-        
+
         if self.how_input == "weekly":
             time_step_factor = 7
         elif self.how_input == "daily":
@@ -184,9 +185,7 @@ class Window_Generator(BaseEstimator):
 
         return df_shift
 
-    def transform(
-        self, df: pd.DataFrame, shuffle: bool=True
-    ) -> pd.DataFrame:
+    def transform(self, df: pd.DataFrame, shuffle: bool = True) -> pd.DataFrame:
         """Transform a preprocessed dataframe in a windowed dataset
         Returns:
             dataset: a windowed tensorflow.dataset with window_size
@@ -231,35 +230,21 @@ class Window_Generator(BaseEstimator):
         return df_drop_cols
 
 
-def load_data_process():
-    """Loads preprocessed data.
+def main():
+    """Main function of featurize module. Featurize cleaned data and save it to disk."""
 
-    Returns:
-        pd.DataFrame: list of preprocessed data dataframes.
-    """
-    train_df = pd.read_csv(TRAIN_TREATED_DATA_PATH, index_col="din_instante")
-    val_df = pd.read_csv(VAL_TREATED_DATA_PATH, index_col="din_instante")
-    test_df = pd.read_csv(TEST_TREATED_DATA_PATH, index_col="din_instante")
-    return train_df, val_df, test_df
-
-
-if __name__ == "__main__":
-    """ Featurize cleaned data. """
-    
-    logger = get_logger(__name__)
-
-    train_df, val_df, test_df = load_data_process()
-    logger.info("FEATURIZE: LOADING DATA... DONE!")
     params = yaml.safe_load(open("params.yaml"))["featurize"]
 
-    wd = Window_Generator(
+    train_df, val_df, test_df = load_processed_data()
+    logger.info("FEATURIZE: LOADING DATA... DONE!")
+
+    wd = WindowGenerator(
         batch_size=params["BATCH_SIZE_PRO"],
         window_size=params["WINDOW_SIZE"],
         shuffle_buffer=params["SUFFLE_BUFFER_PRO"],
         target_period=params["TARGET_PERIOD"],
         how_input=params["HOW_INPUT_WINDOW_GEN"],
         how_target=params["HOW_TARGET_WINDOW_GEN"],
-        SEED=SEED,
     )
 
     # dataset for performance evaluation
@@ -280,3 +265,8 @@ if __name__ == "__main__":
     # dataset to training
     train_dataset.to_csv(TRAIN_PROCESSED_DATA_PATH, index="din_instante")
     logger.info("FEATURIZE: SAVING DATASETS... DONE!")
+
+
+if __name__ == "__main__":
+    logger = get_logger(__name__)
+    main()

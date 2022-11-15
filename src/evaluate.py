@@ -1,15 +1,39 @@
 import json
 import os
+from typing import Dict
 
+import pandas as pd
+import tensorflow as tf
 import yaml
 
+from src.common.load_data import load_featurized_data
 from src.common.logger import get_logger
-from src.const import *
-from src.utils import *
+from src.common.utils_evaluate import (
+    generate_metrics_semana,
+    learning_curves,
+    plot_predicted_series,
+    plot_residual_error,
+)
+from src.config.const import (
+    HISTORY_PATH,
+    JOB_ROOT_FOLDER,
+    TARGET_DF_PATH,
+    VALUATION_PATH,
+)
 
 
-def predict_load(model, pred_dataset, params):
+def predict_load(model, pred_dataset: pd.DataFrame, params: Dict):
+    """If the param MODEL_TYPE is set to "AUTOREGRESSIVE" in params.yaml,
+        return autoregressive predictions.
 
+    Args:
+        model (_type_): _description_
+        pred_dataset (_type_): _description_
+        params (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
     autoreg_steps = params["evaluate"]["AUTOREGRESSIVE_STEPS"]
     model_type = params["evaluate"]["MODEL_TYPE"]
     temp_pred_dataset = pred_dataset.copy()
@@ -20,16 +44,16 @@ def predict_load(model, pred_dataset, params):
                 temp_pred_dataset.iloc[:, -autoreg_steps:], verbose=0
             )
             temp_pred_dataset[f"previsão semana {autoreg_step}"] = next_prediction
+
+    elif model_type == "SINGLE-STEP":
+        temp_pred_dataset = model.predict(temp_pred_dataset, verbose=0)
+
     temp_pred_dataset.index = pred_dataset.index
 
     return temp_pred_dataset
 
 
-# valuation
-if __name__ == "__main__":
-
-    logger = get_logger(__name__)
-
+def main():
     with open(HISTORY_PATH, "r") as history_file:
         history = json.load(history_file)
 
@@ -42,25 +66,11 @@ if __name__ == "__main__":
     )
 
     # make prediction
-    train_pred = predict_load(
-        model,
-        load_dataset_list["train_pred"][0],
-        params=params,
-    )
-    val_pred = predict_load(
-        model,
-        load_dataset_list["val"][0],
-        params=params,
-    )
-    test_pred = predict_load(
-        model,
-        load_dataset_list["test"][0],
-        params=params,
-    )
-    logger.info("PREDICTIONS: DONE!")
-
+    train_pred = predict_load(model, load_dataset_list["train_pred"][0], params=params)
+    val_pred = predict_load(model, load_dataset_list["val"][0], params=params)
+    test_pred = predict_load(model, load_dataset_list["test"][0], params=params)
     pred_list = [train_pred, val_pred, test_pred]
-    logger.info("HOW_WINDOW_GEN_PRO != autoregressivo, no need to unbatch predictions.")
+    logger.info("PREDICTIONS: DONE!")
 
     df_target = pd.read_csv(TARGET_DF_PATH)
     logger.info("LOADED TARGET DATA")
@@ -98,3 +108,10 @@ if __name__ == "__main__":
     )
     residual_fig.savefig(os.path.join(VALUATION_PATH, "residuo.png"))
     logger.info("RESIDUAL SAVED TO DISK")
+
+
+# valuation
+if __name__ == "__main__":
+
+    logger = get_logger(__name__)
+    main()

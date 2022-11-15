@@ -1,5 +1,6 @@
 import json
 import os
+from typing import Dict
 
 import mlflow
 import numpy as np
@@ -7,10 +8,15 @@ import pandas as pd
 import tensorflow as tf
 import yaml
 
+from src.common.load_data import load_featurized_data
 from src.common.logger import get_logger
-from src.const import *
-from src.utils import *
-from src.vault_dagshub import *
+from src.config.const import (
+    HISTORY_PARAMS_PATH,
+    HISTORY_PATH,
+    REG_NAME_MODEL,
+    TRAIN_MODEL_PATH,
+)
+from src.vault_dagshub import DAGSHUB_USERNAME, DAGSHUB_PASSWORD
 
 # mlflow settings
 os.environ["MLFLOW_TRACKING_USERNAME"] = DAGSHUB_USERNAME
@@ -31,7 +37,7 @@ def compile_and_fit(
     filepath: str,
     batch_size: int,
     patience: int = 4,
-):
+) -> Dict:
     # early stopping callback
     early_stopping = tf.keras.callbacks.EarlyStopping(
         monitor="val_loss", patience=patience, mode="min"
@@ -88,11 +94,10 @@ def create_model(neurons: list):
     return model
 
 
-if __name__ == "__main__":
-    logger = get_logger(__name__)
-    # load params
-    params = yaml.safe_load(open("params.yaml"))
+def main():
+    """Main function of train module. Trains a model and saves the artifact to disk."""
 
+    params = yaml.safe_load(open("params.yaml"))
     load_dataset_list = load_featurized_data()
 
     with mlflow.start_run():
@@ -147,3 +152,8 @@ if __name__ == "__main__":
         mlflow.end_run()
 
     logger.info("MLFLOW RUN ENDED. END OF TRAINING.")
+
+
+if __name__ == "__main__":
+    logger = get_logger(__name__)
+    main()

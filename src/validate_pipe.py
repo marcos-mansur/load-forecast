@@ -1,10 +1,17 @@
+""" Module for data quality check"""
+
 import pandas as pd
 import yaml
 
-from const import *
 from preprocess import Preprocessor
+from src.config.const import (
+    TEST_TREATED_DATA_PATH,
+    TRAIN_TREATED_DATA_PATH,
+    VAL_TREATED_DATA_PATH,
+)
 
-params = yaml.safe_load(open("params.yaml"))
+with open("params.yaml") as param_file:
+    params = yaml.safe_load(param_file)
 
 # load data
 train_df = pd.read_csv(TRAIN_TREATED_DATA_PATH, parse_dates=["din_instante"])
@@ -22,9 +29,7 @@ print("VAL SET SIZE PROPORTION:", round(val_df.shape[0] / all_data_len, 3))
 if params["preprocess"]["TEST_START_PP"]:
     print("TEST SET SIZE PROPORTION:", round(test_df.shape[0] / all_data_len, 3))
 
-window_size_timedelta = pd.Timedelta(
-    value=params["featurize"]["WINDOW_SIZE_PRO"], unit="W"
-)
+window_size_timedelta = pd.Timedelta(value=params["featurize"]["WINDOW_SIZE"], unit="W")
 
 print("\nTRAIN_DF:")
 assert (
