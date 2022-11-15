@@ -12,14 +12,14 @@ stages:
     outs:
     - data/preprocessed/train_preprocessed.csv
     - data/preprocessed/val_preprocessed.csv
-    - data/preprocessed/test_preprocessed.csv
+    # - data/preprocessed/test_preprocessed.csv
     - data/target/target_df.csv
   featurize:
     cmd: python -m src.featurize
     deps:
     - data/preprocessed/train_preprocessed.csv
     - data/preprocessed/val_preprocessed.csv
-    - data/preprocessed/test_preprocessed.csv
+    # - data/preprocessed/test_preprocessed.csv
     - src/featurize.py
     params:
     - featurize.BATCH_SIZE_PRO
@@ -31,13 +31,13 @@ stages:
     outs:
     - data/featurized/train_processed.csv
     - data/featurized/val_processed.csv
-    - data/featurized/test_processed.csv
+    # - data/featurized/test_processed.csv
   train: 
     cmd: python -m src.train
     deps:
     - data/featurized/train_processed.csv
     - data/featurized/val_processed.csv
-    - data/featurized/test_processed.csv
+    # - data/featurized/test_processed.csv
     - src/train.py
     params:
     - train.EPOCHS
@@ -60,3 +60,5 @@ stages:
     - evaluation/metrics_semana.png
     - evaluation/prediction_series.png
     - evaluation/residuo.png
+    params:
+    - featurize.MODEL_TYPE

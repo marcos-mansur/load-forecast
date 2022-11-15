@@ -34,8 +34,8 @@ def predict_load(model, pred_dataset: pd.DataFrame, params: Dict):
     Returns:
         _type_: _description_
     """
-    autoreg_steps = params["evaluate"]["AUTOREGRESSIVE_STEPS"]
-    model_type = params["evaluate"]["MODEL_TYPE"]
+    autoreg_steps = params["featurize"]["TARGET_PERIOD"]
+    model_type = params["featurize"]["MODEL_TYPE"]
     temp_pred_dataset = pred_dataset.copy()
 
     if model_type == "AUTOREGRESSIVE":

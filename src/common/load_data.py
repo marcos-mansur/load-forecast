@@ -38,7 +38,7 @@ def load_raw_data(start=2009, end=2021):
     return df_20XX.reset_index(drop=True)
 
 
-def load_processed_data():
+def load_processed_data(params=None):
     """Loads preprocessed data.
 
     Returns:
@@ -46,7 +46,11 @@ def load_processed_data():
     """
     train_df = pd.read_csv(TRAIN_TREATED_DATA_PATH, index_col="din_instante",parse_dates=True)
     val_df = pd.read_csv(VAL_TREATED_DATA_PATH, index_col="din_instante",parse_dates=True)
-    test_df = pd.read_csv(TEST_TREATED_DATA_PATH, index_col="din_instante",parse_dates=True)
+    
+    if params['preprocess']['TEST_START_PP']:
+        test_df = pd.read_csv(TEST_TREATED_DATA_PATH, index_col="din_instante",parse_dates=True)
+    else:
+        test_df = None
     return train_df, val_df, test_df
 
 

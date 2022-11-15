@@ -266,10 +266,6 @@ class Preprocessor(BaseEstimator, TransformerMixin):
         df = df.copy()
         window_size_timedelta = pd.Timedelta(value=window_size, unit="W")
 
-        assert type(self.params["preprocess"]["VAL_START_PP"]) == type(
-            self.params["preprocess"]["TEST_START_PP"]
-        ), """params.VAL_START_PP type must be iqual to params.TEST_START_PP"""
-
         # if arg val_start is float, process like it's the proportion of dataset
         if type(val_start) == float:
 

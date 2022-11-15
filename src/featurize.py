@@ -29,6 +29,7 @@ class WindowGenerator(BaseEstimator):
         sazo_weeks=2,
         how_input="weekly",
         how_target="weekly",
+        model_type='AUTOREGRESSIVE'
     ):
         self.batch_size = batch_size
         self.shuffle_buffer = shuffle_buffer
@@ -39,21 +40,21 @@ class WindowGenerator(BaseEstimator):
         self.how_input = how_input
         self.how_target = how_target
 
-        self.target_period = target_period
         self.window_size = window_size
         self.target_period_mod = target_period
-        self.window_size_mod = window_size
+
+        self.model_type = model_type
 
         # creates modfied params
-        if self.how_input == "weekly":
-            self.window_size_mod = self.window_size * 7
+        if model_type == 'SINGLE-STEP':
+            self.target_period = target_period
+        elif model_type == 'AUTOREGRESSIVE':
+            self.target_period = 1
+
         if self.how_input == "daily":
             assert (
                 self.window_size % 7 == 0
-            ), "how_input = 'daily' demmands window_size multiple of 7 (days in a week)"
-
-        if self.how_target == "weekly":
-            self.target_period_mod = self.target_period * 7
+            ), "how_input = 'daily' demmands window_size multiple of 7 (days in a week)"        
 
         assert self.how_input in [
             "daily",
@@ -233,24 +234,25 @@ class WindowGenerator(BaseEstimator):
 def main():
     """Main function of featurize module. Featurize cleaned data and save it to disk."""
 
-    params = yaml.safe_load(open("params.yaml"))["featurize"]
+    params = yaml.safe_load(open("params.yaml"))
 
-    train_df, val_df, test_df = load_processed_data()
+    train_df, val_df, test_df = load_processed_data(params)
     logger.info("FEATURIZE: LOADING DATA... DONE!")
 
     wd = WindowGenerator(
-        batch_size=params["BATCH_SIZE_PRO"],
-        window_size=params["WINDOW_SIZE"],
-        shuffle_buffer=params["SUFFLE_BUFFER_PRO"],
-        target_period=params["TARGET_PERIOD"],
-        how_input=params["HOW_INPUT_WINDOW_GEN"],
-        how_target=params["HOW_TARGET_WINDOW_GEN"],
+        batch_size=params["featurize"]["BATCH_SIZE_PRO"],
+        window_size=params["featurize"]["WINDOW_SIZE"],
+        shuffle_buffer=params["featurize"]["SUFFLE_BUFFER_PRO"],
+        target_period=params["featurize"]["TARGET_PERIOD"],
+        how_input=params["featurize"]["HOW_INPUT_WINDOW_GEN"],
+        how_target=params["featurize"]["HOW_TARGET_WINDOW_GEN"],
+        model_type=params["featurize"]["MODEL_TYPE"]
     )
 
     # dataset for performance evaluation
     train_pred_dataset = wd.transform(df=train_df, shuffle=False)
     val_dataset = wd.transform(df=val_df, shuffle=False)
-    test_dataset = wd.transform(df=test_df, shuffle=False)
+    #test_dataset = wd.transform(df=test_df, shuffle=False)
     # dataset to training
     train_dataset = wd.transform(df=train_df, shuffle=True)
     logger.info("FEATURIZE: TRASFORMING DATASETS... DONE!")
@@ -261,7 +263,7 @@ def main():
     # dataset for performance evaluation
     train_pred_dataset.to_csv(TRAIN_PRED_PROCESSED_DATA_PATH, index="din_instante")
     val_dataset.to_csv(VAL_PROCESSED_DATA_PATH, index="din_instante")
-    test_dataset.to_csv(TEST_PROCESSED_DATA_PATH, index="din_instante")
+    #test_dataset.to_csv(TEST_PROCESSED_DATA_PATH, index="din_instante")
     # dataset to training
     train_dataset.to_csv(TRAIN_PROCESSED_DATA_PATH, index="din_instante")
     logger.info("FEATURIZE: SAVING DATASETS... DONE!")
