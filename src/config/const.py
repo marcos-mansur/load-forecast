@@ -11,7 +11,7 @@ SEED = 42
 REGIAO = "SUDESTE"
 
 JOB_ROOT_FOLDER: Path = (
-    Path(__file__ if __file__ is not None else ".").resolve().parent.parent
+    Path(__file__ if __file__ is not None else ".").resolve().parent.parent.parent
 )
 
 # preprocess.py output data path const
