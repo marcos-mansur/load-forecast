@@ -1,26 +1,16 @@
-import datetime
+""" Module with utils to plot evaluation metrics """
 
+import datetime
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
-import tensorflow as tf
 from sklearn.metrics import (
     mean_absolute_error,
     mean_absolute_percentage_error,
     mean_squared_error,
 )
 from statsmodels.tsa.seasonal import seasonal_decompose
-
-from src.const import *
-
-
-def load_prediction_data():
-    return [
-        pd.read_csv(TRAIN_PREDICTION_DATA_PATH),
-        pd.read_csv(VAL_PREDICTION_DATA_WEEK_PATH),
-        pd.read_csv(TEST_PREDICTION_DATA_WEEK_PATH),
-    ]
 
 
 def learning_curves(history, skip, plot=False):
@@ -89,7 +79,7 @@ def plot_predicted_series(pred_list, df_target, plot=False):
             y_value = pred.loc[:, f"previsão semana {week_count+1}"]
             sns.lineplot(
                 x=[
-                    pd.Timestamp(item, tz="UTC")
+                    item
                     for sublist in true_index.to_frame().values
                     for item in sublist
                 ],
@@ -294,7 +284,7 @@ def plot_residual_error(df_target, pred_list, date_list, plot=False):
     for pred, date, color in zip(pred_list, date_list, colors[: len(pred_list)]):
 
         res_pred = (
-            pred.loc[:, f"Semana 1"] - df_target[f"Semana 1"].loc[np.array(date.index)]
+            pred.loc[:, "Semana 1"] - df_target["Semana 1"].loc[np.array(date.index)]
         )
         sns.lineplot(y=res_pred, x=df_target["Data"], ax=ax, color=color)
         res_list.append(res_pred)
@@ -305,45 +295,3 @@ def plot_residual_error(df_target, pred_list, date_list, plot=False):
     if plot:
         plt.show()
     return fig, res_list
-
-
-def load_featurized_data():
-    """
-    load featurized load data, week start data and target data.
-    """
-    # Load energy data
-    train_pred_dataset_x = pd.read_csv(
-        TRAIN_PRED_PROCESSED_DATA_PATH, index_col="din_instante", parse_dates=True
-    ).filter(like="input semana")
-    train_pred_dataset_y = pd.read_csv(
-        TRAIN_PRED_PROCESSED_DATA_PATH, index_col="din_instante", parse_dates=True
-    ).filter(like="target semana")
-
-    train_dataset_x = pd.read_csv(
-        TRAIN_PROCESSED_DATA_PATH, index_col="din_instante", parse_dates=True
-    ).filter(like="input semana")
-    train_dataset_y = pd.read_csv(
-        TRAIN_PROCESSED_DATA_PATH, index_col="din_instante", parse_dates=True
-    ).filter(like="target semana")
-
-    val_dataset_x = pd.read_csv(
-        VAL_PROCESSED_DATA_PATH, index_col="din_instante", parse_dates=True
-    ).filter(like="input semana")
-    val_dataset_y = pd.read_csv(
-        VAL_PROCESSED_DATA_PATH, index_col="din_instante", parse_dates=True
-    ).filter(like="target semana")
-
-    test_dataset_x = pd.read_csv(
-        TEST_PROCESSED_DATA_PATH, index_col="din_instante", parse_dates=True
-    ).filter(like="input semana")
-    test_dataset_y = pd.read_csv(
-        TEST_PROCESSED_DATA_PATH, index_col="din_instante", parse_dates=True
-    ).filter(like="target semana")
-
-    load_dataset_list = {
-        "train_pred": [train_pred_dataset_x, train_pred_dataset_y],
-        "val": [val_dataset_x, val_dataset_y],
-        "test": [test_dataset_x, test_dataset_y],
-        "train": [train_dataset_x, train_dataset_y],
-    }
-    return load_dataset_list
