@@ -99,20 +99,28 @@ def plot_predicted_series(pred_list, df_target, plot=False):
         for pred_set in pred_list:
             pred_set_to_avaluate = pred_set.iloc[:-3]
             # generate true date index
-            score_list_by_dataset.append(
-                mean_squared_error(
-                    pred_set_to_avaluate.loc[:,f"previsão semana {week_count+1}"],
-                    df_target[f"Semana {week_count+1}"].loc[pred_set_to_avaluate['Data Previsão'].values],
-                    squared=False,
-                )
+            score_list_by_dataset.extend(
+                [
+                    mean_squared_error(
+                        pred_set_to_avaluate.loc[:,f"previsão semana {week_count+1}"],
+                        df_target[f"Semana {week_count+1}"].loc[pred_set_to_avaluate['Data Previsão'].values],
+                        squared=False,
+                    ),
+                    mean_absolute_percentage_error(
+                        pred_set_to_avaluate.loc[:,f"previsão semana {week_count+1}"],
+                        df_target[f"Semana {week_count+1}"].loc[pred_set_to_avaluate['Data Previsão'].values],
+                    )*100,
+                ]
             )
 
         scores = (
             r"RMSE Train ={:.0f}"
             + "\n"
+            + r"MAPE Train ={:3.2f}%"
+            + "\n\n"
             + r"RMSE val ={:.0f}"
-            #+ "\n"
-            #+ r"RMSE test ={:.0f}"
+            + "\n"
+            + r"MAPE val ={:3.2f}%"
         ).format(*score_list_by_dataset)
         np.ravel(ax)[week_count].legend([extra], [scores], loc="lower right")
 
@@ -121,14 +129,13 @@ def plot_predicted_series(pred_list, df_target, plot=False):
     return fig
 
 
-def generate_metrics_semana(df_target, pred_list, date_list, plot=False):
+def generate_metrics_semana(df_target, pred_list, plot=False):
     """Generates metrics for prediction performance of the 5 predicted weeks
     and generates plot for such metrics
 
     Args:
         df_target (_type_): dataframe with target values
         pred_list (_type_): list with predictions for train, val and test dataset as items
-        date_list (_type_): list with week initial day data for train, val and test dataset as items
         id (_type_): _description_
         save (bool, optional): If True, saves plots as png. Defaults to False.
         plot (bool, optional): If True, show plots. Defaults to False.
@@ -149,11 +156,13 @@ def generate_metrics_semana(df_target, pred_list, date_list, plot=False):
     metrics_df_list = [train_metrics_df, val_metrics_df, test_metrics_df]
 
     # df_set will take the values: train_pred, val_pred and test_pred
-    for [i, df_set, data_week] in zip(enumerator, pred_list, date_list):
+    for [i, pred_set] in zip(enumerator, pred_list):
 
         mae_list = []
         mape_list = []
-        mse_list = []
+        rmse_list = []
+
+        pred_set_to_avaluate = pred_set.iloc[:-3]
 
         # loops the five weeks
         for week in range(0, 5):
@@ -161,25 +170,25 @@ def generate_metrics_semana(df_target, pred_list, date_list, plot=False):
             # adds mae of each week to mae_list
             mae_list.append(
                 mean_absolute_error(
-                    df_set.loc[:, f"Semana {week+1}"],
-                    df_target[f"Semana {week+1}"].loc[np.array(data_week.index)],
+                    pred_set_to_avaluate.loc[:,f"previsão semana {week+1}"],
+                    df_target[f"Semana {week+1}"].loc[pred_set_to_avaluate['Data Previsão'].values],
                 )
             )
 
             # adds mape of each week to mape_list
             mape_list.append(
                 mean_absolute_percentage_error(
-                    df_set.loc[:, f"Semana {week+1}"],
-                    df_target[f"Semana {week+1}"].loc[np.array(data_week.index)],
+                    pred_set_to_avaluate.loc[:,f"previsão semana {week+1}"],
+                    df_target[f"Semana {week+1}"].loc[pred_set_to_avaluate['Data Previsão'].values],
                 )
                 * 100
             )
 
-            # adds mse of each week to mse_list
-            mse_list.append(
+            # adds mse of each week to rmse_list
+            rmse_list.append(
                 mean_squared_error(
-                    df_set.loc[:, f"Semana {week+1}"],
-                    df_target[f"Semana {week+1}"].loc[np.array(data_week.index)],
+                    pred_set_to_avaluate.loc[:,f"previsão semana {week+1}"],
+                    df_target[f"Semana {week+1}"].loc[pred_set_to_avaluate['Data Previsão'].values],
                     squared=False,
                 )
             )
@@ -187,7 +196,7 @@ def generate_metrics_semana(df_target, pred_list, date_list, plot=False):
         # saves weekly metrics to a df
         metrics_df_list[i]["MAE"] = mae_list
         metrics_df_list[i]["MAPE"] = mape_list
-        metrics_df_list[i]["RMSE"] = mse_list
+        metrics_df_list[i]["RMSE"] = rmse_list
 
         # rectangle to print the metrics mean and std over it
         extra = plt.Rectangle(
@@ -213,11 +222,11 @@ def generate_metrics_semana(df_target, pred_list, date_list, plot=False):
         ax[i, 1].legend([extra], [scores], loc="lower right")
 
         # plot MSE by week
-        sns.lineplot(x=range(1, 6), y=mse_list, ax=ax[i, 2])
+        sns.lineplot(x=range(1, 6), y=rmse_list, ax=ax[i, 2])
         ax[i, 2].set_title(f"{name_dict[str(i)]} - MSE por semana prevista")
         ax[i, 2].set_xticks([1, 2, 3, 4, 5])
         scores = (r"$MSE={:.2f} \pm {:.2f}$").format(
-            np.mean(mse_list), np.std(mse_list)
+            np.mean(rmse_list), np.std(rmse_list)
         )
         ax[i, 2].legend([extra], [scores], loc="lower right")
 
@@ -250,7 +259,7 @@ def create_target_df(df, df_target_path, baseline_size=1):
     df_target.to_csv(df_target_path)
 
 
-def plot_residual_error(df_target, pred_list, date_list, plot=False):
+def plot_residual_error(df_target, pred_list, plot=False):
     # variation from one week to the next
     res_baseline = df_target[
         "Resíduo"
@@ -263,12 +272,12 @@ def plot_residual_error(df_target, pred_list, date_list, plot=False):
     # sns.lineplot(y=res_baseline, x=df_target['Data'], ax=ax)
 
     res_list = []
-    for pred, date, color in zip(pred_list, date_list, colors[: len(pred_list)]):
-
+    for pred_set, color in zip(pred_list, colors[: len(pred_list)]):
+        pred = pred_set.iloc[:-3]
         res_pred = (
-            pred.loc[:, "Semana 1"] - df_target["Semana 1"].loc[np.array(date.index)]
+            pred.loc[:, "previsão semana 1"].values - df_target["Semana 1"].loc[pred['Data Previsão']].values
         )
-        sns.lineplot(y=res_pred, x=df_target["Data"], ax=ax, color=color)
+        sns.lineplot(y=res_pred, x=pred['Data Previsão'], ax=ax, color=color)
         res_list.append(res_pred)
 
     ax.set_title("Resíduo - Semana 1")
