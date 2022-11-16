@@ -5,7 +5,7 @@ numpy==1.*
 matplotlib==3.*
 seaborn==0.*
 pendulum==2.*
-sklearn==1.*
+scikit-learn==1.*
 tensorflow==2.*
 ipykernel==6.*
 statsmodels==0.*

@@ -139,7 +139,13 @@ class WindowGenerator(BaseEstimator):
         Returns:
             pd.DataFrame: a windowed dataframe with shifted values for target.
         """
+        #if input is daily, the window_size unit is 'day' and the shift must be in days
+        temp_window_size = self.window_size
+        if self.how_input == 'daily':
+            temp_window_size = self.window_size/7
 
+        df = df.copy()
+        df['Data Forecast'] = df.index + pd.Timedelta(value=7*temp_window_size, unit="d")
         if self.how_input == "weekly":
             time_step_factor = 7
         elif self.how_input == "daily":

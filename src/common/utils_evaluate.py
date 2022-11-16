@@ -1,6 +1,6 @@
 """ Module with utils to plot evaluation metrics """
 
-import datetime
+import yaml
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -54,6 +54,12 @@ def learning_curves(history, skip, plot=False):
 
 def plot_predicted_series(pred_list, df_target, plot=False):
 
+    params = yaml.safe_load(open("params.yaml"))
+
+    window_size = params['featurize']['WINDOW_SIZE']
+    if params['featurize']['HOW_INPUT_WINDOW_GEN'] == 'daily':
+        window_size = window_size/7
+
     colors = ["orange", "green", "purple"]
     fig, ax = plt.subplots(figsize=(20, 35), ncols=1, nrows=5)
     extra = plt.Rectangle((0, 0), 0, 0, fc="none", fill=False, ec="none", linewidth=0)
@@ -62,28 +68,23 @@ def plot_predicted_series(pred_list, df_target, plot=False):
     for week_count in range(0, 5):
         # plot measured data
         sns.lineplot(
-            x=df_target["Data"],
+            x=df_target.index,
             y=df_target[f"Semana {week_count+1}"],
             ax=np.ravel(ax)[week_count],
             color="teal",
         )
 
         # plot predicted data
-        for pred, color in zip(pred_list, colors[: len(pred_list)]):
-            true_index = pred.index[week_count:]
-            for _date_to_add_at_the_end in range(week_count + 1):
-                np.append(
-                    true_index,
-                    (pd.Index([true_index[-1] + pd.Timedelta(value=7, unit="d")])),
-                )
-            y_value = pred.loc[:, f"previsão semana {week_count+1}"]
+        for pred_set, color in zip(pred_list, colors[: len(pred_list)]):
+            
+            # shift index so it shows date of prediction
+            true_index = pred_set.index.astype('datetime64[ms]') + pd.Timedelta(value=7*window_size, unit="d")
+            x_value = [str(index_unit).split(' ')[0] for index_unit in true_index]
+            y_value = pred_set.loc[:, f"previsão semana {week_count+1}"].values
+            
             sns.lineplot(
-                x=[
-                    item
-                    for sublist in true_index.to_frame().values
-                    for item in sublist
-                ],
-                y=y_value.values,
+                x= x_value,
+                y=y_value,
                 ax=np.ravel(ax)[week_count],
                 color=color,
             )
@@ -91,32 +92,27 @@ def plot_predicted_series(pred_list, df_target, plot=False):
         np.ravel(ax)[week_count].set_title(
             f"Carga real vs Predição em todo o período - Semana {week_count+1}"
         )
+
         # np.ravel(ax)[week_count].legend(['Real','Previsão no treino',
         #     'Previsão na validação','Previsão no teste'], loc='upper left')
         score_list_by_dataset = []
-        for pred_set in range(pred_list):
-
+        for pred_set in pred_list:
+            pred_set_to_avaluate = pred_set.iloc[:-3]
             # generate true date index
-            true_index = pred.index[week_count:]
-            for _date_to_add_at_the_end in range(week_count):
-                true_index.append(
-                    pd.Index([x_value[-1] + pd.Timedelta(value=7, unit="d")])
-                )
-
             score_list_by_dataset.append(
                 mean_squared_error(
-                    pred_set.loc[:, f"previsão semana {week_count+1}"],
-                    df_target[f"Semana {week_count+1}"].loc[true_index],
+                    pred_set_to_avaluate.loc[:,f"previsão semana {week_count+1}"],
+                    df_target[f"Semana {week_count+1}"].loc[pred_set_to_avaluate['Data Previsão'].values],
                     squared=False,
                 )
             )
 
         scores = (
-            r"MAE Train ={:.0f}"
+            r"RMSE Train ={:.0f}"
             + "\n"
-            + r"MAE val ={:.0f}"
-            + "\n"
-            + r"MAE test ={:.0f}"
+            + r"RMSE val ={:.0f}"
+            #+ "\n"
+            #+ r"RMSE test ={:.0f}"
         ).format(*score_list_by_dataset)
         np.ravel(ax)[week_count].legend([extra], [scores], loc="lower right")
 
@@ -230,21 +226,6 @@ def generate_metrics_semana(df_target, pred_list, date_list, plot=False):
     return metrics_df_list, fig
 
 
-def plot_sazonality(res_list, date_list, model="aditive"):
-    assert model in ["aditive", "multiplicative"]
-
-    analysis = [
-        pd.Series(data=res_list[c], index=date_list[c]) for c in range(len(date_list))
-    ]
-
-    fig = []
-    for i in range(len(date_list)):
-        decompose_result_mult = seasonal_decompose(analysis[i], model=model)
-        fig[i] = decompose_result_mult.plot()
-        # fig[i].set_size_inches((20, 9))
-    return fig
-
-
 def create_target_df(df, df_target_path, baseline_size=1):
     """returns a dataframe with target values and baseline"""
     # average daily load by operative week
@@ -264,7 +245,8 @@ def create_target_df(df, df_target_path, baseline_size=1):
     df_target["Média Móvel"] = (
         df_target["Semana 1"].shift(1).rolling(baseline_size).mean()
     )
-
+    df_target.set_index('Data',inplace=True)
+    df_target.dropna(subset=["Semana 5"],inplace=True,axis=0)
     df_target.to_csv(df_target_path)
 
 

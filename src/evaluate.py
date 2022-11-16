@@ -35,6 +35,7 @@ def predict_load(model, pred_dataset: pd.DataFrame, params: Dict):
         _type_: _description_
     """
     autoreg_steps = params["featurize"]["TARGET_PERIOD"]
+    window_size = params["featurize"]["WINDOW_SIZE"]
     model_type = params["featurize"]["MODEL_TYPE"]
     temp_pred_dataset = pred_dataset.copy()
 
@@ -60,19 +61,28 @@ def main():
     load_dataset_list = load_featurized_data()
 
     params = yaml.safe_load(open("params.yaml"))
-
+    window_size = params['featurize']['WINDOW_SIZE']
     model = tf.keras.models.load_model(
         JOB_ROOT_FOLDER / "src" / "model" / "model_train.h5"
     )
 
     # make prediction
     train_pred = predict_load(model, load_dataset_list["train_pred"][0], params=params)
+    train_pred_date = train_pred.index + pd.Timedelta(days=7*window_size)
+    train_pred['Data Previsão'] = [str(date).split(' ')[0] for date in train_pred_date]
+    
     val_pred = predict_load(model, load_dataset_list["val"][0], params=params)
-    test_pred = predict_load(model, load_dataset_list["test"][0], params=params)
-    pred_list = [train_pred, val_pred, test_pred]
+    val_pred_date = val_pred.index + pd.Timedelta(days=7*window_size)
+    val_pred['Data Previsão'] = [str(date).split(' ')[0] for date in val_pred_date] 
+#    test_pred = predict_load(model, load_dataset_list["test"][0], params=params)
+    pred_list = [
+        train_pred, 
+        val_pred, 
+    #    test_pred
+    ]
     logger.info("PREDICTIONS: DONE!")
 
-    df_target = pd.read_csv(TARGET_DF_PATH)
+    df_target = pd.read_csv(TARGET_DF_PATH,index_col='Data')
     logger.info("LOADED TARGET DATA")
     os.makedirs(VALUATION_PATH, exist_ok=True)
 
