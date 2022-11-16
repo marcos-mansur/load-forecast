@@ -2,6 +2,7 @@
 
 import yaml
 import matplotlib.pyplot as plt
+from datetime import datetime as dtime
 import numpy as np
 import pandas as pd
 import seaborn as sns
@@ -68,11 +69,12 @@ def plot_predicted_series(pred_list, df_target, plot=False):
     for week_count in range(0, 5):
         # plot measured data
         sns.lineplot(
-            x=df_target.index,
-            y=df_target[f"Semana {week_count+1}"],
+            x=df_target.iloc[week_count:].index,
+            y=df_target[f"Semana {week_count+1}"].iloc[:-week_count or None],
             ax=np.ravel(ax)[week_count],
             color="teal",
         )
+        
 
         # plot predicted data
         for pred_set, color in zip(pred_list, colors[: len(pred_list)]):

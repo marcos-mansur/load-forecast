@@ -70,11 +70,16 @@ def compile_and_fit(
     return history
 
 
-def create_model(neurons: list):
+def create_model(
+    neurons: list, 
+    model_type: str,
+    target_period: int,
+) -> tf.keras.models.Sequential:
 
     assert (
         type(neurons) == list
     ), 'Input "neurons" to the function create_model() must be list'
+
     # LSTM
     model = tf.keras.models.Sequential(
         [
@@ -88,7 +93,13 @@ def create_model(neurons: list):
     model.add(
         tf.keras.layers.LSTM(neurons[0], return_sequences=False, activation="tanh")
     )
-    model.add(tf.keras.layers.Dense(1))
+
+    if model_type == 'AUTOREGRESSIVE':
+        last_layer_neurons = 1
+    if model_type == 'SINGLE-STEP':
+        last_layer_neurons = target_period
+    
+    model.add(tf.keras.layers.Dense(last_layer_neurons))
     model.add(tf.keras.layers.Lambda(lambda x: x * 10000.0))
 
     return model
@@ -104,7 +115,11 @@ def main():
         logger.info("MLFLOW RUN: STARTED!")
 
         # create model
-        model = create_model(neurons=params["train"]["NEURONS"])
+        model = create_model(
+            neurons=params["train"]["NEURONS"], 
+            model_type = params["featurize"]["MODEL_TYPE"],
+            target_period = params["featurize"]["TARGET_PERIOD"]
+        )
         if model:
             logger.info("CREATE MODEL: DONE!")
 

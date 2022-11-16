@@ -35,7 +35,7 @@ def predict_load(model, pred_dataset: pd.DataFrame, params: Dict):
         _type_: _description_
     """
     autoreg_steps = params["featurize"]["TARGET_PERIOD"]
-    window_size = params["featurize"]["WINDOW_SIZE"]
+    target_period = params["featurize"]["TARGET_PERIOD"]
     model_type = params["featurize"]["MODEL_TYPE"]
     temp_pred_dataset = pred_dataset.copy()
 
@@ -45,11 +45,22 @@ def predict_load(model, pred_dataset: pd.DataFrame, params: Dict):
                 temp_pred_dataset.iloc[:, -autoreg_steps:], verbose=0
             )
             temp_pred_dataset[f"previsão semana {autoreg_step}"] = next_prediction
+        
+        temp_pred_dataset.index = pred_dataset.index
+        
 
     elif model_type == "SINGLE-STEP":
-        temp_pred_dataset = model.predict(temp_pred_dataset, verbose=0)
+        temp_pred = model.predict(temp_pred_dataset, verbose=0)
+        temp_pred_dataset = temp_pred_dataset.merge(
+            pd.DataFrame(
+                temp_pred, 
+                index=pred_dataset.index,
+                columns=[f'previsão semana {week}' for week in range(1,target_period +1)]
+            ),
+            on='din_instante',
+            how='outer')
+        print('debug')
 
-    temp_pred_dataset.index = pred_dataset.index
 
     return temp_pred_dataset
 
