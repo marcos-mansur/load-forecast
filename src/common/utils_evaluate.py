@@ -137,13 +137,13 @@ def plot_predicted_series(pred_list, df_target, plot=False):
             )
 
         scores = (
-            r"RMSE Train ={:.0f}"
+            r"RMSE Train = {:.0f}"
             + "\n"
-            + r"MAPE Train ={:.2f}%"
+            + r"MAPE Train = {:.2f}%"
             + "\n\n"
-            + r"RMSE val ={:.0f}"
+            + r"RMSE val = {:.0f}"
             + "\n"
-            + r"MAPE val ={:.2f}%"
+            + r"MAPE val = {:.2f}%"
         ).format(*score_list_by_dataset)
 
         np.ravel(ax)[week_count].legend([extra], [scores], loc="lower right")
