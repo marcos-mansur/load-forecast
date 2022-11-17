@@ -35,7 +35,6 @@ def predict_load(model, pred_dataset: pd.DataFrame, params: Dict):
         _type_: _description_
     """
     autoreg_steps = params["featurize"]["TARGET_PERIOD"]
-    target_period = params["featurize"]["TARGET_PERIOD"]
     model_type = params["featurize"]["MODEL_TYPE"]
     temp_pred_dataset = pred_dataset.copy()
 
@@ -55,11 +54,10 @@ def predict_load(model, pred_dataset: pd.DataFrame, params: Dict):
             pd.DataFrame(
                 temp_pred, 
                 index=pred_dataset.index,
-                columns=[f'previsão semana {week}' for week in range(1,target_period +1)]
+                columns=[f'previsão semana {week}' for week in range(1,autoreg_steps +1)]
             ),
             on='din_instante',
             how='outer')
-        print('debug')
 
 
     return temp_pred_dataset
@@ -97,7 +95,7 @@ def main():
     logger.info("LOADED TARGET DATA")
     os.makedirs(VALUATION_PATH, exist_ok=True)
 
-    lc_fig = learning_curves(history=history, skip=20)
+    lc_fig = learning_curves(history=history, skip=20, plot=True)
     lc_fig.savefig(VALUATION_PATH / "learning_curves.png")
     logger.info("LEARNING CURVES SAVED TO DISK")
 
@@ -106,6 +104,7 @@ def main():
     pred_series_fig = plot_predicted_series(
         pred_list=pred_list,
         df_target=df_target,
+        plot=True
     )
     pred_series_fig.savefig(os.path.join(VALUATION_PATH, "prediction_series.png"))
     logger.info("PREDICTED SERIES LINEPLOT SAVED TO DISK")
@@ -114,6 +113,7 @@ def main():
     metricas_semana, metricas_fig = generate_metrics_semana(
         df_target,
         pred_list,
+        plot=True
     )
     metricas_fig.savefig(os.path.join(VALUATION_PATH, "metrics_semana.png"))
     logger.info("WEEKLY METRICS GRAPHS SAVED TO DISK")
@@ -126,6 +126,7 @@ def main():
     residual_fig, res_list = plot_residual_error(
         df_target,
         pred_list,
+        plot=True
     )
     residual_fig.savefig(os.path.join(VALUATION_PATH, "residuo.png"))
     logger.info("RESIDUAL SAVED TO DISK")

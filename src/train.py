@@ -24,7 +24,9 @@ os.environ["MLFLOW_TRACKING_PASSWORD"] = DAGSHUB_PASSWORD
 os.environ[
     "MLFLOW_TRACKING_URI"
 ] = "https://dagshub.com/marcos-mansur/load-forecast.mlflow"
-mlflow.tensorflow.autolog(registered_model_name=f"{REG_NAME_MODEL}")
+
+params = yaml.safe_load(open("params.yaml"))
+mlflow.tensorflow.autolog(registered_model_name=f"{params['featurize']['MODEL_TYPE']}")
 
 
 def compile_and_fit(
@@ -70,33 +72,37 @@ def compile_and_fit(
     return history
 
 
-def create_model(
-    neurons: list, 
-    model_type: str,
-    target_period: int,
+def create_model(params: Dict
 ) -> tf.keras.models.Sequential:
 
+    neurons_for_each_layer = params["train"]["NEURONS"]
+    model_type = params["featurize"]["MODEL_TYPE"]
+    target_period = params["featurize"]["TARGET_PERIOD"]
+
     assert (
-        type(neurons) == list
+        type(neurons_for_each_layer) == list
     ), 'Input "neurons" to the function create_model() must be list'
 
     # LSTM
-    model = tf.keras.models.Sequential(
-        [
-            tf.keras.layers.Lambda(
-                lambda x: tf.expand_dims(x, axis=-1), input_shape=[None]
-            ),
-            tf.keras.layers.BatchNormalization(),
-        ]
-    )
+    model = tf.keras.models.Sequential()
+    model.add(tf.keras.layers.Lambda(lambda x: tf.expand_dims(x, axis=-1), input_shape=[None]))
+    model.add(tf.keras.layers.BatchNormalization())
 
-    model.add(
-        tf.keras.layers.LSTM(neurons[0], return_sequences=False, activation="tanh")
-    )
+    # add hidden layers
+    for enumerator, neurons in enumerate(neurons_for_each_layer):
+
+        if enumerator +1 == len(neurons_for_each_layer):
+            return_sequences = False
+        else:
+            return_sequences = True
+        model.add(
+            tf.keras.layers.LSTM(neurons, return_sequences=return_sequences, activation="tanh")
+        )
+
 
     if model_type == 'AUTOREGRESSIVE':
         last_layer_neurons = 1
-    if model_type == 'SINGLE-STEP':
+    elif model_type == 'SINGLE-STEP':
         last_layer_neurons = target_period
     
     model.add(tf.keras.layers.Dense(last_layer_neurons))
@@ -105,39 +111,18 @@ def create_model(
     return model
 
 
-def main():
+def main(params):
     """Main function of train module. Trains a model and saves the artifact to disk."""
 
-    params = yaml.safe_load(open("params.yaml"))
     load_dataset_list = load_featurized_data()
 
     with mlflow.start_run():
         logger.info("MLFLOW RUN: STARTED!")
 
         # create model
-        model = create_model(
-            neurons=params["train"]["NEURONS"], 
-            model_type = params["featurize"]["MODEL_TYPE"],
-            target_period = params["featurize"]["TARGET_PERIOD"]
-        )
+        model = create_model(params=params)
         if model:
             logger.info("CREATE MODEL: DONE!")
-
-        mlflow.log_params(
-            {
-                "model": "vanila",
-                "layers": "[LSTM]",
-                "Patience": params["train"]["PATIENCE"],
-                "neurons": params["train"]["NEURONS"],
-                "epochs": params["train"]["EPOCHS"],
-                "batch size": params["featurize"]["BATCH_SIZE_PRO"],
-                "window size": params["featurize"]["WINDOW_SIZE"],
-                "window_input_pp": params["featurize"]["HOW_INPUT_WINDOW_GEN"],
-                "window_target_pp": params["featurize"]["HOW_TARGET_WINDOW_GEN"],
-                "Start year": params["preprocess"]["DATA_YEAR_START_PP"],
-            }
-        )
-        logger.info("LOGGING PARAMS: DONE!")
 
         logger.info("MODEL TRAINING: STARTING!")
         history = compile_and_fit(
@@ -171,4 +156,4 @@ def main():
 
 if __name__ == "__main__":
     logger = get_logger(__name__)
-    main()
+    main(params)

@@ -2,6 +2,7 @@
 
 import yaml
 import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
 from datetime import datetime as dtime
 import numpy as np
 import pandas as pd
@@ -11,7 +12,6 @@ from sklearn.metrics import (
     mean_absolute_percentage_error,
     mean_squared_error,
 )
-from statsmodels.tsa.seasonal import seasonal_decompose
 
 
 def learning_curves(history, skip, plot=False):
@@ -58,46 +58,51 @@ def plot_predicted_series(pred_list, df_target, plot=False):
     params = yaml.safe_load(open("params.yaml"))
 
     window_size = params['featurize']['WINDOW_SIZE']
+    # window size in days
     if params['featurize']['HOW_INPUT_WINDOW_GEN'] == 'daily':
         window_size = window_size/7
 
-    colors = ["orange", "green", "purple"]
+    colors = ["orange", "green"]
+    dataset_names = ['Treino','Validação']
     fig, ax = plt.subplots(figsize=(20, 35), ncols=1, nrows=5)
-    extra = plt.Rectangle((0, 0), 0, 0, fc="none", fill=False, ec="none", linewidth=0)
 
     # loop over 5 weeks
-    for week_count in range(0, 5):
+    for week_count in range(0, params['featurize']['TARGET_PERIOD']):
+
+        extra = plt.Rectangle((0, 0), 0, 0, fc="none", fill=False, ec="none", linewidth=0)
+
         # plot measured data
         sns.lineplot(
             x=df_target.iloc[week_count:].index,
             y=df_target[f"Semana {week_count+1}"].iloc[:-week_count or None],
             ax=np.ravel(ax)[week_count],
             color="teal",
+            label='Carga Real'
         )
-        
 
         # plot predicted data
-        for pred_set, color in zip(pred_list, colors[: len(pred_list)]):
+        for pred_set, color,ds_name in zip(pred_list, colors,dataset_names):
             
             # shift index so it shows date of prediction
-            true_index = pred_set.index.astype('datetime64[ms]') + pd.Timedelta(value=7*window_size, unit="d")
+            true_index = pred_set.index.astype('datetime64[ms]') + pd.Timedelta(value=7*(window_size), unit="d") # -1 
             x_value = [str(index_unit).split(' ')[0] for index_unit in true_index]
             y_value = pred_set.loc[:, f"previsão semana {week_count+1}"].values
             
             sns.lineplot(
-                x= x_value,
+                x=x_value,
                 y=y_value,
                 ax=np.ravel(ax)[week_count],
                 color=color,
+                label=ds_name
             )
 
         np.ravel(ax)[week_count].set_title(
             f"Carga real vs Predição em todo o período - Semana {week_count+1}"
         )
 
-        # np.ravel(ax)[week_count].legend(['Real','Previsão no treino',
-        #     'Previsão na validação','Previsão no teste'], loc='upper left')
+        # calculate scores
         score_list_by_dataset = []
+        
         for pred_set in pred_list:
             pred_set_to_avaluate = pred_set.iloc[:-3]
             # generate true date index
@@ -118,13 +123,30 @@ def plot_predicted_series(pred_list, df_target, plot=False):
         scores = (
             r"RMSE Train ={:.0f}"
             + "\n"
-            + r"MAPE Train ={:3.2f}%"
+            + r"MAPE Train ={:.2f}%"
             + "\n\n"
             + r"RMSE val ={:.0f}"
             + "\n"
-            + r"MAPE val ={:3.2f}%"
+            + r"MAPE val ={:.2f}%"
         ).format(*score_list_by_dataset)
+
         np.ravel(ax)[week_count].legend([extra], [scores], loc="lower right")
+        
+        # add rectangle patch
+        np.ravel(ax)[week_count].add_patch(extra)
+        # patch coordinates
+        extra_x, extra_y = extra.get_xy()
+        cx = extra_x + extra.get_width()/2.0
+        cy = extra_y + extra.get_height()/2.0
+        np.ravel(ax)[week_count].annotate(scores, (cx, cy), color='black', weight='bold', fontsize=10, ha='center', va='center')
+        
+        #np.ravel(ax)[week_count].legend(loc='upper left')
+
+        np.ravel(ax)[week_count].xaxis.set_major_locator(mdates.MonthLocator())
+        np.ravel(ax)[week_count].xaxis.set_minor_locator(mdates.MonthLocator(bymonth=1))
+        
+        for label in np.ravel(ax)[week_count].get_xticklabels(which='major'):
+            label.set(rotation=30, horizontalalignment='right')
 
     if plot:
         plt.show()
@@ -145,26 +167,33 @@ def generate_metrics_semana(df_target, pred_list, plot=False):
     Returns:
         _type_: list with dataframes of
     """
-    name_dict = {"0": "train_data", "1": "val_data", "2": "test_data"}
+    name_dict = {0: "treino", 1: "validação", 2: "teste"}
 
-    fig, ax = plt.subplots(figsize=(20, 10), ncols=3, nrows=len(pred_list))
-
-    # list of size equals to number of folds the dataset were splited
-    enumerator = [cont for cont in range(len(pred_list))]
-
+    fig, ax = plt.subplots(figsize=(20, 5), ncols=3)
+    
     train_metrics_df = pd.DataFrame(index=[f"Semana {week}" for week in range(1, 6)])
     val_metrics_df = pd.DataFrame(index=[f"Semana {week}" for week in range(1, 6)])
     test_metrics_df = pd.DataFrame(index=[f"Semana {week}" for week in range(1, 6)])
     metrics_df_list = [train_metrics_df, val_metrics_df, test_metrics_df]
+    
+
+
+    mae_plot_list = [0,0]
+    mape_plot_list = [0,0]
+    rmse_plot_list = [0,0]
+
+    colors_list = ['teal','orange']
 
     # df_set will take the values: train_pred, val_pred and test_pred
-    for [i, pred_set] in zip(enumerator, pred_list):
+    for i, pred_set in enumerate(pred_list):
+
+        # drop last rows with nan values from autoregressiveness, if it's on
+        # 3 samples makes no difference so we drop them anyway
+        pred_set_to_avaluate = pred_set.iloc[:-3]
 
         mae_list = []
         mape_list = []
         rmse_list = []
-
-        pred_set_to_avaluate = pred_set.iloc[:-3]
 
         # loops the five weeks
         for week in range(0, 5):
@@ -195,42 +224,41 @@ def generate_metrics_semana(df_target, pred_list, plot=False):
                 )
             )
 
+
+        legend_text_mae = (r"MAE {} = {:.0f} $\pm$ {:.0f}").format(
+                name_dict[i],np.mean(mae_list), np.std(mae_list)
+        )
+        legend_text_mape = (r"MAPE {} = {:.2f}% $\pm$ {:.2f}%").format(
+                name_dict[i],np.mean(mape_list), np.std(mape_list)
+        )
+        legend_text_rmse = (r"RMSE {} = {:.0f} $\pm$ {:.0f}").format(
+                name_dict[i],np.mean(rmse_list), np.std(rmse_list)
+        )
+            
+        # plot MAE by week
+        mae_plot_list[i] = sns.lineplot(x=range(1, 6), y=mae_list, ax=ax[0], color=colors_list[i], label=legend_text_mae)
+        # plot mape by week
+        mape_plot_list[i] = sns.lineplot(x=range(1, 6), y=mape_list, ax=ax[1], color=colors_list[i], label=legend_text_mape)
+        # plot MSE by week
+        rmse_plot_list[i] = sns.lineplot(x=range(1, 6), y=rmse_list, ax=ax[2], color=colors_list[i],  label=legend_text_rmse)
+
         # saves weekly metrics to a df
         metrics_df_list[i]["MAE"] = mae_list
         metrics_df_list[i]["MAPE"] = mape_list
         metrics_df_list[i]["RMSE"] = rmse_list
 
-        # rectangle to print the metrics mean and std over it
-        extra = plt.Rectangle(
-            (0, 0), 0, 0, fc="none", fill=False, ec="none", linewidth=0
-        )
+    
+    ax[0].set_title("MAE por semana prevista")
+    ax[0].set_xticks([1, 2, 3, 4, 5],labels=["Semana 1","Semana 2","Semana 3","Semana 4","Semana 5"])
+    ax[1].set_title("MAPE por semana prevista")
+    ax[1].set_xticks([1, 2, 3, 4, 5],labels=["Semana 1","Semana 2","Semana 3","Semana 4","Semana 5"])
+    ax[2].set_title("MSE por semana prevista")
+    ax[2].set_xticks([1, 2, 3, 4, 5],labels=["Semana 1","Semana 2","Semana 3","Semana 4","Semana 5"])
 
-        # plot MAE by week
-        sns.lineplot(x=range(1, 6), y=mae_list, ax=ax[i, 0])
-        ax[i, 0].set_title(f"{name_dict[str(i)]} - MAE por semana prevista")
-        ax[i, 0].set_xticks([1, 2, 3, 4, 5])
-        scores = (r"$MAE={:.2f} \pm {:.2f}$").format(
-            np.mean(mae_list), np.std(mae_list)
-        )
-        ax[i, 0].legend([extra], [scores], loc="lower right")
 
-        # plot mape by week
-        sns.lineplot(x=range(1, 6), y=mape_list, ax=ax[i, 1])
-        ax[i, 1].set_title(f"{name_dict[str(i)]} - MAPE por semana prevista")
-        ax[i, 1].set_xticks([1, 2, 3, 4, 5])
-        scores = (r"$MAPE={:.2f} \pm {:.2f}$").format(
-            np.mean(mape_list), np.std(mape_list)
-        )
-        ax[i, 1].legend([extra], [scores], loc="lower right")
-
-        # plot MSE by week
-        sns.lineplot(x=range(1, 6), y=rmse_list, ax=ax[i, 2])
-        ax[i, 2].set_title(f"{name_dict[str(i)]} - MSE por semana prevista")
-        ax[i, 2].set_xticks([1, 2, 3, 4, 5])
-        scores = (r"$MSE={:.2f} \pm {:.2f}$").format(
-            np.mean(rmse_list), np.std(rmse_list)
-        )
-        ax[i, 2].legend([extra], [scores], loc="lower right")
+    ax[0].legend(loc='lower right')
+    ax[1].legend(loc='lower right')
+    ax[2].legend(loc='lower right')
 
     if plot:
         plt.show()
