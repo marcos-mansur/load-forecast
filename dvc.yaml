@@ -4,16 +4,28 @@ stages:
     deps:
     - data/raw-data
     - src/preprocess.py
+    - src/common/load_data.py
     params:
     - preprocess.DATA_YEAR_START_PP
     - preprocess.HOW_IMPUTE_NAN
     - preprocess.TEST_START_PP
     - preprocess.VAL_START_PP
+    - featurize.WINDOW_SIZE
     outs:
     - data/preprocessed/train_preprocessed.csv
     - data/preprocessed/val_preprocessed.csv
     # - data/preprocessed/test_preprocessed.csv
-    - data/target/target_df.csv
+  generate_target:
+    cmd: python -m src.generate_target
+    deps:
+     - src/common/target_methods.py
+     - src/common/load_data.py
+     - src/preprocess.py
+    params:
+    - preprocess.DATA_YEAR_START_PP
+    - preprocess.HOW_IMPUTE_NAN
+    outs:
+      - data/target/target_df.csv
   featurize:
     cmd: python -m src.featurize
     deps:
@@ -21,13 +33,16 @@ stages:
     - data/preprocessed/val_preprocessed.csv
     # - data/preprocessed/test_preprocessed.csv
     - src/featurize.py
+    - src/common/load_data.py
     params:
+    - preprocess.TEST_START_PP
     - featurize.BATCH_SIZE_PRO
     - featurize.WINDOW_SIZE
     - featurize.SUFFLE_BUFFER_PRO
     - featurize.TARGET_PERIOD
     - featurize.HOW_INPUT_WINDOW_GEN
     - featurize.HOW_TARGET_WINDOW_GEN
+    - featurize.MODEL_TYPE
     outs:
     - data/featurized/train_processed.csv
     - data/featurized/val_processed.csv
@@ -39,6 +54,7 @@ stages:
     - data/featurized/val_processed.csv
     # - data/featurized/test_processed.csv
     - src/train.py
+    - src/common/load_data.py
     params:
     - train.EPOCHS
     - train.PATIENCE
@@ -52,6 +68,8 @@ stages:
     cmd: python -m src.evaluate
     deps:
     - src/evaluate.py
+    - src/common/utils_evaluate.py
+    - src/common/load_data.py
     - src/model/model_train.h5
     - data/target/target_df.csv
     - evaluation/history.json

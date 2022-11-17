@@ -3,20 +3,14 @@ import os
 from typing import Dict
 
 import mlflow
-import numpy as np
 import pandas as pd
 import tensorflow as tf
 import yaml
 
 from src.common.load_data import load_featurized_data
 from src.common.logger import get_logger
-from src.config.const import (
-    HISTORY_PARAMS_PATH,
-    HISTORY_PATH,
-    REG_NAME_MODEL,
-    TRAIN_MODEL_PATH,
-)
-from src.vault_dagshub import DAGSHUB_USERNAME, DAGSHUB_PASSWORD
+from src.config.const import HISTORY_PARAMS_PATH, HISTORY_PATH, TRAIN_MODEL_PATH
+from src.vault_dagshub import DAGSHUB_PASSWORD, DAGSHUB_USERNAME
 
 # mlflow settings
 os.environ["MLFLOW_TRACKING_USERNAME"] = DAGSHUB_USERNAME
@@ -69,11 +63,11 @@ def compile_and_fit(
         callbacks=[early_stopping],  # , checkpoint
         batch_size=batch_size,
     )
+
     return history
 
 
-def create_model(params: Dict
-) -> tf.keras.models.Sequential:
+def create_model(params: Dict) -> tf.keras.models.Sequential:
 
     neurons_for_each_layer = params["train"]["NEURONS"]
     model_type = params["featurize"]["MODEL_TYPE"]
@@ -85,26 +79,29 @@ def create_model(params: Dict
 
     # LSTM
     model = tf.keras.models.Sequential()
-    model.add(tf.keras.layers.Lambda(lambda x: tf.expand_dims(x, axis=-1), input_shape=[None]))
+    model.add(
+        tf.keras.layers.Lambda(lambda x: tf.expand_dims(x, axis=-1), input_shape=[None])
+    )
     model.add(tf.keras.layers.BatchNormalization())
 
     # add hidden layers
     for enumerator, neurons in enumerate(neurons_for_each_layer):
 
-        if enumerator +1 == len(neurons_for_each_layer):
+        if enumerator + 1 == len(neurons_for_each_layer):
             return_sequences = False
         else:
             return_sequences = True
         model.add(
-            tf.keras.layers.LSTM(neurons, return_sequences=return_sequences, activation="tanh")
+            tf.keras.layers.LSTM(
+                neurons, return_sequences=return_sequences, activation="tanh"
+            )
         )
 
-
-    if model_type == 'AUTOREGRESSIVE':
+    if model_type == "AUTOREGRESSIVE":
         last_layer_neurons = 1
-    elif model_type == 'SINGLE-STEP':
+    elif model_type == "SINGLE-STEP":
         last_layer_neurons = target_period
-    
+
     model.add(tf.keras.layers.Dense(last_layer_neurons))
     model.add(tf.keras.layers.Lambda(lambda x: x * 10000.0))
 

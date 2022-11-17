@@ -8,10 +8,8 @@ from sklearn.base import BaseEstimator, TransformerMixin
 
 from src.common.load_data import load_raw_data
 from src.common.logger import get_logger
-from src.common.utils_evaluate import create_target_df
 from src.config.const import (
     REGIAO,
-    TARGET_DF_PATH,
     TEST_TREATED_DATA_PATH,
     TRAIN_TREATED_DATA_PATH,
     TREATED_DATA_PATH,
@@ -48,8 +46,8 @@ class Preprocessor(BaseEstimator, TransformerMixin):
     def transform(self, df: pd.DataFrame):
         """Applies transformations"""
         df = df.copy()
-        
-        logger = get_logger('Preprocessor transformation')
+
+        logger = get_logger("Preprocessor transformation")
 
         df = self.filter_subsystem(df, regiao=self.regiao)  # filter by subsystem
         logger.debug({"filtered subsystem": self.regiao})
@@ -84,8 +82,10 @@ class Preprocessor(BaseEstimator, TransformerMixin):
                 .copy()
             )
         except:
-            logger.info('Data could not be filtered by subsystem, perhaps it has already been fitlered')
-            
+            logger.info(
+                "Data could not be filtered by subsystem, perhaps it has already been fitlered"
+            )
+
         # dropa columns about subsystem
         df.drop(
             labels=["nom_subsistema", "id_subsistema"],
@@ -362,15 +362,20 @@ class Preprocessor(BaseEstimator, TransformerMixin):
             return train_df, val_df, None
 
 
+def load_and_preprocess_data(params):
+
+    df_raw = load_raw_data(start=params["preprocess"]["DATA_YEAR_START_PP"], end=2022)
+    pp = Preprocessor(regiao=REGIAO, params=params)
+    df = pp.fit_transform(df_raw)
+    return df, pp
+
+
 def main():
     """Main function of preprocess module to apply preprocessing transformations"""
 
     params = yaml.safe_load(open("params.yaml"))
 
-    df_20XX = load_raw_data(start=params["preprocess"]["DATA_YEAR_START_PP"], end=2022)
-
-    pp = Preprocessor(regiao=REGIAO, params=params)
-    df = pp.fit_transform(df_20XX)
+    df, pp = load_and_preprocess_data(params=params)
 
     train_df, val_df, test_df = pp.split_time(
         df=df,
@@ -390,12 +395,10 @@ def main():
             TEST_TREATED_DATA_PATH, index="din_instante"
         )
 
-    create_target_df(df, df_target_path=TARGET_DF_PATH, baseline_size=5)
-
     logger.info(f"PREPROCESS - CSV FILES SAVED TO {TREATED_DATA_PATH}")
 
 
-if __name__ == "__main__":
+logger = get_logger(__name__)
 
-    logger = get_logger(__name__)
+if __name__ == "__main__":
     main()

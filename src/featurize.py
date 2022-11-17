@@ -29,7 +29,7 @@ class WindowGenerator(BaseEstimator):
         sazo_weeks=2,
         how_input="weekly",
         how_target="weekly",
-        model_type='AUTOREGRESSIVE'
+        model_type="AUTOREGRESSIVE",
     ):
         self.batch_size = batch_size
         self.shuffle_buffer = shuffle_buffer
@@ -46,15 +46,15 @@ class WindowGenerator(BaseEstimator):
         self.model_type = model_type
 
         # creates modfied params
-        if model_type == 'SINGLE-STEP':
+        if model_type == "SINGLE-STEP":
             self.target_period = target_period
-        elif model_type == 'AUTOREGRESSIVE':
+        elif model_type == "AUTOREGRESSIVE":
             self.target_period = 1
 
         if self.how_input == "daily":
             assert (
                 self.window_size % 7 == 0
-            ), "how_input = 'daily' demmands window_size multiple of 7 (days in a week)"        
+            ), "how_input = 'daily' demmands window_size multiple of 7 (days in a week)"
 
         assert self.how_input in [
             "daily",
@@ -139,13 +139,15 @@ class WindowGenerator(BaseEstimator):
         Returns:
             pd.DataFrame: a windowed dataframe with shifted values for target.
         """
-        #if input is daily, the window_size unit is 'day' and the shift must be in days
+        # if input is daily, the window_size unit is 'day' and the shift must be in days
         temp_window_size = self.window_size
-        if self.how_input == 'daily':
-            temp_window_size = self.window_size/7
+        if self.how_input == "daily":
+            temp_window_size = self.window_size / 7
 
         df = df.copy()
-        df['Data Forecast'] = df.index + pd.Timedelta(value=7*temp_window_size, unit="d")
+        df["Data Forecast"] = df.index + pd.Timedelta(
+            value=7 * temp_window_size, unit="d"
+        )
         if self.how_input == "weekly":
             time_step_factor = 7
         elif self.how_input == "daily":
@@ -252,15 +254,18 @@ def main():
         target_period=params["featurize"]["TARGET_PERIOD"],
         how_input=params["featurize"]["HOW_INPUT_WINDOW_GEN"],
         how_target=params["featurize"]["HOW_TARGET_WINDOW_GEN"],
-        model_type=params["featurize"]["MODEL_TYPE"]
+        model_type=params["featurize"]["MODEL_TYPE"],
     )
 
     # dataset for performance evaluation
     train_pred_dataset = wd.transform(df=train_df, shuffle=False)
-    val_dataset = wd.transform(df=val_df, shuffle=False)
-    #test_dataset = wd.transform(df=test_df, shuffle=False)
     # dataset to training
     train_dataset = wd.transform(df=train_df, shuffle=True)
+    val_dataset = wd.transform(df=val_df, shuffle=False)
+
+    if params["preprocess"]["TEST_START_PP"]:
+        test_dataset = wd.transform(df=test_df, shuffle=False)
+
     logger.info("FEATURIZE: TRASFORMING DATASETS... DONE!")
 
     os.makedirs(PROCESSED_DATA_PATH, exist_ok=True)
@@ -268,10 +273,13 @@ def main():
     # saves datasets to disk
     # dataset for performance evaluation
     train_pred_dataset.to_csv(TRAIN_PRED_PROCESSED_DATA_PATH, index="din_instante")
-    val_dataset.to_csv(VAL_PROCESSED_DATA_PATH, index="din_instante")
-    #test_dataset.to_csv(TEST_PROCESSED_DATA_PATH, index="din_instante")
     # dataset to training
     train_dataset.to_csv(TRAIN_PROCESSED_DATA_PATH, index="din_instante")
+
+    val_dataset.to_csv(VAL_PROCESSED_DATA_PATH, index="din_instante")
+    if params["preprocess"]["TEST_START_PP"]:
+        test_dataset.to_csv(TEST_PROCESSED_DATA_PATH, index="din_instante")
+
     logger.info("FEATURIZE: SAVING DATASETS... DONE!")
 
 

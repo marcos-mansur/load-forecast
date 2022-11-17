@@ -2,9 +2,6 @@
 
 from pathlib import Path
 
-# registered model name
-REG_NAME_MODEL = "temp"
-
 # global consts
 SEED = 42
 # preprocess consts
