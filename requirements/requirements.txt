@@ -19,3 +19,4 @@ mkdocs==1.*
 pre-commit==2.*
 mkdocstrings[python]==0.*
 SciencePlots==1.0.8
+pygit2==1.11.1

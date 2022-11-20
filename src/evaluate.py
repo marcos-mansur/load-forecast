@@ -46,8 +46,9 @@ def predict_load(model, pred_dataset: pd.DataFrame, params: Dict):
             temp_pred_dataset[f"previsão semana {autoreg_step}"] = next_prediction
 
         temp_pred_dataset.index = pred_dataset.index
+        print('Forecasting type: AUTOREGRESSIVE... Done!') 
 
-    elif model_type == "SINGLE-STEP":
+    elif model_type == "SINGLE-SHOT":
         temp_pred = model.predict(temp_pred_dataset, verbose=0)
         temp_pred_dataset = temp_pred_dataset.merge(
             pd.DataFrame(
@@ -60,6 +61,8 @@ def predict_load(model, pred_dataset: pd.DataFrame, params: Dict):
             on="din_instante",
             how="outer",
         )
+        print('Forecasting type: SINGLE-SHOT... Done!') 
+
 
     return temp_pred_dataset
 
@@ -67,7 +70,7 @@ def predict_load(model, pred_dataset: pd.DataFrame, params: Dict):
 def main():
     with open(HISTORY_PATH, "r") as history_file:
         history = json.load(history_file)
-
+    logger = get_logger(__name__)
     load_dataset_list = load_featurized_data()
 
     params = yaml.safe_load(open("params.yaml"))
@@ -128,5 +131,5 @@ def main():
 # valuation
 if __name__ == "__main__":
 
-    logger = get_logger(__name__)
+    
     main()

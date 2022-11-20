@@ -46,7 +46,7 @@ class WindowGenerator(BaseEstimator):
         self.model_type = model_type
 
         # creates modfied params
-        if model_type == "SINGLE-STEP":
+        if model_type == "SINGLE-SHOT":
             self.target_period = target_period
         elif model_type == "AUTOREGRESSIVE":
             self.target_period = 1

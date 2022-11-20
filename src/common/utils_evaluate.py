@@ -50,9 +50,9 @@ def learning_curves(history, skip, plot=False):
             label=curve_label,
         )
 
-    ax.ravel()[0].set_title("Learning Curve: MSE - loss")
-    ax.ravel()[1].set_title("Learning Curve: MAE")
-    ax.ravel()[2].set_title("Learning Curve: RMSE")
+    ax.ravel()[0].set_title("Learning Curve: EMQ - loss")
+    ax.ravel()[1].set_title("Learning Curve: EMA")
+    ax.ravel()[2].set_title("Learning Curve: REMQ")
 
     if plot:
         plt.show()
@@ -94,7 +94,7 @@ def plot_predicted_series(pred_list, df_target, plot=False):
 
             # shift index so it shows date of prediction
             true_index = pred_set.index.astype("datetime64[ms]") + pd.Timedelta(
-                value=7 * (window_size), unit="d"
+                value=7 * (window_size-1), unit="d"
             )  # -1
             x_value = [str(index_unit).split(" ")[0] for index_unit in true_index]
             y_value = pred_set.loc[:, f"previsão semana {week_count+1}"].values
@@ -137,13 +137,13 @@ def plot_predicted_series(pred_list, df_target, plot=False):
             )
 
         scores = (
-            r"RMSE Train = {:.0f}"
+            r"REMQ Train = {:.0f}"
             + "\n"
-            + r"MAPE Train = {:.2f}%"
+            + r"EMAP Train = {:.2f}%"
             + "\n\n"
-            + r"RMSE val = {:.0f}"
+            + r"REMQ val = {:.0f}"
             + "\n"
-            + r"MAPE val = {:.2f}%"
+            + r"EMAP val = {:.2f}%"
         ).format(*score_list_by_dataset)
 
         np.ravel(ax)[week_count].legend([extra], [scores], loc="lower right")
@@ -252,17 +252,17 @@ def generate_metrics_semana(df_target, pred_list, plot=False):
                 )
             )
 
-        legend_text_mae = (r"MAE médio {} = {:.0f} $\pm$ {:.0f}").format(
+        legend_text_mae = (r"EMA médio {} = {:.0f} $\pm$ {:.0f}").format(
             name_dict[i], np.mean(mae_list), np.std(mae_list)
         )
-        legend_text_mape = (r"MAPE médio {} = {:.2f}% $\pm$ {:.2f}%").format(
+        legend_text_mape = (r"EMAP médio {} = {:.2f}% $\pm$ {:.2f}%").format(
             name_dict[i], np.mean(mape_list), np.std(mape_list)
         )
-        legend_text_rmse = (r"RMSE médio {} = {:.0f} $\pm$ {:.0f}").format(
+        legend_text_rmse = (r"REMQ médio {} = {:.0f} $\pm$ {:.0f}").format(
             name_dict[i], np.mean(rmse_list), np.std(rmse_list)
         )
 
-        # plot MAE by week
+        # plot EMA by week
         mae_plot_list[i] = sns.lineplot(
             x=range(1, 6),
             y=mae_list,
@@ -278,7 +278,7 @@ def generate_metrics_semana(df_target, pred_list, plot=False):
             color=colors_list[i],
             label=legend_text_mape,
         )
-        # plot MSE by week
+        # plot EMQ by week
         rmse_plot_list[i] = sns.lineplot(
             x=range(1, 6),
             y=rmse_list,
@@ -288,21 +288,21 @@ def generate_metrics_semana(df_target, pred_list, plot=False):
         )
 
         # saves weekly metrics to a df
-        metrics_df_list[i]["MAE"] = mae_list
-        metrics_df_list[i]["MAPE"] = mape_list
-        metrics_df_list[i]["RMSE"] = rmse_list
+        metrics_df_list[i]["EMA"] = mae_list
+        metrics_df_list[i]["EMAP"] = mape_list
+        metrics_df_list[i]["REMQ"] = rmse_list
 
-    ax[0].set_title("MAE das inferências por semana")
+    ax[0].set_title("EMA das inferências por semana")
     ax[0].set_xticks(
         [1, 2, 3, 4, 5],
         labels=["Semana 1", "Semana 2", "Semana 3", "Semana 4", "Semana 5"],
     )
-    ax[1].set_title("MAPE das inferências por semana")
+    ax[1].set_title("EMAP das inferências por semana")
     ax[1].set_xticks(
         [1, 2, 3, 4, 5],
         labels=["Semana 1", "Semana 2", "Semana 3", "Semana 4", "Semana 5"],
     )
-    ax[2].set_title("RMSE das inferências por semana")
+    ax[2].set_title("REMQ das inferências por semana")
     ax[2].set_xticks(
         [1, 2, 3, 4, 5],
         labels=["Semana 1", "Semana 2", "Semana 3", "Semana 4", "Semana 5"],

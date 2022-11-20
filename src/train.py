@@ -6,11 +6,13 @@ import mlflow
 import pandas as pd
 import tensorflow as tf
 import yaml
+from dvclive.keras import DVCLiveCallback
 
 from src.common.load_data import load_featurized_data
 from src.common.logger import get_logger
 from src.config.const import HISTORY_PARAMS_PATH, HISTORY_PATH, TRAIN_MODEL_PATH
 from src.vault_dagshub import DAGSHUB_PASSWORD, DAGSHUB_USERNAME
+from src.model.create_model import create_single_shot_model, FeedBack
 
 # mlflow settings
 os.environ["MLFLOW_TRACKING_USERNAME"] = DAGSHUB_USERNAME
@@ -60,7 +62,7 @@ def compile_and_fit(
         epochs=epochs,
         verbose=0,
         validation_data=(val_data[0], val_data[1]),
-        callbacks=[early_stopping],  # , checkpoint
+        callbacks=[early_stopping, DVCLiveCallback()],  # , checkpoint
         batch_size=batch_size,
     )
 
@@ -99,7 +101,7 @@ def create_model(params: Dict) -> tf.keras.models.Sequential:
 
     if model_type == "AUTOREGRESSIVE":
         last_layer_neurons = 1
-    elif model_type == "SINGLE-STEP":
+    elif model_type == "SINGLE-SHOT":
         last_layer_neurons = target_period
 
     model.add(tf.keras.layers.Dense(last_layer_neurons))

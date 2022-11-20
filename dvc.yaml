@@ -60,6 +60,12 @@ stages:
     - train.PATIENCE
     - train.NEURONS
     - train.MODEL_NAME
+    metrics:
+    - dvclive/metrics.json:
+        cache: false
+    plots:
+    - dvclive/plots:
+        cache: false
     outs:
     - src/model/model_train.h5
     - evaluation/history.json

@@ -9,7 +9,7 @@ from rich.traceback import install
 console = Console(width=140)
 install()
 logging.basicConfig(
-    level=logging.INFO,
+    level=logging.WARNING,
     format="%(message)s",
     datefmt="[%Y-%m-%d %H:%M:%S]",
     handlers=[RichHandler(markup=True, rich_tracebacks=True, console=console)],
