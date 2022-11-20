@@ -55,11 +55,15 @@ stages:
     # - data/featurized/test_processed.csv
     - src/train.py
     - src/common/load_data.py
+    - src/utils/utils_evaluate.py
+    - src/utils/create_model.py
+    - src/utils/data_transform.py
     params:
     - train.EPOCHS
     - train.PATIENCE
     - train.NEURONS
     - train.MODEL_NAME
+    - featurize.MODEL_TYPE
     metrics:
     - dvclive/metrics.json:
         cache: false
@@ -67,22 +71,28 @@ stages:
     - dvclive/plots:
         cache: false
     outs:
-    - src/model/model_train.h5
+    - src/model/model_train/
     - evaluation/history.json
     - evaluation/history_params.json
-  evaluate:
-    cmd: python -m src.evaluate
-    deps:
-    - src/evaluate.py
-    - src/common/utils_evaluate.py
-    - src/common/load_data.py
-    - src/model/model_train.h5
-    - data/target/target_df.csv
-    - evaluation/history.json
-    outs:
     - evaluation/learning_curves.png
     - evaluation/metrics_semana.png
     - evaluation/prediction_series.png
     - evaluation/residuo.png
-    params:
-    - featurize.MODEL_TYPE
+    - data/predicted/train.csv
+    - data/predicted/val.csv
+  # evaluate:
+  #   cmd: python -m src.evaluate
+  #   deps:
+  #   - src/evaluate.py
+  #   - src/common/utils_evaluate.py
+  #   - src/common/load_data.py
+  #   - src/model/model_train/
+  #   - data/target/target_df.csv
+  #   - evaluation/history.json
+  #   outs:
+  #   - evaluation/learning_curves.png
+  #   - evaluation/metrics_semana.png
+  #   - evaluation/prediction_series.png
+  #   - evaluation/residuo.png
+  #   params:
+  #   - featurize.MODEL_TYPE

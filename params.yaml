@@ -6,8 +6,8 @@ preprocess:
   HOW_IMPUTE_NAN: sazonalidade
 
 featurize:
-  BATCH_SIZE_PRO: 32
-  WINDOW_SIZE: 7
+  BATCH_SIZE_PRO: 64
+  WINDOW_SIZE: 50
   SUFFLE_BUFFER_PRO: 20
   TARGET_PERIOD: 5
   HOW_INPUT_WINDOW_GEN: weekly
@@ -17,6 +17,6 @@ featurize:
 train:
   EPOCHS: 150
   PATIENCE: 8
-  NEURONS: [2]
+  NEURONS: [8]
   LAYERS: [LSTM] 
-  MODEL_NAME: model_train.h5
+  MODEL_NAME: model_train
