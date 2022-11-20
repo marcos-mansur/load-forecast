@@ -28,7 +28,6 @@ def learning_curves(history, skip, plot=False):
     ]
 
     name_dict = {0: "Treino", 1: "Validação"}
-
     for i, metric in enumerate(metrics_list):
         # plot train and validation metrics on the same plot
         if i <= 1:
@@ -40,14 +39,17 @@ def learning_curves(history, skip, plot=False):
 
         if (i % 2) == 0:
             curve_label = "Treino"
+            color = 'teal'
         else:
             curve_label = "Validação"
+            color = 'orange'
 
         sns.lineplot(
             x=range(skip, len(history[metric])),
             y=history[metric][skip:],
             ax=ax1,
             label=curve_label,
+            color=color
         )
 
     ax.ravel()[0].set_title("Learning Curve: EMQ - loss")

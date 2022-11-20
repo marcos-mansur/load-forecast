@@ -114,7 +114,7 @@ def eval(pred_list,history):
     logger.info("LOADED TARGET DATA")
     os.makedirs(VALUATION_PATH, exist_ok=True)
 
-    lc_fig = learning_curves(history=history, skip=20, plot=True)
+    lc_fig = learning_curves(history=history, skip=25, plot=True)
     lc_fig.savefig(VALUATION_PATH / "learning_curves.png")
     logger.info("LEARNING CURVES SAVED TO DISK")
 
