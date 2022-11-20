@@ -1,0 +1,15 @@
+{
+    "train": {
+        "loss": 3111238.5,
+        "mean_absolute_error": 1343.29443359375,
+        "mean_absolute_percentage_error": 3.7203989028930664,
+        "root_mean_squared_error": 1763.8701171875
+    },
+    "eval": {
+        "loss": 4186766.75,
+        "mean_absolute_error": 1499.6925048828125,
+        "mean_absolute_percentage_error": 3.8281896114349365,
+        "root_mean_squared_error": 2046.1590576171875
+    },
+    "step": 100
+}

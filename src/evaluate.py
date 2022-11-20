@@ -6,9 +6,10 @@ import pandas as pd
 import tensorflow as tf
 import yaml
 
-from src.common.load_data import load_featurized_data
+from src.utils.data_transform import prepare_data_for_prediction, predict_load
+from src.utils.load_data import load_featurized_data
 from src.common.logger import get_logger
-from src.common.utils_evaluate import (
+from src.utils.utils_evaluate import (
     generate_metrics_semana,
     learning_curves,
     plot_predicted_series,
@@ -19,75 +20,51 @@ from src.config.const import (
     JOB_ROOT_FOLDER,
     TARGET_DF_PATH,
     VALUATION_PATH,
+    TRAIN_MODEL_PATH
 )
 
 
-def predict_load(model, pred_dataset: pd.DataFrame, params: Dict):
-    """If the param MODEL_TYPE is set to "AUTOREGRESSIVE" in params.yaml,
-        return autoregressive predictions.
-
-    Args:
-        model (_type_): _description_
-        pred_dataset (_type_): _description_
-        params (_type_): _description_
-
-    Returns:
-        _type_: _description_
-    """
-    autoreg_steps = params["featurize"]["TARGET_PERIOD"]
-    model_type = params["featurize"]["MODEL_TYPE"]
-    temp_pred_dataset = pred_dataset.copy()
-
-    if model_type == "AUTOREGRESSIVE":
-        for autoreg_step in range(1, autoreg_steps + 1):
-            next_prediction = model.predict(
-                temp_pred_dataset.iloc[:, -autoreg_steps:], verbose=0
-            )
-            temp_pred_dataset[f"previsão semana {autoreg_step}"] = next_prediction
-
-        temp_pred_dataset.index = pred_dataset.index
-        print('Forecasting type: AUTOREGRESSIVE... Done!') 
-
-    elif model_type == "SINGLE-SHOT":
-        temp_pred = model.predict(temp_pred_dataset, verbose=0)
-        temp_pred_dataset = temp_pred_dataset.merge(
-            pd.DataFrame(
-                temp_pred,
-                index=pred_dataset.index,
-                columns=[
-                    f"previsão semana {week}" for week in range(1, autoreg_steps + 1)
-                ],
-            ),
-            on="din_instante",
-            how="outer",
-        )
-        print('Forecasting type: SINGLE-SHOT... Done!') 
-
-
-    return temp_pred_dataset
-
 
 def main():
+
     with open(HISTORY_PATH, "r") as history_file:
         history = json.load(history_file)
+
     logger = get_logger(__name__)
-    load_dataset_list = load_featurized_data()
 
     params = yaml.safe_load(open("params.yaml"))
     window_size = params["featurize"]["WINDOW_SIZE"]
-    model = tf.keras.models.load_model(
-        JOB_ROOT_FOLDER / "src" / "model" / "model_train.h5"
-    )
+    model_name = params["train"]["MODEL_NAME"]
+    model_type = params["featurize"]["MODEL_TYPE"]
 
+    
+    load_dataset_list = load_featurized_data()
+    logger.info('Loading data... Done!')
+    
+    model_path = JOB_ROOT_FOLDER / "src" / "model" / model_name
+    format = 'model_train.h5' if model_type == 'SINGLE-SHOT' else '/1/'
+
+    if model_type == 'SINGLE-SHOT':
+        model = tf.keras.models.load_model(
+            model_path
+        )
+    elif model_type == 'AUTOREGRESSIVE':
+        model = tf.saved_model.load(
+            TRAIN_MODEL_PATH / (params["train"]["MODEL_NAME"] + format)
+        )
+
+    load_dataset_list = prepare_data_for_prediction(load_dataset_list,model_type)
     # make prediction
-    train_pred = predict_load(model, load_dataset_list["train_pred"][0], params=params)
+    train_pred = predict_load(model, load_dataset_list[0], params=params)
     train_pred_date = train_pred.index + pd.Timedelta(days=7 * window_size)
     train_pred["Data Previsão"] = [str(date).split(" ")[0] for date in train_pred_date]
 
-    val_pred = predict_load(model, load_dataset_list["val"][0], params=params)
+    val_pred = predict_load(model, load_dataset_list[1], params=params)
     val_pred_date = val_pred.index + pd.Timedelta(days=7 * window_size)
     val_pred["Data Previsão"] = [str(date).split(" ")[0] for date in val_pred_date]
+    
     #    test_pred = predict_load(model, load_dataset_list["test"][0], params=params)
+    
     pred_list = [
         train_pred,
         val_pred,
@@ -131,5 +108,4 @@ def main():
 # valuation
 if __name__ == "__main__":
 
-    
     main()

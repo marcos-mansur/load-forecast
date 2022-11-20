@@ -41,15 +41,9 @@ class WindowGenerator(BaseEstimator):
         self.how_target = how_target
 
         self.window_size = window_size
-        self.target_period_mod = target_period
+        self.target_period = target_period
 
         self.model_type = model_type
-
-        # creates modfied params
-        if model_type == "SINGLE-SHOT":
-            self.target_period = target_period
-        elif model_type == "AUTOREGRESSIVE":
-            self.target_period = 1
 
         if self.how_input == "daily":
             assert (
@@ -153,44 +147,44 @@ class WindowGenerator(BaseEstimator):
         elif self.how_input == "daily":
             time_step_factor = 1
 
-        if self.how_target == "daily":
-            df_shift = df.copy()
-            periodo = "dia"
-            # DAILY DAILY TA QUEBRADO
-            for time_step in range(
-                self.window_size * time_step_factor,
-                self.window_size + self.target_period,
-            ):
-                df_shift[
-                    f"target {periodo} {time_step/time_step_factor-self.window_size+1}"
-                ] = df_shift["val_cargaenergiamwmed"].shift(-time_step)
+        # if self.how_target == "daily":
+        #     df_shift = df.copy()
+        #     periodo = "dia"
+        #     # DAILY DAILY TA QUEBRADO
+        #     for time_step in range(
+        #         self.window_size * time_step_factor,
+        #         self.window_size + self.target_period,
+        #     ):
+        #         df_shift[
+        #             f"target {periodo} {time_step/time_step_factor+1}"
+        #         ] = df_shift["val_cargaenergiamwmed"].shift(-time_step)
 
-            df_shift[df_shift["dia semana"] == "Friday"]
+        #     df_shift[df_shift["dia semana"] == "Friday"]
 
         if self.how_target == "weekly":
             df_shift = df_weekly.copy()
             periodo = "semana"
 
-            if self.how_input == "daily":
-                for time_step in range(
-                    int(self.window_size / 7),
-                    int(self.window_size / 7) + self.target_period,
-                ):
-                    df_shift[
-                        f"target {periodo} {time_step-int(self.window_size/7)+1}"
-                    ] = (
-                        df_weekly.groupby("semana")["val_cargaenergiamwmed"]
-                        .mean()
-                        .shift(-time_step)
-                    )
+            # if self.how_input == "daily":
+            #     for time_step in range(
+            #         int(self.window_size / 7),
+            #         int(self.window_size / 7) + self.target_period,
+            #     ):
+            #         df_shift[
+            #             f"target {periodo} {time_step+1}"
+            #         ] = (
+            #             df_weekly.groupby("semana")["val_cargaenergiamwmed"]
+            #             .mean()
+            #             .shift(-time_step)
+            #         )
 
             if self.how_input == "weekly":
                 for time_step in range(
                     self.window_size, self.window_size + self.target_period
                 ):
-                    df_shift[
-                        f"target {periodo} {time_step-int(self.window_size/7)+1}"
-                    ] = df_weekly["val_cargaenergiamwmed"].shift(-time_step - 1)
+                    df_shift[f"target {periodo} {time_step+1}"] = df_weekly[
+                        "val_cargaenergiamwmed"
+                    ].shift(-time_step)
 
         return df_shift
 
