@@ -8,6 +8,7 @@ import tensorflow as tf
 import yaml
 from dvclive.keras import DVCLiveCallback
 import matplotlib.pyplot as plt 
+from datetime import datetime
 
 
 from src.utils.utils_evaluate import (
@@ -26,7 +27,8 @@ from src.config.const import (
     VALUATION_PATH,
     TRAIN_MODEL_PATH,
     TRAIN_PREDICTION_PATH,
-    VAL_PREDICTION_PATH
+    VAL_PREDICTION_PATH,
+    EVAL_ARCHIVE_PATH
 )
 from src.vault_dagshub import DAGSHUB_PASSWORD, DAGSHUB_USERNAME
 from src.utils.data_transform import prepare_data_for_prediction, predict_load,prepare_predicted_data
@@ -110,16 +112,20 @@ def eval(pred_list,history):
     
     logger.info("PREDICTIONS: DONE!")
 
+    run_id = str(datetime.now()) + "_" + params['featurize']['MODEL_TYPE'] + '_'+ params['featurize']['LAYERS']
+
     df_target = pd.read_csv(TARGET_DF_PATH, index_col="Data")
     logger.info("LOADED TARGET DATA")
     os.makedirs(VALUATION_PATH, exist_ok=True)
 
-    lc_fig = learning_curves(history=history, skip=20, plot=True)
-    lc_fig.savefig(VALUATION_PATH / "learning_curves.png")
+    lc_fig = learning_curves(history=history.history, skip=20, plot=True)
+    lc_fig.savefig(VALUATION_PATH / f"learning_curves.png")
+    lc_fig.savefig(EVAL_ARCHIVE_PATH / f"learning_curves {run_id}.png")
     logger.info("LEARNING CURVES SAVED TO DISK")
 
-    lc_fig = learning_curves(history=history, skip=50, plot=True)
-    lc_fig.savefig(VALUATION_PATH / "learning_curves - zoom.png")
+    lc_fig = learning_curves(history=history.history, skip=int(len(history.history)*0.2), plot=True)
+    lc_fig.savefig(VALUATION_PATH / f"learning_curves-zoom.png")
+    lc_fig.savefig(EVAL_ARCHIVE_PATH / f"learning_curves-zoom {run_id} .png")
     logger.info("LEARNING CURVES SAVED TO DISK")
 
     # generates the plot of the original and
@@ -127,14 +133,16 @@ def eval(pred_list,history):
     pred_series_fig = plot_predicted_series(
         pred_list=pred_list, df_target=df_target, plot=True
     )
-    pred_series_fig.savefig(os.path.join(VALUATION_PATH, "prediction_series.png"))
+    pred_series_fig.savefig(os.path.join(VALUATION_PATH, f"prediction_series.png"))
+    pred_series_fig.savefig(os.path.join(EVAL_ARCHIVE_PATH, f"prediction_series {run_id}.png"))
     logger.info("PREDICTED SERIES LINEPLOT SAVED TO DISK")
 
     # generates metrics for the 5 weeks and plots
     metricas_semana, metricas_fig = generate_metrics_semana(
         df_target, pred_list, plot=True
     )
-    metricas_fig.savefig(os.path.join(VALUATION_PATH, "metrics_semana.png"))
+    metricas_fig.savefig(os.path.join(VALUATION_PATH, f"metrics_semana.png"))
+    metricas_fig.savefig(os.path.join(EVAL_ARCHIVE_PATH, f"metrics_semana {run_id}.png"))
     logger.info("WEEKLY METRICS GRAPHS SAVED TO DISK")
 
     train_semana_metrics = metricas_semana[0].to_dict(orient="dict")
@@ -143,8 +151,17 @@ def eval(pred_list,history):
 
     # generates the residual plot
     residual_fig, res_list = plot_residual_error(df_target, pred_list, plot=True)
-    residual_fig.savefig(os.path.join(VALUATION_PATH, "residuo.png"))
+    residual_fig.savefig(os.path.join(VALUATION_PATH, f"residuo.png"))
+    residual_fig.savefig(os.path.join(EVAL_ARCHIVE_PATH, f"residuo {run_id}.png"))
     logger.info("RESIDUAL SAVED TO DISK")
+
+
+    with open(EVAL_ARCHIVE_PATH / f"history_{run_id}", "w") as archive_path:
+            json.dump(history.history, archive_path)
+    with open(HISTORY_PARAMS_PATH , "w") as archive_path:
+        json.dump(history.params, archive_path )
+    logger.info("TRAIN HISTORY STORED TO DISK")
+
 
 def main(params):
     """Main function of train module. Trains a model and saves the artifact to disk."""
@@ -191,11 +208,10 @@ def main(params):
         # save model to disk
         os.makedirs(TRAIN_MODEL_PATH, exist_ok=True)
         
-        format = 'model_train.h5' if model_type == 'SINGLE-SHOT' else '/1/'
+        format = '/model_train.h5' if model_type == 'SINGLE-SHOT' else '/1/'
         
-        tf.saved_model.save(
-            model, 
-            TRAIN_MODEL_PATH / (params["train"]["MODEL_NAME"] + format)
+        model.save(
+            TRAIN_MODEL_PATH / params["featurize"]["MODEL_TYPE"] / (params["train"]["MODEL_NAME"] + format)
         )
         logger.info("TRAINED MODEL STORED TO DISK")
 
@@ -224,7 +240,7 @@ def main(params):
         treated_pred_train,
         treated_pred_val,
     ]
-    eval(pred_list=pred_list,history=history.history)
+    eval(pred_list=pred_list,history=history)
 
     treated_pred_train.to_csv(TRAIN_PREDICTION_PATH)
     treated_pred_val.to_csv(VAL_PREDICTION_PATH)

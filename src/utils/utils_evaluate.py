@@ -1,7 +1,5 @@
 """ Module with utils to plot evaluation metrics """
 
-from datetime import datetime as dtime
-
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import numpy as np

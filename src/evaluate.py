@@ -50,7 +50,7 @@ def main():
         )
     elif model_type == 'AUTOREGRESSIVE':
         model = tf.saved_model.load(
-            TRAIN_MODEL_PATH / (params["train"]["MODEL_NAME"] + format)
+            TRAIN_MODEL_PATH / params["featurize"]["MODEL_TYPE"] / (params["train"]["MODEL_NAME"] + format)
         )
 
     load_dataset_list = prepare_data_for_prediction(load_dataset_list,model_type)

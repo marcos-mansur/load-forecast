@@ -35,5 +35,6 @@ TEST_PREDICTION_PATH: Path = PREDICTION_DATA_PATH / "test.csv"
 TRAIN_MODEL_PATH = JOB_ROOT_FOLDER / "src" / "model"
 
 VALUATION_PATH: Path = JOB_ROOT_FOLDER / "evaluation"
+EVAL_ARCHIVE_PATH: Path = JOB_ROOT_FOLDER / "eval_archive"
 HISTORY_PATH: Path = VALUATION_PATH / "history.json"
 HISTORY_PARAMS_PATH: Path = VALUATION_PATH / "history_params.json"

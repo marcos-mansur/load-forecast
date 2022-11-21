@@ -71,7 +71,7 @@ stages:
     - dvclive/plots:
         cache: false
     outs:
-    - src/model/model_train/
+    # - src/model/model_train/
     - evaluation/history.json
     - evaluation/history_params.json
     - evaluation/learning_curves.png
