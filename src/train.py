@@ -126,7 +126,7 @@ def eval(pred_list,history):
     lc_fig.savefig(EVAL_ARCHIVE_PATH / f"learning_curves {run_id}.png")
     logger.info("LEARNING CURVES SAVED TO DISK")
 
-    lc_fig = learning_curves(history=history.history, skip=int(len(history.history)*0.2), plot=True)
+    lc_fig = learning_curves(history=history.history, skip=int(len(history.history['loss'])*0.8), plot=True)
     lc_fig.savefig(VALUATION_PATH / f"learning_curves-zoom.png")
     lc_fig.savefig(EVAL_ARCHIVE_PATH / f"learning_curves-zoom {run_id} .png")
     logger.info("LEARNING CURVES SAVED TO DISK")
@@ -161,7 +161,7 @@ def eval(pred_list,history):
 
     with open(EVAL_ARCHIVE_PATH / f"history_{run_id}", "w") as archive_path:
             json.dump(history.history, archive_path)
-    with open(HISTORY_PARAMS_PATH , "w") as archive_path:
+    with open(EVAL_ARCHIVE_PATH / f"historyparams_{run_id}", "w") as archive_path:
         json.dump(history.params, archive_path )
     logger.info("TRAIN HISTORY STORED TO DISK")
 
