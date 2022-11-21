@@ -2,6 +2,9 @@ from typing import Dict
 
 import tensorflow as tf
 import yaml
+from src.common.logger import get_logger
+
+logger = get_logger(__file__)
 
 params = yaml.safe_load(open("params.yaml"))
 
@@ -40,7 +43,7 @@ def create_single_shot_model(params: Dict) -> tf.keras.models.Sequential:
                     neurons, return_sequences=return_sequences, activation="tanh"
                 )
             )
-        elif layer == ["RNN"]:
+        elif layer == "RNN":
             model.add(
                 tf.keras.layers.SimpleRNN(
                     neurons, return_sequences=return_sequences, activation="tanh"
@@ -49,13 +52,13 @@ def create_single_shot_model(params: Dict) -> tf.keras.models.Sequential:
 
     model.add(tf.keras.layers.Dense(target_period))
     model.add(tf.keras.layers.Lambda(lambda x: x * 10000.0))
-
+    logger.info(model.summary())
     return model
 
 
 #  builds an autoregressive RNN model that outputs a single time step
 class AutoregressiveModel(tf.keras.Model):
-    def __init__(self, units, out_steps):
+    def __init__(self, units, out_steps,layer_type):
         super().__init__()
         self.out_steps = out_steps
         self.reshape_layer = tf.keras.layers.Lambda(
@@ -63,9 +66,13 @@ class AutoregressiveModel(tf.keras.Model):
         )
         self.norm_layer = tf.keras.layers.BatchNormalization()
         self.units = units
-        self.lstm_cell = tf.keras.layers.LSTMCell(units)
+        self.layer_type = layer_type
+        if layer_type == 'RNN':
+            self.layer_cell = tf.keras.layers.SimpleRNNCell(units)
+        if layer_type == 'LSTM':    
+            self.layer_cell = tf.keras.layers.LSTMCell(units)
         # Also wrap the LSTMCell in an RNN to simplify the `warmup` method.
-        self.lstm_rnn = tf.keras.layers.RNN(self.lstm_cell, return_state=True)
+        self.lstm_rnn = tf.keras.layers.RNN(self.layer_cell, return_state=True)
         self.dropout_layer = tf.keras.layers.Dropout(rate=0.2)
         self.dense = tf.keras.layers.Dense(1)  # number of features
         self.scale_layer = tf.keras.layers.Lambda(lambda x: x * 10000.0)
@@ -122,7 +129,7 @@ class AutoregressiveModel(tf.keras.Model):
             # Use the last prediction as input.
             x = prediction
             # Execute one lstm step.
-            x, state = self.lstm_cell(x, states=state, training=training)
+            x, state = self.layer_cell(x, states=state, training=training)
             # Convert the lstm output to a prediction.
             prediction = self.dense(x)
             # Add the prediction to the output.
@@ -144,6 +151,7 @@ def create_model(params):
         return AutoregressiveModel(
             units=params["train"]["NEURONS"][0],
             out_steps=params["featurize"]["TARGET_PERIOD"],
+            layer_type=params['train']['LAYERS'][0]
         )
 
     if params["featurize"]["MODEL_TYPE"] == "SINGLE-SHOT":

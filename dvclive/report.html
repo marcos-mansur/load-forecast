@@ -1,0 +1,7034 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="refresh" content="5">
+    <title>DVC Plot</title>
+    
+
+    <script src="https://cdn.jsdelivr.net/npm/vega@5.20.2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-lite@5.2.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-embed@6.18.2"></script>
+    
+    <style>
+        table {
+            border-spacing: 15px;
+        }
+    </style>
+</head>
+<body>
+    
+        <div id="metrics_json" style="text-align: center; padding: 10x">
+            <p>metrics_json</p>
+            <div style="display: flex;justify-content: center;">
+                <table>
+<thead>
+<tr><th>train                                                                                                                                                         </th><th>eval                                                                                                                                                         </th><th style="text-align: right;">  step</th></tr>
+</thead>
+<tbody>
+<tr><td>{&#x27;loss&#x27;: 3652955.25, &#x27;mean_absolute_error&#x27;: 1498.16259765625, &#x27;mean_absolute_percentage_error&#x27;: 4.173087120056152, &#x27;root_mean_squared_error&#x27;: 1911.2705078125}</td><td>{&#x27;loss&#x27;: 6828064.5, &#x27;mean_absolute_error&#x27;: 2009.931884765625, &#x27;mean_absolute_percentage_error&#x27;: 5.186705589294434, &#x27;root_mean_squared_error&#x27;: 2613.056640625}</td><td style="text-align: right;">   149</td></tr>
+</tbody>
+</table>
+            </div>
+        </div>
+
+    <div id = "static_train_loss">
+        <script type = "text/javascript">
+            var spec = {
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    "data": {
+        "values": [
+    {
+        "rev": "workspace",
+        "step": "0",
+        "train/loss": "1270962688.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "1",
+        "train/loss": "1227683712.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "2",
+        "train/loss": "1182414464.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "3",
+        "train/loss": "1134237696.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "4",
+        "train/loss": "1073134144.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "5",
+        "train/loss": "997647488.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "6",
+        "train/loss": "891117120.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "7",
+        "train/loss": "756624192.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "8",
+        "train/loss": "636660608.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "9",
+        "train/loss": "542512192.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "10",
+        "train/loss": "460087648.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "11",
+        "train/loss": "386963968.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "12",
+        "train/loss": "321874080.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "13",
+        "train/loss": "267090448.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "14",
+        "train/loss": "221013232.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "15",
+        "train/loss": "183121264.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "16",
+        "train/loss": "151740848.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "17",
+        "train/loss": "126002792.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "18",
+        "train/loss": "104562888.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "19",
+        "train/loss": "86966856.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "20",
+        "train/loss": "72335048.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "21",
+        "train/loss": "60188736.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "22",
+        "train/loss": "50092280.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "23",
+        "train/loss": "41819984.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "24",
+        "train/loss": "34865488.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "25",
+        "train/loss": "29215800.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "26",
+        "train/loss": "24623106.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "27",
+        "train/loss": "20743232.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "28",
+        "train/loss": "17680574.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "29",
+        "train/loss": "15221343.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "30",
+        "train/loss": "13169318.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "31",
+        "train/loss": "11585023.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "32",
+        "train/loss": "10212866.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "33",
+        "train/loss": "9177642.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "34",
+        "train/loss": "8369397.5"
+    },
+    {
+        "rev": "workspace",
+        "step": "35",
+        "train/loss": "7761487.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "36",
+        "train/loss": "7236951.5"
+    },
+    {
+        "rev": "workspace",
+        "step": "37",
+        "train/loss": "6847315.5"
+    },
+    {
+        "rev": "workspace",
+        "step": "38",
+        "train/loss": "6550908.5"
+    },
+    {
+        "rev": "workspace",
+        "step": "39",
+        "train/loss": "6267971.5"
+    },
+    {
+        "rev": "workspace",
+        "step": "40",
+        "train/loss": "6149893.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "41",
+        "train/loss": "5989907.5"
+    },
+    {
+        "rev": "workspace",
+        "step": "42",
+        "train/loss": "5891191.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "43",
+        "train/loss": "5826586.5"
+    },
+    {
+        "rev": "workspace",
+        "step": "44",
+        "train/loss": "5777864.5"
+    },
+    {
+        "rev": "workspace",
+        "step": "45",
+        "train/loss": "5742660.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "46",
+        "train/loss": "5681203.5"
+    },
+    {
+        "rev": "workspace",
+        "step": "47",
+        "train/loss": "5654190.5"
+    },
+    {
+        "rev": "workspace",
+        "step": "48",
+        "train/loss": "5655529.5"
+    },
+    {
+        "rev": "workspace",
+        "step": "49",
+        "train/loss": "5628982.5"
+    },
+    {
+        "rev": "workspace",
+        "step": "50",
+        "train/loss": "5610660.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "51",
+        "train/loss": "5586960.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "52",
+        "train/loss": "5589832.5"
+    },
+    {
+        "rev": "workspace",
+        "step": "53",
+        "train/loss": "5582938.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "54",
+        "train/loss": "5578311.5"
+    },
+    {
+        "rev": "workspace",
+        "step": "55",
+        "train/loss": "5548003.5"
+    },
+    {
+        "rev": "workspace",
+        "step": "56",
+        "train/loss": "5533051.5"
+    },
+    {
+        "rev": "workspace",
+        "step": "57",
+        "train/loss": "5533769.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "58",
+        "train/loss": "5530929.5"
+    },
+    {
+        "rev": "workspace",
+        "step": "59",
+        "train/loss": "5520285.5"
+    },
+    {
+        "rev": "workspace",
+        "step": "60",
+        "train/loss": "5510894.5"
+    },
+    {
+        "rev": "workspace",
+        "step": "61",
+        "train/loss": "5482045.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "62",
+        "train/loss": "5482199.5"
+    },
+    {
+        "rev": "workspace",
+        "step": "63",
+        "train/loss": "5456318.5"
+    },
+    {
+        "rev": "workspace",
+        "step": "64",
+        "train/loss": "5466286.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "65",
+        "train/loss": "5449260.5"
+    },
+    {
+        "rev": "workspace",
+        "step": "66",
+        "train/loss": "5430826.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "67",
+        "train/loss": "5431314.5"
+    },
+    {
+        "rev": "workspace",
+        "step": "68",
+        "train/loss": "5424126.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "69",
+        "train/loss": "5393269.5"
+    },
+    {
+        "rev": "workspace",
+        "step": "70",
+        "train/loss": "5391205.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "71",
+        "train/loss": "5378357.5"
+    },
+    {
+        "rev": "workspace",
+        "step": "72",
+        "train/loss": "5370944.5"
+    },
+    {
+        "rev": "workspace",
+        "step": "73",
+        "train/loss": "5349883.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "74",
+        "train/loss": "5348970.5"
+    },
+    {
+        "rev": "workspace",
+        "step": "75",
+        "train/loss": "5322563.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "76",
+        "train/loss": "5318243.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "77",
+        "train/loss": "5296081.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "78",
+        "train/loss": "5292931.5"
+    },
+    {
+        "rev": "workspace",
+        "step": "79",
+        "train/loss": "5270917.5"
+    },
+    {
+        "rev": "workspace",
+        "step": "80",
+        "train/loss": "5252871.5"
+    },
+    {
+        "rev": "workspace",
+        "step": "81",
+        "train/loss": "5249230.5"
+    },
+    {
+        "rev": "workspace",
+        "step": "82",
+        "train/loss": "5227063.5"
+    },
+    {
+        "rev": "workspace",
+        "step": "83",
+        "train/loss": "5209559.5"
+    },
+    {
+        "rev": "workspace",
+        "step": "84",
+        "train/loss": "5191301.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "85",
+        "train/loss": "5169723.5"
+    },
+    {
+        "rev": "workspace",
+        "step": "86",
+        "train/loss": "5155615.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "87",
+        "train/loss": "5128168.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "88",
+        "train/loss": "5107337.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "89",
+        "train/loss": "5079504.5"
+    },
+    {
+        "rev": "workspace",
+        "step": "90",
+        "train/loss": "5058931.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "91",
+        "train/loss": "5030433.5"
+    },
+    {
+        "rev": "workspace",
+        "step": "92",
+        "train/loss": "5012797.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "93",
+        "train/loss": "4974195.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "94",
+        "train/loss": "4932034.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "95",
+        "train/loss": "4907745.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "96",
+        "train/loss": "4858287.5"
+    },
+    {
+        "rev": "workspace",
+        "step": "97",
+        "train/loss": "4822873.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "98",
+        "train/loss": "4777745.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "99",
+        "train/loss": "4722387.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "100",
+        "train/loss": "4669120.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "101",
+        "train/loss": "4627368.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "102",
+        "train/loss": "4571121.5"
+    },
+    {
+        "rev": "workspace",
+        "step": "103",
+        "train/loss": "4454034.5"
+    },
+    {
+        "rev": "workspace",
+        "step": "104",
+        "train/loss": "4420011.5"
+    },
+    {
+        "rev": "workspace",
+        "step": "105",
+        "train/loss": "4382445.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "106",
+        "train/loss": "4272076.5"
+    },
+    {
+        "rev": "workspace",
+        "step": "107",
+        "train/loss": "4202246.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "108",
+        "train/loss": "4066336.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "109",
+        "train/loss": "4030000.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "110",
+        "train/loss": "4010475.5"
+    },
+    {
+        "rev": "workspace",
+        "step": "111",
+        "train/loss": "3946298.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "112",
+        "train/loss": "3917346.75"
+    },
+    {
+        "rev": "workspace",
+        "step": "113",
+        "train/loss": "3883788.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "114",
+        "train/loss": "3791360.25"
+    },
+    {
+        "rev": "workspace",
+        "step": "115",
+        "train/loss": "3749121.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "116",
+        "train/loss": "3738213.25"
+    },
+    {
+        "rev": "workspace",
+        "step": "117",
+        "train/loss": "3737411.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "118",
+        "train/loss": "3676904.25"
+    },
+    {
+        "rev": "workspace",
+        "step": "119",
+        "train/loss": "3809021.5"
+    },
+    {
+        "rev": "workspace",
+        "step": "120",
+        "train/loss": "3665896.5"
+    },
+    {
+        "rev": "workspace",
+        "step": "121",
+        "train/loss": "3639501.75"
+    },
+    {
+        "rev": "workspace",
+        "step": "122",
+        "train/loss": "3610906.75"
+    },
+    {
+        "rev": "workspace",
+        "step": "123",
+        "train/loss": "3688142.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "124",
+        "train/loss": "3841473.25"
+    },
+    {
+        "rev": "workspace",
+        "step": "125",
+        "train/loss": "3589609.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "126",
+        "train/loss": "3739568.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "127",
+        "train/loss": "3626086.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "128",
+        "train/loss": "3648723.25"
+    },
+    {
+        "rev": "workspace",
+        "step": "129",
+        "train/loss": "3657930.5"
+    },
+    {
+        "rev": "workspace",
+        "step": "130",
+        "train/loss": "3704382.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "131",
+        "train/loss": "3660762.5"
+    },
+    {
+        "rev": "workspace",
+        "step": "132",
+        "train/loss": "3665672.5"
+    },
+    {
+        "rev": "workspace",
+        "step": "133",
+        "train/loss": "3684005.75"
+    },
+    {
+        "rev": "workspace",
+        "step": "134",
+        "train/loss": "3675658.25"
+    },
+    {
+        "rev": "workspace",
+        "step": "135",
+        "train/loss": "3639828.25"
+    },
+    {
+        "rev": "workspace",
+        "step": "136",
+        "train/loss": "3733443.75"
+    },
+    {
+        "rev": "workspace",
+        "step": "137",
+        "train/loss": "3581416.25"
+    },
+    {
+        "rev": "workspace",
+        "step": "138",
+        "train/loss": "3637604.5"
+    },
+    {
+        "rev": "workspace",
+        "step": "139",
+        "train/loss": "3702751.25"
+    },
+    {
+        "rev": "workspace",
+        "step": "140",
+        "train/loss": "3547979.25"
+    },
+    {
+        "rev": "workspace",
+        "step": "141",
+        "train/loss": "3596551.25"
+    },
+    {
+        "rev": "workspace",
+        "step": "142",
+        "train/loss": "3645997.75"
+    },
+    {
+        "rev": "workspace",
+        "step": "143",
+        "train/loss": "3524546.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "144",
+        "train/loss": "3697288.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "145",
+        "train/loss": "3644715.75"
+    },
+    {
+        "rev": "workspace",
+        "step": "146",
+        "train/loss": "3481468.0"
+    },
+    {
+        "rev": "workspace",
+        "step": "147",
+        "train/loss": "3643801.75"
+    },
+    {
+        "rev": "workspace",
+        "step": "148",
+        "train/loss": "3650894.75"
+    },
+    {
+        "rev": "workspace",
+        "step": "149",
+        "train/loss": "3652955.25"
+    }
+]
+    },
+    "title": "",
+    "width": 300,
+    "height": 300,
+    "layer": [
+        {
+            "encoding": {
+                "x": {
+                    "field": "step",
+                    "type": "quantitative",
+                    "title": "step"
+                },
+                "y": {
+                    "field": "train/loss",
+                    "type": "quantitative",
+                    "title": "train/loss",
+                    "scale": {
+                        "zero": false
+                    }
+                },
+                "color": {
+                    "field": "rev",
+                    "type": "nominal"
+                }
+            },
+            "layer": [
+                {
+                    "mark": "line"
+                },
+                {
+                    "selection": {
+                        "label": {
+                            "type": "single",
+                            "nearest": true,
+                            "on": "mouseover",
+                            "encodings": [
+                                "x"
+                            ],
+                            "empty": "none",
+                            "clear": "mouseout"
+                        }
+                    },
+                    "mark": "point",
+                    "encoding": {
+                        "opacity": {
+                            "condition": {
+                                "selection": "label",
+                                "value": 1
+                            },
+                            "value": 0
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "transform": [
+                {
+                    "filter": {
+                        "selection": "label"
+                    }
+                }
+            ],
+            "layer": [
+                {
+                    "mark": {
+                        "type": "rule",
+                        "color": "gray"
+                    },
+                    "encoding": {
+                        "x": {
+                            "field": "step",
+                            "type": "quantitative"
+                        }
+                    }
+                },
+                {
+                    "encoding": {
+                        "text": {
+                            "type": "quantitative",
+                            "field": "train/loss"
+                        },
+                        "x": {
+                            "field": "step",
+                            "type": "quantitative"
+                        },
+                        "y": {
+                            "field": "train/loss",
+                            "type": "quantitative"
+                        }
+                    },
+                    "layer": [
+                        {
+                            "mark": {
+                                "type": "text",
+                                "align": "left",
+                                "dx": 5,
+                                "dy": -5
+                            },
+                            "encoding": {
+                                "color": {
+                                    "type": "nominal",
+                                    "field": "rev"
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
+;
+            vegaEmbed('#static_train_loss', spec);
+        </script>
+    </div>
+    
+
+    <div id = "static_train_mean_absolute_error">
+        <script type = "text/javascript">
+            var spec = {
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    "data": {
+        "values": [
+    {
+        "rev": "workspace",
+        "step": "0",
+        "train/mean_absolute_error": "35285.96484375"
+    },
+    {
+        "rev": "workspace",
+        "step": "1",
+        "train/mean_absolute_error": "34686.36328125"
+    },
+    {
+        "rev": "workspace",
+        "step": "2",
+        "train/mean_absolute_error": "34029.05078125"
+    },
+    {
+        "rev": "workspace",
+        "step": "3",
+        "train/mean_absolute_error": "33303.515625"
+    },
+    {
+        "rev": "workspace",
+        "step": "4",
+        "train/mean_absolute_error": "32376.412109375"
+    },
+    {
+        "rev": "workspace",
+        "step": "5",
+        "train/mean_absolute_error": "31181.34765625"
+    },
+    {
+        "rev": "workspace",
+        "step": "6",
+        "train/mean_absolute_error": "29444.765625"
+    },
+    {
+        "rev": "workspace",
+        "step": "7",
+        "train/mean_absolute_error": "27133.58203125"
+    },
+    {
+        "rev": "workspace",
+        "step": "8",
+        "train/mean_absolute_error": "24875.130859375"
+    },
+    {
+        "rev": "workspace",
+        "step": "9",
+        "train/mean_absolute_error": "22920.25"
+    },
+    {
+        "rev": "workspace",
+        "step": "10",
+        "train/mean_absolute_error": "21040.841796875"
+    },
+    {
+        "rev": "workspace",
+        "step": "11",
+        "train/mean_absolute_error": "19223.34765625"
+    },
+    {
+        "rev": "workspace",
+        "step": "12",
+        "train/mean_absolute_error": "17447.208984375"
+    },
+    {
+        "rev": "workspace",
+        "step": "13",
+        "train/mean_absolute_error": "15803.810546875"
+    },
+    {
+        "rev": "workspace",
+        "step": "14",
+        "train/mean_absolute_error": "14279.951171875"
+    },
+    {
+        "rev": "workspace",
+        "step": "15",
+        "train/mean_absolute_error": "12899.44140625"
+    },
+    {
+        "rev": "workspace",
+        "step": "16",
+        "train/mean_absolute_error": "11648.1513671875"
+    },
+    {
+        "rev": "workspace",
+        "step": "17",
+        "train/mean_absolute_error": "10518.04296875"
+    },
+    {
+        "rev": "workspace",
+        "step": "18",
+        "train/mean_absolute_error": "9491.6806640625"
+    },
+    {
+        "rev": "workspace",
+        "step": "19",
+        "train/mean_absolute_error": "8570.7587890625"
+    },
+    {
+        "rev": "workspace",
+        "step": "20",
+        "train/mean_absolute_error": "7737.177734375"
+    },
+    {
+        "rev": "workspace",
+        "step": "21",
+        "train/mean_absolute_error": "6994.529296875"
+    },
+    {
+        "rev": "workspace",
+        "step": "22",
+        "train/mean_absolute_error": "6326.76025390625"
+    },
+    {
+        "rev": "workspace",
+        "step": "23",
+        "train/mean_absolute_error": "5724.08154296875"
+    },
+    {
+        "rev": "workspace",
+        "step": "24",
+        "train/mean_absolute_error": "5178.9189453125"
+    },
+    {
+        "rev": "workspace",
+        "step": "25",
+        "train/mean_absolute_error": "4681.216796875"
+    },
+    {
+        "rev": "workspace",
+        "step": "26",
+        "train/mean_absolute_error": "4234.6669921875"
+    },
+    {
+        "rev": "workspace",
+        "step": "27",
+        "train/mean_absolute_error": "3826.62646484375"
+    },
+    {
+        "rev": "workspace",
+        "step": "28",
+        "train/mean_absolute_error": "3464.9970703125"
+    },
+    {
+        "rev": "workspace",
+        "step": "29",
+        "train/mean_absolute_error": "3149.1220703125"
+    },
+    {
+        "rev": "workspace",
+        "step": "30",
+        "train/mean_absolute_error": "2879.10009765625"
+    },
+    {
+        "rev": "workspace",
+        "step": "31",
+        "train/mean_absolute_error": "2655.819580078125"
+    },
+    {
+        "rev": "workspace",
+        "step": "32",
+        "train/mean_absolute_error": "2464.688232421875"
+    },
+    {
+        "rev": "workspace",
+        "step": "33",
+        "train/mean_absolute_error": "2321.252197265625"
+    },
+    {
+        "rev": "workspace",
+        "step": "34",
+        "train/mean_absolute_error": "2211.965087890625"
+    },
+    {
+        "rev": "workspace",
+        "step": "35",
+        "train/mean_absolute_error": "2137.640625"
+    },
+    {
+        "rev": "workspace",
+        "step": "36",
+        "train/mean_absolute_error": "2073.478759765625"
+    },
+    {
+        "rev": "workspace",
+        "step": "37",
+        "train/mean_absolute_error": "2026.4266357421875"
+    },
+    {
+        "rev": "workspace",
+        "step": "38",
+        "train/mean_absolute_error": "1998.57275390625"
+    },
+    {
+        "rev": "workspace",
+        "step": "39",
+        "train/mean_absolute_error": "1970.4674072265625"
+    },
+    {
+        "rev": "workspace",
+        "step": "40",
+        "train/mean_absolute_error": "1964.3443603515625"
+    },
+    {
+        "rev": "workspace",
+        "step": "41",
+        "train/mean_absolute_error": "1950.9998779296875"
+    },
+    {
+        "rev": "workspace",
+        "step": "42",
+        "train/mean_absolute_error": "1943.4613037109375"
+    },
+    {
+        "rev": "workspace",
+        "step": "43",
+        "train/mean_absolute_error": "1943.66650390625"
+    },
+    {
+        "rev": "workspace",
+        "step": "44",
+        "train/mean_absolute_error": "1939.1295166015625"
+    },
+    {
+        "rev": "workspace",
+        "step": "45",
+        "train/mean_absolute_error": "1939.6224365234375"
+    },
+    {
+        "rev": "workspace",
+        "step": "46",
+        "train/mean_absolute_error": "1934.7763671875"
+    },
+    {
+        "rev": "workspace",
+        "step": "47",
+        "train/mean_absolute_error": "1934.2998046875"
+    },
+    {
+        "rev": "workspace",
+        "step": "48",
+        "train/mean_absolute_error": "1935.2322998046875"
+    },
+    {
+        "rev": "workspace",
+        "step": "49",
+        "train/mean_absolute_error": "1935.3021240234375"
+    },
+    {
+        "rev": "workspace",
+        "step": "50",
+        "train/mean_absolute_error": "1934.0035400390625"
+    },
+    {
+        "rev": "workspace",
+        "step": "51",
+        "train/mean_absolute_error": "1933.152587890625"
+    },
+    {
+        "rev": "workspace",
+        "step": "52",
+        "train/mean_absolute_error": "1934.03515625"
+    },
+    {
+        "rev": "workspace",
+        "step": "53",
+        "train/mean_absolute_error": "1932.4259033203125"
+    },
+    {
+        "rev": "workspace",
+        "step": "54",
+        "train/mean_absolute_error": "1935.5972900390625"
+    },
+    {
+        "rev": "workspace",
+        "step": "55",
+        "train/mean_absolute_error": "1928.5693359375"
+    },
+    {
+        "rev": "workspace",
+        "step": "56",
+        "train/mean_absolute_error": "1926.0068359375"
+    },
+    {
+        "rev": "workspace",
+        "step": "57",
+        "train/mean_absolute_error": "1927.6304931640625"
+    },
+    {
+        "rev": "workspace",
+        "step": "58",
+        "train/mean_absolute_error": "1926.4949951171875"
+    },
+    {
+        "rev": "workspace",
+        "step": "59",
+        "train/mean_absolute_error": "1924.208251953125"
+    },
+    {
+        "rev": "workspace",
+        "step": "60",
+        "train/mean_absolute_error": "1922.946044921875"
+    },
+    {
+        "rev": "workspace",
+        "step": "61",
+        "train/mean_absolute_error": "1920.252197265625"
+    },
+    {
+        "rev": "workspace",
+        "step": "62",
+        "train/mean_absolute_error": "1918.6058349609375"
+    },
+    {
+        "rev": "workspace",
+        "step": "63",
+        "train/mean_absolute_error": "1914.4561767578125"
+    },
+    {
+        "rev": "workspace",
+        "step": "64",
+        "train/mean_absolute_error": "1914.13623046875"
+    },
+    {
+        "rev": "workspace",
+        "step": "65",
+        "train/mean_absolute_error": "1913.9903564453125"
+    },
+    {
+        "rev": "workspace",
+        "step": "66",
+        "train/mean_absolute_error": "1911.131591796875"
+    },
+    {
+        "rev": "workspace",
+        "step": "67",
+        "train/mean_absolute_error": "1912.6798095703125"
+    },
+    {
+        "rev": "workspace",
+        "step": "68",
+        "train/mean_absolute_error": "1905.677978515625"
+    },
+    {
+        "rev": "workspace",
+        "step": "69",
+        "train/mean_absolute_error": "1903.628173828125"
+    },
+    {
+        "rev": "workspace",
+        "step": "70",
+        "train/mean_absolute_error": "1904.44775390625"
+    },
+    {
+        "rev": "workspace",
+        "step": "71",
+        "train/mean_absolute_error": "1900.00341796875"
+    },
+    {
+        "rev": "workspace",
+        "step": "72",
+        "train/mean_absolute_error": "1898.0643310546875"
+    },
+    {
+        "rev": "workspace",
+        "step": "73",
+        "train/mean_absolute_error": "1892.78564453125"
+    },
+    {
+        "rev": "workspace",
+        "step": "74",
+        "train/mean_absolute_error": "1891.7430419921875"
+    },
+    {
+        "rev": "workspace",
+        "step": "75",
+        "train/mean_absolute_error": "1890.1871337890625"
+    },
+    {
+        "rev": "workspace",
+        "step": "76",
+        "train/mean_absolute_error": "1889.5240478515625"
+    },
+    {
+        "rev": "workspace",
+        "step": "77",
+        "train/mean_absolute_error": "1882.620361328125"
+    },
+    {
+        "rev": "workspace",
+        "step": "78",
+        "train/mean_absolute_error": "1883.3431396484375"
+    },
+    {
+        "rev": "workspace",
+        "step": "79",
+        "train/mean_absolute_error": "1880.70166015625"
+    },
+    {
+        "rev": "workspace",
+        "step": "80",
+        "train/mean_absolute_error": "1877.314453125"
+    },
+    {
+        "rev": "workspace",
+        "step": "81",
+        "train/mean_absolute_error": "1872.380859375"
+    },
+    {
+        "rev": "workspace",
+        "step": "82",
+        "train/mean_absolute_error": "1869.5760498046875"
+    },
+    {
+        "rev": "workspace",
+        "step": "83",
+        "train/mean_absolute_error": "1865.6507568359375"
+    },
+    {
+        "rev": "workspace",
+        "step": "84",
+        "train/mean_absolute_error": "1865.981201171875"
+    },
+    {
+        "rev": "workspace",
+        "step": "85",
+        "train/mean_absolute_error": "1856.9544677734375"
+    },
+    {
+        "rev": "workspace",
+        "step": "86",
+        "train/mean_absolute_error": "1856.4443359375"
+    },
+    {
+        "rev": "workspace",
+        "step": "87",
+        "train/mean_absolute_error": "1851.350341796875"
+    },
+    {
+        "rev": "workspace",
+        "step": "88",
+        "train/mean_absolute_error": "1844.3553466796875"
+    },
+    {
+        "rev": "workspace",
+        "step": "89",
+        "train/mean_absolute_error": "1838.500732421875"
+    },
+    {
+        "rev": "workspace",
+        "step": "90",
+        "train/mean_absolute_error": "1838.0560302734375"
+    },
+    {
+        "rev": "workspace",
+        "step": "91",
+        "train/mean_absolute_error": "1830.5955810546875"
+    },
+    {
+        "rev": "workspace",
+        "step": "92",
+        "train/mean_absolute_error": "1822.3670654296875"
+    },
+    {
+        "rev": "workspace",
+        "step": "93",
+        "train/mean_absolute_error": "1814.8858642578125"
+    },
+    {
+        "rev": "workspace",
+        "step": "94",
+        "train/mean_absolute_error": "1808.546875"
+    },
+    {
+        "rev": "workspace",
+        "step": "95",
+        "train/mean_absolute_error": "1803.8035888671875"
+    },
+    {
+        "rev": "workspace",
+        "step": "96",
+        "train/mean_absolute_error": "1793.5428466796875"
+    },
+    {
+        "rev": "workspace",
+        "step": "97",
+        "train/mean_absolute_error": "1782.611572265625"
+    },
+    {
+        "rev": "workspace",
+        "step": "98",
+        "train/mean_absolute_error": "1772.269287109375"
+    },
+    {
+        "rev": "workspace",
+        "step": "99",
+        "train/mean_absolute_error": "1763.48583984375"
+    },
+    {
+        "rev": "workspace",
+        "step": "100",
+        "train/mean_absolute_error": "1752.3212890625"
+    },
+    {
+        "rev": "workspace",
+        "step": "101",
+        "train/mean_absolute_error": "1735.2020263671875"
+    },
+    {
+        "rev": "workspace",
+        "step": "102",
+        "train/mean_absolute_error": "1724.5177001953125"
+    },
+    {
+        "rev": "workspace",
+        "step": "103",
+        "train/mean_absolute_error": "1697.541748046875"
+    },
+    {
+        "rev": "workspace",
+        "step": "104",
+        "train/mean_absolute_error": "1691.872802734375"
+    },
+    {
+        "rev": "workspace",
+        "step": "105",
+        "train/mean_absolute_error": "1675.603271484375"
+    },
+    {
+        "rev": "workspace",
+        "step": "106",
+        "train/mean_absolute_error": "1659.090576171875"
+    },
+    {
+        "rev": "workspace",
+        "step": "107",
+        "train/mean_absolute_error": "1641.483642578125"
+    },
+    {
+        "rev": "workspace",
+        "step": "108",
+        "train/mean_absolute_error": "1614.08056640625"
+    },
+    {
+        "rev": "workspace",
+        "step": "109",
+        "train/mean_absolute_error": "1600.039794921875"
+    },
+    {
+        "rev": "workspace",
+        "step": "110",
+        "train/mean_absolute_error": "1591.1085205078125"
+    },
+    {
+        "rev": "workspace",
+        "step": "111",
+        "train/mean_absolute_error": "1565.7637939453125"
+    },
+    {
+        "rev": "workspace",
+        "step": "112",
+        "train/mean_absolute_error": "1571.37451171875"
+    },
+    {
+        "rev": "workspace",
+        "step": "113",
+        "train/mean_absolute_error": "1544.5030517578125"
+    },
+    {
+        "rev": "workspace",
+        "step": "114",
+        "train/mean_absolute_error": "1533.6138916015625"
+    },
+    {
+        "rev": "workspace",
+        "step": "115",
+        "train/mean_absolute_error": "1515.8580322265625"
+    },
+    {
+        "rev": "workspace",
+        "step": "116",
+        "train/mean_absolute_error": "1506.5159912109375"
+    },
+    {
+        "rev": "workspace",
+        "step": "117",
+        "train/mean_absolute_error": "1504.4639892578125"
+    },
+    {
+        "rev": "workspace",
+        "step": "118",
+        "train/mean_absolute_error": "1496.6002197265625"
+    },
+    {
+        "rev": "workspace",
+        "step": "119",
+        "train/mean_absolute_error": "1524.911376953125"
+    },
+    {
+        "rev": "workspace",
+        "step": "120",
+        "train/mean_absolute_error": "1499.61865234375"
+    },
+    {
+        "rev": "workspace",
+        "step": "121",
+        "train/mean_absolute_error": "1489.47900390625"
+    },
+    {
+        "rev": "workspace",
+        "step": "122",
+        "train/mean_absolute_error": "1475.6759033203125"
+    },
+    {
+        "rev": "workspace",
+        "step": "123",
+        "train/mean_absolute_error": "1489.004150390625"
+    },
+    {
+        "rev": "workspace",
+        "step": "124",
+        "train/mean_absolute_error": "1524.5111083984375"
+    },
+    {
+        "rev": "workspace",
+        "step": "125",
+        "train/mean_absolute_error": "1482.1729736328125"
+    },
+    {
+        "rev": "workspace",
+        "step": "126",
+        "train/mean_absolute_error": "1515.1990966796875"
+    },
+    {
+        "rev": "workspace",
+        "step": "127",
+        "train/mean_absolute_error": "1491.011962890625"
+    },
+    {
+        "rev": "workspace",
+        "step": "128",
+        "train/mean_absolute_error": "1475.68603515625"
+    },
+    {
+        "rev": "workspace",
+        "step": "129",
+        "train/mean_absolute_error": "1494.4154052734375"
+    },
+    {
+        "rev": "workspace",
+        "step": "130",
+        "train/mean_absolute_error": "1500.5733642578125"
+    },
+    {
+        "rev": "workspace",
+        "step": "131",
+        "train/mean_absolute_error": "1483.4676513671875"
+    },
+    {
+        "rev": "workspace",
+        "step": "132",
+        "train/mean_absolute_error": "1484.6837158203125"
+    },
+    {
+        "rev": "workspace",
+        "step": "133",
+        "train/mean_absolute_error": "1504.5946044921875"
+    },
+    {
+        "rev": "workspace",
+        "step": "134",
+        "train/mean_absolute_error": "1504.1744384765625"
+    },
+    {
+        "rev": "workspace",
+        "step": "135",
+        "train/mean_absolute_error": "1496.0986328125"
+    },
+    {
+        "rev": "workspace",
+        "step": "136",
+        "train/mean_absolute_error": "1496.814697265625"
+    },
+    {
+        "rev": "workspace",
+        "step": "137",
+        "train/mean_absolute_error": "1468.9847412109375"
+    },
+    {
+        "rev": "workspace",
+        "step": "138",
+        "train/mean_absolute_error": "1473.9796142578125"
+    },
+    {
+        "rev": "workspace",
+        "step": "139",
+        "train/mean_absolute_error": "1489.703125"
+    },
+    {
+        "rev": "workspace",
+        "step": "140",
+        "train/mean_absolute_error": "1471.7408447265625"
+    },
+    {
+        "rev": "workspace",
+        "step": "141",
+        "train/mean_absolute_error": "1479.2127685546875"
+    },
+    {
+        "rev": "workspace",
+        "step": "142",
+        "train/mean_absolute_error": "1482.1251220703125"
+    },
+    {
+        "rev": "workspace",
+        "step": "143",
+        "train/mean_absolute_error": "1456.553955078125"
+    },
+    {
+        "rev": "workspace",
+        "step": "144",
+        "train/mean_absolute_error": "1483.3858642578125"
+    },
+    {
+        "rev": "workspace",
+        "step": "145",
+        "train/mean_absolute_error": "1469.318115234375"
+    },
+    {
+        "rev": "workspace",
+        "step": "146",
+        "train/mean_absolute_error": "1448.6131591796875"
+    },
+    {
+        "rev": "workspace",
+        "step": "147",
+        "train/mean_absolute_error": "1479.3795166015625"
+    },
+    {
+        "rev": "workspace",
+        "step": "148",
+        "train/mean_absolute_error": "1486.0516357421875"
+    },
+    {
+        "rev": "workspace",
+        "step": "149",
+        "train/mean_absolute_error": "1498.16259765625"
+    }
+]
+    },
+    "title": "",
+    "width": 300,
+    "height": 300,
+    "layer": [
+        {
+            "encoding": {
+                "x": {
+                    "field": "step",
+                    "type": "quantitative",
+                    "title": "step"
+                },
+                "y": {
+                    "field": "train/mean_absolute_error",
+                    "type": "quantitative",
+                    "title": "train/mean_absolute_error",
+                    "scale": {
+                        "zero": false
+                    }
+                },
+                "color": {
+                    "field": "rev",
+                    "type": "nominal"
+                }
+            },
+            "layer": [
+                {
+                    "mark": "line"
+                },
+                {
+                    "selection": {
+                        "label": {
+                            "type": "single",
+                            "nearest": true,
+                            "on": "mouseover",
+                            "encodings": [
+                                "x"
+                            ],
+                            "empty": "none",
+                            "clear": "mouseout"
+                        }
+                    },
+                    "mark": "point",
+                    "encoding": {
+                        "opacity": {
+                            "condition": {
+                                "selection": "label",
+                                "value": 1
+                            },
+                            "value": 0
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "transform": [
+                {
+                    "filter": {
+                        "selection": "label"
+                    }
+                }
+            ],
+            "layer": [
+                {
+                    "mark": {
+                        "type": "rule",
+                        "color": "gray"
+                    },
+                    "encoding": {
+                        "x": {
+                            "field": "step",
+                            "type": "quantitative"
+                        }
+                    }
+                },
+                {
+                    "encoding": {
+                        "text": {
+                            "type": "quantitative",
+                            "field": "train/mean_absolute_error"
+                        },
+                        "x": {
+                            "field": "step",
+                            "type": "quantitative"
+                        },
+                        "y": {
+                            "field": "train/mean_absolute_error",
+                            "type": "quantitative"
+                        }
+                    },
+                    "layer": [
+                        {
+                            "mark": {
+                                "type": "text",
+                                "align": "left",
+                                "dx": 5,
+                                "dy": -5
+                            },
+                            "encoding": {
+                                "color": {
+                                    "type": "nominal",
+                                    "field": "rev"
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
+;
+            vegaEmbed('#static_train_mean_absolute_error', spec);
+        </script>
+    </div>
+    
+
+    <div id = "static_train_mean_absolute_percentage_error">
+        <script type = "text/javascript">
+            var spec = {
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    "data": {
+        "values": [
+    {
+        "rev": "workspace",
+        "step": "0",
+        "train/mean_absolute_percentage_error": "98.67017364501953"
+    },
+    {
+        "rev": "workspace",
+        "step": "1",
+        "train/mean_absolute_percentage_error": "96.98892211914062"
+    },
+    {
+        "rev": "workspace",
+        "step": "2",
+        "train/mean_absolute_percentage_error": "95.11847686767578"
+    },
+    {
+        "rev": "workspace",
+        "step": "3",
+        "train/mean_absolute_percentage_error": "93.0694808959961"
+    },
+    {
+        "rev": "workspace",
+        "step": "4",
+        "train/mean_absolute_percentage_error": "90.4605712890625"
+    },
+    {
+        "rev": "workspace",
+        "step": "5",
+        "train/mean_absolute_percentage_error": "87.08959197998047"
+    },
+    {
+        "rev": "workspace",
+        "step": "6",
+        "train/mean_absolute_percentage_error": "82.2396011352539"
+    },
+    {
+        "rev": "workspace",
+        "step": "7",
+        "train/mean_absolute_percentage_error": "75.80786895751953"
+    },
+    {
+        "rev": "workspace",
+        "step": "8",
+        "train/mean_absolute_percentage_error": "69.49748992919922"
+    },
+    {
+        "rev": "workspace",
+        "step": "9",
+        "train/mean_absolute_percentage_error": "64.0257339477539"
+    },
+    {
+        "rev": "workspace",
+        "step": "10",
+        "train/mean_absolute_percentage_error": "58.73645782470703"
+    },
+    {
+        "rev": "workspace",
+        "step": "11",
+        "train/mean_absolute_percentage_error": "53.626678466796875"
+    },
+    {
+        "rev": "workspace",
+        "step": "12",
+        "train/mean_absolute_percentage_error": "48.62971115112305"
+    },
+    {
+        "rev": "workspace",
+        "step": "13",
+        "train/mean_absolute_percentage_error": "44.007755279541016"
+    },
+    {
+        "rev": "workspace",
+        "step": "14",
+        "train/mean_absolute_percentage_error": "39.717830657958984"
+    },
+    {
+        "rev": "workspace",
+        "step": "15",
+        "train/mean_absolute_percentage_error": "35.833126068115234"
+    },
+    {
+        "rev": "workspace",
+        "step": "16",
+        "train/mean_absolute_percentage_error": "32.3173828125"
+    },
+    {
+        "rev": "workspace",
+        "step": "17",
+        "train/mean_absolute_percentage_error": "29.138708114624023"
+    },
+    {
+        "rev": "workspace",
+        "step": "18",
+        "train/mean_absolute_percentage_error": "26.25785255432129"
+    },
+    {
+        "rev": "workspace",
+        "step": "19",
+        "train/mean_absolute_percentage_error": "23.671245574951172"
+    },
+    {
+        "rev": "workspace",
+        "step": "20",
+        "train/mean_absolute_percentage_error": "21.332616806030273"
+    },
+    {
+        "rev": "workspace",
+        "step": "21",
+        "train/mean_absolute_percentage_error": "19.2535457611084"
+    },
+    {
+        "rev": "workspace",
+        "step": "22",
+        "train/mean_absolute_percentage_error": "17.387248992919922"
+    },
+    {
+        "rev": "workspace",
+        "step": "23",
+        "train/mean_absolute_percentage_error": "15.699557304382324"
+    },
+    {
+        "rev": "workspace",
+        "step": "24",
+        "train/mean_absolute_percentage_error": "14.178221702575684"
+    },
+    {
+        "rev": "workspace",
+        "step": "25",
+        "train/mean_absolute_percentage_error": "12.785311698913574"
+    },
+    {
+        "rev": "workspace",
+        "step": "26",
+        "train/mean_absolute_percentage_error": "11.535411834716797"
+    },
+    {
+        "rev": "workspace",
+        "step": "27",
+        "train/mean_absolute_percentage_error": "10.39794635772705"
+    },
+    {
+        "rev": "workspace",
+        "step": "28",
+        "train/mean_absolute_percentage_error": "9.388266563415527"
+    },
+    {
+        "rev": "workspace",
+        "step": "29",
+        "train/mean_absolute_percentage_error": "8.509567260742188"
+    },
+    {
+        "rev": "workspace",
+        "step": "30",
+        "train/mean_absolute_percentage_error": "7.764525413513184"
+    },
+    {
+        "rev": "workspace",
+        "step": "31",
+        "train/mean_absolute_percentage_error": "7.152390003204346"
+    },
+    {
+        "rev": "workspace",
+        "step": "32",
+        "train/mean_absolute_percentage_error": "6.635439872741699"
+    },
+    {
+        "rev": "workspace",
+        "step": "33",
+        "train/mean_absolute_percentage_error": "6.252499580383301"
+    },
+    {
+        "rev": "workspace",
+        "step": "34",
+        "train/mean_absolute_percentage_error": "5.9669389724731445"
+    },
+    {
+        "rev": "workspace",
+        "step": "35",
+        "train/mean_absolute_percentage_error": "5.7797088623046875"
+    },
+    {
+        "rev": "workspace",
+        "step": "36",
+        "train/mean_absolute_percentage_error": "5.619257926940918"
+    },
+    {
+        "rev": "workspace",
+        "step": "37",
+        "train/mean_absolute_percentage_error": "5.506041526794434"
+    },
+    {
+        "rev": "workspace",
+        "step": "38",
+        "train/mean_absolute_percentage_error": "5.445652008056641"
+    },
+    {
+        "rev": "workspace",
+        "step": "39",
+        "train/mean_absolute_percentage_error": "5.38372802734375"
+    },
+    {
+        "rev": "workspace",
+        "step": "40",
+        "train/mean_absolute_percentage_error": "5.38010311126709"
+    },
+    {
+        "rev": "workspace",
+        "step": "41",
+        "train/mean_absolute_percentage_error": "5.354695796966553"
+    },
+    {
+        "rev": "workspace",
+        "step": "42",
+        "train/mean_absolute_percentage_error": "5.34441614151001"
+    },
+    {
+        "rev": "workspace",
+        "step": "43",
+        "train/mean_absolute_percentage_error": "5.354954719543457"
+    },
+    {
+        "rev": "workspace",
+        "step": "44",
+        "train/mean_absolute_percentage_error": "5.349041938781738"
+    },
+    {
+        "rev": "workspace",
+        "step": "45",
+        "train/mean_absolute_percentage_error": "5.3580827713012695"
+    },
+    {
+        "rev": "workspace",
+        "step": "46",
+        "train/mean_absolute_percentage_error": "5.351262092590332"
+    },
+    {
+        "rev": "workspace",
+        "step": "47",
+        "train/mean_absolute_percentage_error": "5.353209018707275"
+    },
+    {
+        "rev": "workspace",
+        "step": "48",
+        "train/mean_absolute_percentage_error": "5.358007431030273"
+    },
+    {
+        "rev": "workspace",
+        "step": "49",
+        "train/mean_absolute_percentage_error": "5.364019393920898"
+    },
+    {
+        "rev": "workspace",
+        "step": "50",
+        "train/mean_absolute_percentage_error": "5.362008571624756"
+    },
+    {
+        "rev": "workspace",
+        "step": "51",
+        "train/mean_absolute_percentage_error": "5.364030838012695"
+    },
+    {
+        "rev": "workspace",
+        "step": "52",
+        "train/mean_absolute_percentage_error": "5.369390487670898"
+    },
+    {
+        "rev": "workspace",
+        "step": "53",
+        "train/mean_absolute_percentage_error": "5.364114284515381"
+    },
+    {
+        "rev": "workspace",
+        "step": "54",
+        "train/mean_absolute_percentage_error": "5.378083229064941"
+    },
+    {
+        "rev": "workspace",
+        "step": "55",
+        "train/mean_absolute_percentage_error": "5.356722831726074"
+    },
+    {
+        "rev": "workspace",
+        "step": "56",
+        "train/mean_absolute_percentage_error": "5.3496575355529785"
+    },
+    {
+        "rev": "workspace",
+        "step": "57",
+        "train/mean_absolute_percentage_error": "5.354671001434326"
+    },
+    {
+        "rev": "workspace",
+        "step": "58",
+        "train/mean_absolute_percentage_error": "5.35176420211792"
+    },
+    {
+        "rev": "workspace",
+        "step": "59",
+        "train/mean_absolute_percentage_error": "5.345657825469971"
+    },
+    {
+        "rev": "workspace",
+        "step": "60",
+        "train/mean_absolute_percentage_error": "5.343160152435303"
+    },
+    {
+        "rev": "workspace",
+        "step": "61",
+        "train/mean_absolute_percentage_error": "5.3379082679748535"
+    },
+    {
+        "rev": "workspace",
+        "step": "62",
+        "train/mean_absolute_percentage_error": "5.3315582275390625"
+    },
+    {
+        "rev": "workspace",
+        "step": "63",
+        "train/mean_absolute_percentage_error": "5.320621013641357"
+    },
+    {
+        "rev": "workspace",
+        "step": "64",
+        "train/mean_absolute_percentage_error": "5.319399833679199"
+    },
+    {
+        "rev": "workspace",
+        "step": "65",
+        "train/mean_absolute_percentage_error": "5.320772647857666"
+    },
+    {
+        "rev": "workspace",
+        "step": "66",
+        "train/mean_absolute_percentage_error": "5.313144683837891"
+    },
+    {
+        "rev": "workspace",
+        "step": "67",
+        "train/mean_absolute_percentage_error": "5.319739818572998"
+    },
+    {
+        "rev": "workspace",
+        "step": "68",
+        "train/mean_absolute_percentage_error": "5.294082164764404"
+    },
+    {
+        "rev": "workspace",
+        "step": "69",
+        "train/mean_absolute_percentage_error": "5.292418956756592"
+    },
+    {
+        "rev": "workspace",
+        "step": "70",
+        "train/mean_absolute_percentage_error": "5.295938491821289"
+    },
+    {
+        "rev": "workspace",
+        "step": "71",
+        "train/mean_absolute_percentage_error": "5.281592845916748"
+    },
+    {
+        "rev": "workspace",
+        "step": "72",
+        "train/mean_absolute_percentage_error": "5.275252342224121"
+    },
+    {
+        "rev": "workspace",
+        "step": "73",
+        "train/mean_absolute_percentage_error": "5.259021759033203"
+    },
+    {
+        "rev": "workspace",
+        "step": "74",
+        "train/mean_absolute_percentage_error": "5.255369186401367"
+    },
+    {
+        "rev": "workspace",
+        "step": "75",
+        "train/mean_absolute_percentage_error": "5.254622936248779"
+    },
+    {
+        "rev": "workspace",
+        "step": "76",
+        "train/mean_absolute_percentage_error": "5.253373146057129"
+    },
+    {
+        "rev": "workspace",
+        "step": "77",
+        "train/mean_absolute_percentage_error": "5.230785369873047"
+    },
+    {
+        "rev": "workspace",
+        "step": "78",
+        "train/mean_absolute_percentage_error": "5.234935760498047"
+    },
+    {
+        "rev": "workspace",
+        "step": "79",
+        "train/mean_absolute_percentage_error": "5.228999137878418"
+    },
+    {
+        "rev": "workspace",
+        "step": "80",
+        "train/mean_absolute_percentage_error": "5.219894886016846"
+    },
+    {
+        "rev": "workspace",
+        "step": "81",
+        "train/mean_absolute_percentage_error": "5.201271057128906"
+    },
+    {
+        "rev": "workspace",
+        "step": "82",
+        "train/mean_absolute_percentage_error": "5.19474983215332"
+    },
+    {
+        "rev": "workspace",
+        "step": "83",
+        "train/mean_absolute_percentage_error": "5.184032917022705"
+    },
+    {
+        "rev": "workspace",
+        "step": "84",
+        "train/mean_absolute_percentage_error": "5.18854284286499"
+    },
+    {
+        "rev": "workspace",
+        "step": "85",
+        "train/mean_absolute_percentage_error": "5.157865524291992"
+    },
+    {
+        "rev": "workspace",
+        "step": "86",
+        "train/mean_absolute_percentage_error": "5.1591105461120605"
+    },
+    {
+        "rev": "workspace",
+        "step": "87",
+        "train/mean_absolute_percentage_error": "5.145364284515381"
+    },
+    {
+        "rev": "workspace",
+        "step": "88",
+        "train/mean_absolute_percentage_error": "5.122251987457275"
+    },
+    {
+        "rev": "workspace",
+        "step": "89",
+        "train/mean_absolute_percentage_error": "5.106319904327393"
+    },
+    {
+        "rev": "workspace",
+        "step": "90",
+        "train/mean_absolute_percentage_error": "5.108865261077881"
+    },
+    {
+        "rev": "workspace",
+        "step": "91",
+        "train/mean_absolute_percentage_error": "5.085471153259277"
+    },
+    {
+        "rev": "workspace",
+        "step": "92",
+        "train/mean_absolute_percentage_error": "5.057565212249756"
+    },
+    {
+        "rev": "workspace",
+        "step": "93",
+        "train/mean_absolute_percentage_error": "5.037762641906738"
+    },
+    {
+        "rev": "workspace",
+        "step": "94",
+        "train/mean_absolute_percentage_error": "5.022662162780762"
+    },
+    {
+        "rev": "workspace",
+        "step": "95",
+        "train/mean_absolute_percentage_error": "5.0096516609191895"
+    },
+    {
+        "rev": "workspace",
+        "step": "96",
+        "train/mean_absolute_percentage_error": "4.980326175689697"
+    },
+    {
+        "rev": "workspace",
+        "step": "97",
+        "train/mean_absolute_percentage_error": "4.946658611297607"
+    },
+    {
+        "rev": "workspace",
+        "step": "98",
+        "train/mean_absolute_percentage_error": "4.915046215057373"
+    },
+    {
+        "rev": "workspace",
+        "step": "99",
+        "train/mean_absolute_percentage_error": "4.893856525421143"
+    },
+    {
+        "rev": "workspace",
+        "step": "100",
+        "train/mean_absolute_percentage_error": "4.86407470703125"
+    },
+    {
+        "rev": "workspace",
+        "step": "101",
+        "train/mean_absolute_percentage_error": "4.8068437576293945"
+    },
+    {
+        "rev": "workspace",
+        "step": "102",
+        "train/mean_absolute_percentage_error": "4.779248237609863"
+    },
+    {
+        "rev": "workspace",
+        "step": "103",
+        "train/mean_absolute_percentage_error": "4.699967861175537"
+    },
+    {
+        "rev": "workspace",
+        "step": "104",
+        "train/mean_absolute_percentage_error": "4.690884590148926"
+    },
+    {
+        "rev": "workspace",
+        "step": "105",
+        "train/mean_absolute_percentage_error": "4.636146068572998"
+    },
+    {
+        "rev": "workspace",
+        "step": "106",
+        "train/mean_absolute_percentage_error": "4.5986456871032715"
+    },
+    {
+        "rev": "workspace",
+        "step": "107",
+        "train/mean_absolute_percentage_error": "4.543451309204102"
+    },
+    {
+        "rev": "workspace",
+        "step": "108",
+        "train/mean_absolute_percentage_error": "4.470090866088867"
+    },
+    {
+        "rev": "workspace",
+        "step": "109",
+        "train/mean_absolute_percentage_error": "4.431373119354248"
+    },
+    {
+        "rev": "workspace",
+        "step": "110",
+        "train/mean_absolute_percentage_error": "4.405268669128418"
+    },
+    {
+        "rev": "workspace",
+        "step": "111",
+        "train/mean_absolute_percentage_error": "4.328028678894043"
+    },
+    {
+        "rev": "workspace",
+        "step": "112",
+        "train/mean_absolute_percentage_error": "4.355948448181152"
+    },
+    {
+        "rev": "workspace",
+        "step": "113",
+        "train/mean_absolute_percentage_error": "4.276339054107666"
+    },
+    {
+        "rev": "workspace",
+        "step": "114",
+        "train/mean_absolute_percentage_error": "4.251729488372803"
+    },
+    {
+        "rev": "workspace",
+        "step": "115",
+        "train/mean_absolute_percentage_error": "4.2020955085754395"
+    },
+    {
+        "rev": "workspace",
+        "step": "116",
+        "train/mean_absolute_percentage_error": "4.1722893714904785"
+    },
+    {
+        "rev": "workspace",
+        "step": "117",
+        "train/mean_absolute_percentage_error": "4.170079708099365"
+    },
+    {
+        "rev": "workspace",
+        "step": "118",
+        "train/mean_absolute_percentage_error": "4.146646499633789"
+    },
+    {
+        "rev": "workspace",
+        "step": "119",
+        "train/mean_absolute_percentage_error": "4.230106353759766"
+    },
+    {
+        "rev": "workspace",
+        "step": "120",
+        "train/mean_absolute_percentage_error": "4.1617560386657715"
+    },
+    {
+        "rev": "workspace",
+        "step": "121",
+        "train/mean_absolute_percentage_error": "4.134738922119141"
+    },
+    {
+        "rev": "workspace",
+        "step": "122",
+        "train/mean_absolute_percentage_error": "4.0899810791015625"
+    },
+    {
+        "rev": "workspace",
+        "step": "123",
+        "train/mean_absolute_percentage_error": "4.131016731262207"
+    },
+    {
+        "rev": "workspace",
+        "step": "124",
+        "train/mean_absolute_percentage_error": "4.2364959716796875"
+    },
+    {
+        "rev": "workspace",
+        "step": "125",
+        "train/mean_absolute_percentage_error": "4.111926078796387"
+    },
+    {
+        "rev": "workspace",
+        "step": "126",
+        "train/mean_absolute_percentage_error": "4.206151485443115"
+    },
+    {
+        "rev": "workspace",
+        "step": "127",
+        "train/mean_absolute_percentage_error": "4.1464691162109375"
+    },
+    {
+        "rev": "workspace",
+        "step": "128",
+        "train/mean_absolute_percentage_error": "4.090785503387451"
+    },
+    {
+        "rev": "workspace",
+        "step": "129",
+        "train/mean_absolute_percentage_error": "4.152634143829346"
+    },
+    {
+        "rev": "workspace",
+        "step": "130",
+        "train/mean_absolute_percentage_error": "4.166526794433594"
+    },
+    {
+        "rev": "workspace",
+        "step": "131",
+        "train/mean_absolute_percentage_error": "4.1178507804870605"
+    },
+    {
+        "rev": "workspace",
+        "step": "132",
+        "train/mean_absolute_percentage_error": "4.1212944984436035"
+    },
+    {
+        "rev": "workspace",
+        "step": "133",
+        "train/mean_absolute_percentage_error": "4.183959484100342"
+    },
+    {
+        "rev": "workspace",
+        "step": "134",
+        "train/mean_absolute_percentage_error": "4.174645900726318"
+    },
+    {
+        "rev": "workspace",
+        "step": "135",
+        "train/mean_absolute_percentage_error": "4.166257858276367"
+    },
+    {
+        "rev": "workspace",
+        "step": "136",
+        "train/mean_absolute_percentage_error": "4.15132999420166"
+    },
+    {
+        "rev": "workspace",
+        "step": "137",
+        "train/mean_absolute_percentage_error": "4.082254409790039"
+    },
+    {
+        "rev": "workspace",
+        "step": "138",
+        "train/mean_absolute_percentage_error": "4.091648578643799"
+    },
+    {
+        "rev": "workspace",
+        "step": "139",
+        "train/mean_absolute_percentage_error": "4.130082607269287"
+    },
+    {
+        "rev": "workspace",
+        "step": "140",
+        "train/mean_absolute_percentage_error": "4.0918121337890625"
+    },
+    {
+        "rev": "workspace",
+        "step": "141",
+        "train/mean_absolute_percentage_error": "4.109042167663574"
+    },
+    {
+        "rev": "workspace",
+        "step": "142",
+        "train/mean_absolute_percentage_error": "4.119658470153809"
+    },
+    {
+        "rev": "workspace",
+        "step": "143",
+        "train/mean_absolute_percentage_error": "4.045689105987549"
+    },
+    {
+        "rev": "workspace",
+        "step": "144",
+        "train/mean_absolute_percentage_error": "4.116329669952393"
+    },
+    {
+        "rev": "workspace",
+        "step": "145",
+        "train/mean_absolute_percentage_error": "4.077057361602783"
+    },
+    {
+        "rev": "workspace",
+        "step": "146",
+        "train/mean_absolute_percentage_error": "4.0234222412109375"
+    },
+    {
+        "rev": "workspace",
+        "step": "147",
+        "train/mean_absolute_percentage_error": "4.102560043334961"
+    },
+    {
+        "rev": "workspace",
+        "step": "148",
+        "train/mean_absolute_percentage_error": "4.133575916290283"
+    },
+    {
+        "rev": "workspace",
+        "step": "149",
+        "train/mean_absolute_percentage_error": "4.173087120056152"
+    }
+]
+    },
+    "title": "",
+    "width": 300,
+    "height": 300,
+    "layer": [
+        {
+            "encoding": {
+                "x": {
+                    "field": "step",
+                    "type": "quantitative",
+                    "title": "step"
+                },
+                "y": {
+                    "field": "train/mean_absolute_percentage_error",
+                    "type": "quantitative",
+                    "title": "train/mean_absolute_percentage_error",
+                    "scale": {
+                        "zero": false
+                    }
+                },
+                "color": {
+                    "field": "rev",
+                    "type": "nominal"
+                }
+            },
+            "layer": [
+                {
+                    "mark": "line"
+                },
+                {
+                    "selection": {
+                        "label": {
+                            "type": "single",
+                            "nearest": true,
+                            "on": "mouseover",
+                            "encodings": [
+                                "x"
+                            ],
+                            "empty": "none",
+                            "clear": "mouseout"
+                        }
+                    },
+                    "mark": "point",
+                    "encoding": {
+                        "opacity": {
+                            "condition": {
+                                "selection": "label",
+                                "value": 1
+                            },
+                            "value": 0
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "transform": [
+                {
+                    "filter": {
+                        "selection": "label"
+                    }
+                }
+            ],
+            "layer": [
+                {
+                    "mark": {
+                        "type": "rule",
+                        "color": "gray"
+                    },
+                    "encoding": {
+                        "x": {
+                            "field": "step",
+                            "type": "quantitative"
+                        }
+                    }
+                },
+                {
+                    "encoding": {
+                        "text": {
+                            "type": "quantitative",
+                            "field": "train/mean_absolute_percentage_error"
+                        },
+                        "x": {
+                            "field": "step",
+                            "type": "quantitative"
+                        },
+                        "y": {
+                            "field": "train/mean_absolute_percentage_error",
+                            "type": "quantitative"
+                        }
+                    },
+                    "layer": [
+                        {
+                            "mark": {
+                                "type": "text",
+                                "align": "left",
+                                "dx": 5,
+                                "dy": -5
+                            },
+                            "encoding": {
+                                "color": {
+                                    "type": "nominal",
+                                    "field": "rev"
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
+;
+            vegaEmbed('#static_train_mean_absolute_percentage_error', spec);
+        </script>
+    </div>
+    
+
+    <div id = "static_train_root_mean_squared_error">
+        <script type = "text/javascript">
+            var spec = {
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    "data": {
+        "values": [
+    {
+        "rev": "workspace",
+        "step": "0",
+        "train/root_mean_squared_error": "35650.55859375"
+    },
+    {
+        "rev": "workspace",
+        "step": "1",
+        "train/root_mean_squared_error": "35038.3203125"
+    },
+    {
+        "rev": "workspace",
+        "step": "2",
+        "train/root_mean_squared_error": "34386.25390625"
+    },
+    {
+        "rev": "workspace",
+        "step": "3",
+        "train/root_mean_squared_error": "33678.44921875"
+    },
+    {
+        "rev": "workspace",
+        "step": "4",
+        "train/root_mean_squared_error": "32758.7265625"
+    },
+    {
+        "rev": "workspace",
+        "step": "5",
+        "train/root_mean_squared_error": "31585.55859375"
+    },
+    {
+        "rev": "workspace",
+        "step": "6",
+        "train/root_mean_squared_error": "29851.583984375"
+    },
+    {
+        "rev": "workspace",
+        "step": "7",
+        "train/root_mean_squared_error": "27506.8046875"
+    },
+    {
+        "rev": "workspace",
+        "step": "8",
+        "train/root_mean_squared_error": "25232.134765625"
+    },
+    {
+        "rev": "workspace",
+        "step": "9",
+        "train/root_mean_squared_error": "23291.890625"
+    },
+    {
+        "rev": "workspace",
+        "step": "10",
+        "train/root_mean_squared_error": "21449.65234375"
+    },
+    {
+        "rev": "workspace",
+        "step": "11",
+        "train/root_mean_squared_error": "19671.400390625"
+    },
+    {
+        "rev": "workspace",
+        "step": "12",
+        "train/root_mean_squared_error": "17940.849609375"
+    },
+    {
+        "rev": "workspace",
+        "step": "13",
+        "train/root_mean_squared_error": "16342.9033203125"
+    },
+    {
+        "rev": "workspace",
+        "step": "14",
+        "train/root_mean_squared_error": "14866.5126953125"
+    },
+    {
+        "rev": "workspace",
+        "step": "15",
+        "train/root_mean_squared_error": "13532.2333984375"
+    },
+    {
+        "rev": "workspace",
+        "step": "16",
+        "train/root_mean_squared_error": "12318.3154296875"
+    },
+    {
+        "rev": "workspace",
+        "step": "17",
+        "train/root_mean_squared_error": "11225.0966796875"
+    },
+    {
+        "rev": "workspace",
+        "step": "18",
+        "train/root_mean_squared_error": "10225.599609375"
+    },
+    {
+        "rev": "workspace",
+        "step": "19",
+        "train/root_mean_squared_error": "9325.603515625"
+    },
+    {
+        "rev": "workspace",
+        "step": "20",
+        "train/root_mean_squared_error": "8505.0009765625"
+    },
+    {
+        "rev": "workspace",
+        "step": "21",
+        "train/root_mean_squared_error": "7758.13916015625"
+    },
+    {
+        "rev": "workspace",
+        "step": "22",
+        "train/root_mean_squared_error": "7077.58984375"
+    },
+    {
+        "rev": "workspace",
+        "step": "23",
+        "train/root_mean_squared_error": "6466.83740234375"
+    },
+    {
+        "rev": "workspace",
+        "step": "24",
+        "train/root_mean_squared_error": "5904.70068359375"
+    },
+    {
+        "rev": "workspace",
+        "step": "25",
+        "train/root_mean_squared_error": "5405.16455078125"
+    },
+    {
+        "rev": "workspace",
+        "step": "26",
+        "train/root_mean_squared_error": "4962.1669921875"
+    },
+    {
+        "rev": "workspace",
+        "step": "27",
+        "train/root_mean_squared_error": "4554.4736328125"
+    },
+    {
+        "rev": "workspace",
+        "step": "28",
+        "train/root_mean_squared_error": "4204.82763671875"
+    },
+    {
+        "rev": "workspace",
+        "step": "29",
+        "train/root_mean_squared_error": "3901.4541015625"
+    },
+    {
+        "rev": "workspace",
+        "step": "30",
+        "train/root_mean_squared_error": "3628.955810546875"
+    },
+    {
+        "rev": "workspace",
+        "step": "31",
+        "train/root_mean_squared_error": "3403.677490234375"
+    },
+    {
+        "rev": "workspace",
+        "step": "32",
+        "train/root_mean_squared_error": "3195.75732421875"
+    },
+    {
+        "rev": "workspace",
+        "step": "33",
+        "train/root_mean_squared_error": "3029.46240234375"
+    },
+    {
+        "rev": "workspace",
+        "step": "34",
+        "train/root_mean_squared_error": "2892.991455078125"
+    },
+    {
+        "rev": "workspace",
+        "step": "35",
+        "train/root_mean_squared_error": "2785.94482421875"
+    },
+    {
+        "rev": "workspace",
+        "step": "36",
+        "train/root_mean_squared_error": "2690.158203125"
+    },
+    {
+        "rev": "workspace",
+        "step": "37",
+        "train/root_mean_squared_error": "2616.737548828125"
+    },
+    {
+        "rev": "workspace",
+        "step": "38",
+        "train/root_mean_squared_error": "2559.474365234375"
+    },
+    {
+        "rev": "workspace",
+        "step": "39",
+        "train/root_mean_squared_error": "2503.591552734375"
+    },
+    {
+        "rev": "workspace",
+        "step": "40",
+        "train/root_mean_squared_error": "2479.897705078125"
+    },
+    {
+        "rev": "workspace",
+        "step": "41",
+        "train/root_mean_squared_error": "2447.4287109375"
+    },
+    {
+        "rev": "workspace",
+        "step": "42",
+        "train/root_mean_squared_error": "2427.177490234375"
+    },
+    {
+        "rev": "workspace",
+        "step": "43",
+        "train/root_mean_squared_error": "2413.83251953125"
+    },
+    {
+        "rev": "workspace",
+        "step": "44",
+        "train/root_mean_squared_error": "2403.718994140625"
+    },
+    {
+        "rev": "workspace",
+        "step": "45",
+        "train/root_mean_squared_error": "2396.385009765625"
+    },
+    {
+        "rev": "workspace",
+        "step": "46",
+        "train/root_mean_squared_error": "2383.527587890625"
+    },
+    {
+        "rev": "workspace",
+        "step": "47",
+        "train/root_mean_squared_error": "2377.854248046875"
+    },
+    {
+        "rev": "workspace",
+        "step": "48",
+        "train/root_mean_squared_error": "2378.1357421875"
+    },
+    {
+        "rev": "workspace",
+        "step": "49",
+        "train/root_mean_squared_error": "2372.547607421875"
+    },
+    {
+        "rev": "workspace",
+        "step": "50",
+        "train/root_mean_squared_error": "2368.682861328125"
+    },
+    {
+        "rev": "workspace",
+        "step": "51",
+        "train/root_mean_squared_error": "2363.675048828125"
+    },
+    {
+        "rev": "workspace",
+        "step": "52",
+        "train/root_mean_squared_error": "2364.28271484375"
+    },
+    {
+        "rev": "workspace",
+        "step": "53",
+        "train/root_mean_squared_error": "2362.82421875"
+    },
+    {
+        "rev": "workspace",
+        "step": "54",
+        "train/root_mean_squared_error": "2361.84521484375"
+    },
+    {
+        "rev": "workspace",
+        "step": "55",
+        "train/root_mean_squared_error": "2355.419921875"
+    },
+    {
+        "rev": "workspace",
+        "step": "56",
+        "train/root_mean_squared_error": "2352.243896484375"
+    },
+    {
+        "rev": "workspace",
+        "step": "57",
+        "train/root_mean_squared_error": "2352.396728515625"
+    },
+    {
+        "rev": "workspace",
+        "step": "58",
+        "train/root_mean_squared_error": "2351.792724609375"
+    },
+    {
+        "rev": "workspace",
+        "step": "59",
+        "train/root_mean_squared_error": "2349.528564453125"
+    },
+    {
+        "rev": "workspace",
+        "step": "60",
+        "train/root_mean_squared_error": "2347.529296875"
+    },
+    {
+        "rev": "workspace",
+        "step": "61",
+        "train/root_mean_squared_error": "2341.376708984375"
+    },
+    {
+        "rev": "workspace",
+        "step": "62",
+        "train/root_mean_squared_error": "2341.40966796875"
+    },
+    {
+        "rev": "workspace",
+        "step": "63",
+        "train/root_mean_squared_error": "2335.876708984375"
+    },
+    {
+        "rev": "workspace",
+        "step": "64",
+        "train/root_mean_squared_error": "2338.009033203125"
+    },
+    {
+        "rev": "workspace",
+        "step": "65",
+        "train/root_mean_squared_error": "2334.365234375"
+    },
+    {
+        "rev": "workspace",
+        "step": "66",
+        "train/root_mean_squared_error": "2330.4130859375"
+    },
+    {
+        "rev": "workspace",
+        "step": "67",
+        "train/root_mean_squared_error": "2330.517822265625"
+    },
+    {
+        "rev": "workspace",
+        "step": "68",
+        "train/root_mean_squared_error": "2328.97509765625"
+    },
+    {
+        "rev": "workspace",
+        "step": "69",
+        "train/root_mean_squared_error": "2322.341552734375"
+    },
+    {
+        "rev": "workspace",
+        "step": "70",
+        "train/root_mean_squared_error": "2321.896728515625"
+    },
+    {
+        "rev": "workspace",
+        "step": "71",
+        "train/root_mean_squared_error": "2319.128662109375"
+    },
+    {
+        "rev": "workspace",
+        "step": "72",
+        "train/root_mean_squared_error": "2317.52978515625"
+    },
+    {
+        "rev": "workspace",
+        "step": "73",
+        "train/root_mean_squared_error": "2312.981201171875"
+    },
+    {
+        "rev": "workspace",
+        "step": "74",
+        "train/root_mean_squared_error": "2312.78369140625"
+    },
+    {
+        "rev": "workspace",
+        "step": "75",
+        "train/root_mean_squared_error": "2307.068115234375"
+    },
+    {
+        "rev": "workspace",
+        "step": "76",
+        "train/root_mean_squared_error": "2306.131591796875"
+    },
+    {
+        "rev": "workspace",
+        "step": "77",
+        "train/root_mean_squared_error": "2301.321533203125"
+    },
+    {
+        "rev": "workspace",
+        "step": "78",
+        "train/root_mean_squared_error": "2300.63720703125"
+    },
+    {
+        "rev": "workspace",
+        "step": "79",
+        "train/root_mean_squared_error": "2295.84765625"
+    },
+    {
+        "rev": "workspace",
+        "step": "80",
+        "train/root_mean_squared_error": "2291.9140625"
+    },
+    {
+        "rev": "workspace",
+        "step": "81",
+        "train/root_mean_squared_error": "2291.1201171875"
+    },
+    {
+        "rev": "workspace",
+        "step": "82",
+        "train/root_mean_squared_error": "2286.277099609375"
+    },
+    {
+        "rev": "workspace",
+        "step": "83",
+        "train/root_mean_squared_error": "2282.44580078125"
+    },
+    {
+        "rev": "workspace",
+        "step": "84",
+        "train/root_mean_squared_error": "2278.442626953125"
+    },
+    {
+        "rev": "workspace",
+        "step": "85",
+        "train/root_mean_squared_error": "2273.702392578125"
+    },
+    {
+        "rev": "workspace",
+        "step": "86",
+        "train/root_mean_squared_error": "2270.597900390625"
+    },
+    {
+        "rev": "workspace",
+        "step": "87",
+        "train/root_mean_squared_error": "2264.5458984375"
+    },
+    {
+        "rev": "workspace",
+        "step": "88",
+        "train/root_mean_squared_error": "2259.942138671875"
+    },
+    {
+        "rev": "workspace",
+        "step": "89",
+        "train/root_mean_squared_error": "2253.775390625"
+    },
+    {
+        "rev": "workspace",
+        "step": "90",
+        "train/root_mean_squared_error": "2249.20654296875"
+    },
+    {
+        "rev": "workspace",
+        "step": "91",
+        "train/root_mean_squared_error": "2242.86279296875"
+    },
+    {
+        "rev": "workspace",
+        "step": "92",
+        "train/root_mean_squared_error": "2238.927734375"
+    },
+    {
+        "rev": "workspace",
+        "step": "93",
+        "train/root_mean_squared_error": "2230.290283203125"
+    },
+    {
+        "rev": "workspace",
+        "step": "94",
+        "train/root_mean_squared_error": "2220.818115234375"
+    },
+    {
+        "rev": "workspace",
+        "step": "95",
+        "train/root_mean_squared_error": "2215.34326171875"
+    },
+    {
+        "rev": "workspace",
+        "step": "96",
+        "train/root_mean_squared_error": "2204.152099609375"
+    },
+    {
+        "rev": "workspace",
+        "step": "97",
+        "train/root_mean_squared_error": "2196.10400390625"
+    },
+    {
+        "rev": "workspace",
+        "step": "98",
+        "train/root_mean_squared_error": "2185.805419921875"
+    },
+    {
+        "rev": "workspace",
+        "step": "99",
+        "train/root_mean_squared_error": "2173.10546875"
+    },
+    {
+        "rev": "workspace",
+        "step": "100",
+        "train/root_mean_squared_error": "2160.814697265625"
+    },
+    {
+        "rev": "workspace",
+        "step": "101",
+        "train/root_mean_squared_error": "2151.1318359375"
+    },
+    {
+        "rev": "workspace",
+        "step": "102",
+        "train/root_mean_squared_error": "2138.018310546875"
+    },
+    {
+        "rev": "workspace",
+        "step": "103",
+        "train/root_mean_squared_error": "2110.4580078125"
+    },
+    {
+        "rev": "workspace",
+        "step": "104",
+        "train/root_mean_squared_error": "2102.38232421875"
+    },
+    {
+        "rev": "workspace",
+        "step": "105",
+        "train/root_mean_squared_error": "2093.42919921875"
+    },
+    {
+        "rev": "workspace",
+        "step": "106",
+        "train/root_mean_squared_error": "2066.900390625"
+    },
+    {
+        "rev": "workspace",
+        "step": "107",
+        "train/root_mean_squared_error": "2049.93798828125"
+    },
+    {
+        "rev": "workspace",
+        "step": "108",
+        "train/root_mean_squared_error": "2016.5162353515625"
+    },
+    {
+        "rev": "workspace",
+        "step": "109",
+        "train/root_mean_squared_error": "2007.4859619140625"
+    },
+    {
+        "rev": "workspace",
+        "step": "110",
+        "train/root_mean_squared_error": "2002.616943359375"
+    },
+    {
+        "rev": "workspace",
+        "step": "111",
+        "train/root_mean_squared_error": "1986.5291748046875"
+    },
+    {
+        "rev": "workspace",
+        "step": "112",
+        "train/root_mean_squared_error": "1979.22900390625"
+    },
+    {
+        "rev": "workspace",
+        "step": "113",
+        "train/root_mean_squared_error": "1970.7330322265625"
+    },
+    {
+        "rev": "workspace",
+        "step": "114",
+        "train/root_mean_squared_error": "1947.1416015625"
+    },
+    {
+        "rev": "workspace",
+        "step": "115",
+        "train/root_mean_squared_error": "1936.2646484375"
+    },
+    {
+        "rev": "workspace",
+        "step": "116",
+        "train/root_mean_squared_error": "1933.4459228515625"
+    },
+    {
+        "rev": "workspace",
+        "step": "117",
+        "train/root_mean_squared_error": "1933.238525390625"
+    },
+    {
+        "rev": "workspace",
+        "step": "118",
+        "train/root_mean_squared_error": "1917.525634765625"
+    },
+    {
+        "rev": "workspace",
+        "step": "119",
+        "train/root_mean_squared_error": "1951.671630859375"
+    },
+    {
+        "rev": "workspace",
+        "step": "120",
+        "train/root_mean_squared_error": "1914.6529541015625"
+    },
+    {
+        "rev": "workspace",
+        "step": "121",
+        "train/root_mean_squared_error": "1907.747802734375"
+    },
+    {
+        "rev": "workspace",
+        "step": "122",
+        "train/root_mean_squared_error": "1900.238525390625"
+    },
+    {
+        "rev": "workspace",
+        "step": "123",
+        "train/root_mean_squared_error": "1920.45361328125"
+    },
+    {
+        "rev": "workspace",
+        "step": "124",
+        "train/root_mean_squared_error": "1959.9677734375"
+    },
+    {
+        "rev": "workspace",
+        "step": "125",
+        "train/root_mean_squared_error": "1894.62646484375"
+    },
+    {
+        "rev": "workspace",
+        "step": "126",
+        "train/root_mean_squared_error": "1933.79638671875"
+    },
+    {
+        "rev": "workspace",
+        "step": "127",
+        "train/root_mean_squared_error": "1904.2283935546875"
+    },
+    {
+        "rev": "workspace",
+        "step": "128",
+        "train/root_mean_squared_error": "1910.1632080078125"
+    },
+    {
+        "rev": "workspace",
+        "step": "129",
+        "train/root_mean_squared_error": "1912.571533203125"
+    },
+    {
+        "rev": "workspace",
+        "step": "130",
+        "train/root_mean_squared_error": "1924.6768798828125"
+    },
+    {
+        "rev": "workspace",
+        "step": "131",
+        "train/root_mean_squared_error": "1913.31201171875"
+    },
+    {
+        "rev": "workspace",
+        "step": "132",
+        "train/root_mean_squared_error": "1914.594482421875"
+    },
+    {
+        "rev": "workspace",
+        "step": "133",
+        "train/root_mean_squared_error": "1919.3765869140625"
+    },
+    {
+        "rev": "workspace",
+        "step": "134",
+        "train/root_mean_squared_error": "1917.200439453125"
+    },
+    {
+        "rev": "workspace",
+        "step": "135",
+        "train/root_mean_squared_error": "1907.8333740234375"
+    },
+    {
+        "rev": "workspace",
+        "step": "136",
+        "train/root_mean_squared_error": "1932.212158203125"
+    },
+    {
+        "rev": "workspace",
+        "step": "137",
+        "train/root_mean_squared_error": "1892.462890625"
+    },
+    {
+        "rev": "workspace",
+        "step": "138",
+        "train/root_mean_squared_error": "1907.2506103515625"
+    },
+    {
+        "rev": "workspace",
+        "step": "139",
+        "train/root_mean_squared_error": "1924.25341796875"
+    },
+    {
+        "rev": "workspace",
+        "step": "140",
+        "train/root_mean_squared_error": "1883.6080322265625"
+    },
+    {
+        "rev": "workspace",
+        "step": "141",
+        "train/root_mean_squared_error": "1896.4580078125"
+    },
+    {
+        "rev": "workspace",
+        "step": "142",
+        "train/root_mean_squared_error": "1909.44970703125"
+    },
+    {
+        "rev": "workspace",
+        "step": "143",
+        "train/root_mean_squared_error": "1877.3773193359375"
+    },
+    {
+        "rev": "workspace",
+        "step": "144",
+        "train/root_mean_squared_error": "1922.8330078125"
+    },
+    {
+        "rev": "workspace",
+        "step": "145",
+        "train/root_mean_squared_error": "1909.1136474609375"
+    },
+    {
+        "rev": "workspace",
+        "step": "146",
+        "train/root_mean_squared_error": "1865.8692626953125"
+    },
+    {
+        "rev": "workspace",
+        "step": "147",
+        "train/root_mean_squared_error": "1908.8743896484375"
+    },
+    {
+        "rev": "workspace",
+        "step": "148",
+        "train/root_mean_squared_error": "1910.7315673828125"
+    },
+    {
+        "rev": "workspace",
+        "step": "149",
+        "train/root_mean_squared_error": "1911.2705078125"
+    }
+]
+    },
+    "title": "",
+    "width": 300,
+    "height": 300,
+    "layer": [
+        {
+            "encoding": {
+                "x": {
+                    "field": "step",
+                    "type": "quantitative",
+                    "title": "step"
+                },
+                "y": {
+                    "field": "train/root_mean_squared_error",
+                    "type": "quantitative",
+                    "title": "train/root_mean_squared_error",
+                    "scale": {
+                        "zero": false
+                    }
+                },
+                "color": {
+                    "field": "rev",
+                    "type": "nominal"
+                }
+            },
+            "layer": [
+                {
+                    "mark": "line"
+                },
+                {
+                    "selection": {
+                        "label": {
+                            "type": "single",
+                            "nearest": true,
+                            "on": "mouseover",
+                            "encodings": [
+                                "x"
+                            ],
+                            "empty": "none",
+                            "clear": "mouseout"
+                        }
+                    },
+                    "mark": "point",
+                    "encoding": {
+                        "opacity": {
+                            "condition": {
+                                "selection": "label",
+                                "value": 1
+                            },
+                            "value": 0
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "transform": [
+                {
+                    "filter": {
+                        "selection": "label"
+                    }
+                }
+            ],
+            "layer": [
+                {
+                    "mark": {
+                        "type": "rule",
+                        "color": "gray"
+                    },
+                    "encoding": {
+                        "x": {
+                            "field": "step",
+                            "type": "quantitative"
+                        }
+                    }
+                },
+                {
+                    "encoding": {
+                        "text": {
+                            "type": "quantitative",
+                            "field": "train/root_mean_squared_error"
+                        },
+                        "x": {
+                            "field": "step",
+                            "type": "quantitative"
+                        },
+                        "y": {
+                            "field": "train/root_mean_squared_error",
+                            "type": "quantitative"
+                        }
+                    },
+                    "layer": [
+                        {
+                            "mark": {
+                                "type": "text",
+                                "align": "left",
+                                "dx": 5,
+                                "dy": -5
+                            },
+                            "encoding": {
+                                "color": {
+                                    "type": "nominal",
+                                    "field": "rev"
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
+;
+            vegaEmbed('#static_train_root_mean_squared_error', spec);
+        </script>
+    </div>
+    
+
+    <div id = "static_eval_loss">
+        <script type = "text/javascript">
+            var spec = {
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    "data": {
+        "values": [
+    {
+        "eval/loss": "1368647040.0",
+        "rev": "workspace",
+        "step": "0"
+    },
+    {
+        "eval/loss": "1354655488.0",
+        "rev": "workspace",
+        "step": "1"
+    },
+    {
+        "eval/loss": "1364881664.0",
+        "rev": "workspace",
+        "step": "2"
+    },
+    {
+        "eval/loss": "1390056704.0",
+        "rev": "workspace",
+        "step": "3"
+    },
+    {
+        "eval/loss": "1377232896.0",
+        "rev": "workspace",
+        "step": "4"
+    },
+    {
+        "eval/loss": "1333161088.0",
+        "rev": "workspace",
+        "step": "5"
+    },
+    {
+        "eval/loss": "1254240640.0",
+        "rev": "workspace",
+        "step": "6"
+    },
+    {
+        "eval/loss": "1031571008.0",
+        "rev": "workspace",
+        "step": "7"
+    },
+    {
+        "eval/loss": "841781696.0",
+        "rev": "workspace",
+        "step": "8"
+    },
+    {
+        "eval/loss": "701958080.0",
+        "rev": "workspace",
+        "step": "9"
+    },
+    {
+        "eval/loss": "584785536.0",
+        "rev": "workspace",
+        "step": "10"
+    },
+    {
+        "eval/loss": "477809600.0",
+        "rev": "workspace",
+        "step": "11"
+    },
+    {
+        "eval/loss": "404823072.0",
+        "rev": "workspace",
+        "step": "12"
+    },
+    {
+        "eval/loss": "336261632.0",
+        "rev": "workspace",
+        "step": "13"
+    },
+    {
+        "eval/loss": "278333504.0",
+        "rev": "workspace",
+        "step": "14"
+    },
+    {
+        "eval/loss": "231928656.0",
+        "rev": "workspace",
+        "step": "15"
+    },
+    {
+        "eval/loss": "195607024.0",
+        "rev": "workspace",
+        "step": "16"
+    },
+    {
+        "eval/loss": "166481888.0",
+        "rev": "workspace",
+        "step": "17"
+    },
+    {
+        "eval/loss": "142333392.0",
+        "rev": "workspace",
+        "step": "18"
+    },
+    {
+        "eval/loss": "122096736.0",
+        "rev": "workspace",
+        "step": "19"
+    },
+    {
+        "eval/loss": "105342656.0",
+        "rev": "workspace",
+        "step": "20"
+    },
+    {
+        "eval/loss": "90957328.0",
+        "rev": "workspace",
+        "step": "21"
+    },
+    {
+        "eval/loss": "79059184.0",
+        "rev": "workspace",
+        "step": "22"
+    },
+    {
+        "eval/loss": "68918632.0",
+        "rev": "workspace",
+        "step": "23"
+    },
+    {
+        "eval/loss": "60272592.0",
+        "rev": "workspace",
+        "step": "24"
+    },
+    {
+        "eval/loss": "52900788.0",
+        "rev": "workspace",
+        "step": "25"
+    },
+    {
+        "eval/loss": "46784348.0",
+        "rev": "workspace",
+        "step": "26"
+    },
+    {
+        "eval/loss": "41619200.0",
+        "rev": "workspace",
+        "step": "27"
+    },
+    {
+        "eval/loss": "37316996.0",
+        "rev": "workspace",
+        "step": "28"
+    },
+    {
+        "eval/loss": "33581880.0",
+        "rev": "workspace",
+        "step": "29"
+    },
+    {
+        "eval/loss": "30443998.0",
+        "rev": "workspace",
+        "step": "30"
+    },
+    {
+        "eval/loss": "27822520.0",
+        "rev": "workspace",
+        "step": "31"
+    },
+    {
+        "eval/loss": "25564710.0",
+        "rev": "workspace",
+        "step": "32"
+    },
+    {
+        "eval/loss": "23783556.0",
+        "rev": "workspace",
+        "step": "33"
+    },
+    {
+        "eval/loss": "22190072.0",
+        "rev": "workspace",
+        "step": "34"
+    },
+    {
+        "eval/loss": "20859152.0",
+        "rev": "workspace",
+        "step": "35"
+    },
+    {
+        "eval/loss": "19781438.0",
+        "rev": "workspace",
+        "step": "36"
+    },
+    {
+        "eval/loss": "18818304.0",
+        "rev": "workspace",
+        "step": "37"
+    },
+    {
+        "eval/loss": "18037338.0",
+        "rev": "workspace",
+        "step": "38"
+    },
+    {
+        "eval/loss": "17363616.0",
+        "rev": "workspace",
+        "step": "39"
+    },
+    {
+        "eval/loss": "16773951.0",
+        "rev": "workspace",
+        "step": "40"
+    },
+    {
+        "eval/loss": "16370939.0",
+        "rev": "workspace",
+        "step": "41"
+    },
+    {
+        "eval/loss": "15966897.0",
+        "rev": "workspace",
+        "step": "42"
+    },
+    {
+        "eval/loss": "15627961.0",
+        "rev": "workspace",
+        "step": "43"
+    },
+    {
+        "eval/loss": "15376463.0",
+        "rev": "workspace",
+        "step": "44"
+    },
+    {
+        "eval/loss": "15118286.0",
+        "rev": "workspace",
+        "step": "45"
+    },
+    {
+        "eval/loss": "14900165.0",
+        "rev": "workspace",
+        "step": "46"
+    },
+    {
+        "eval/loss": "14780571.0",
+        "rev": "workspace",
+        "step": "47"
+    },
+    {
+        "eval/loss": "14656453.0",
+        "rev": "workspace",
+        "step": "48"
+    },
+    {
+        "eval/loss": "14486092.0",
+        "rev": "workspace",
+        "step": "49"
+    },
+    {
+        "eval/loss": "14394525.0",
+        "rev": "workspace",
+        "step": "50"
+    },
+    {
+        "eval/loss": "14261184.0",
+        "rev": "workspace",
+        "step": "51"
+    },
+    {
+        "eval/loss": "14169846.0",
+        "rev": "workspace",
+        "step": "52"
+    },
+    {
+        "eval/loss": "14129254.0",
+        "rev": "workspace",
+        "step": "53"
+    },
+    {
+        "eval/loss": "13997811.0",
+        "rev": "workspace",
+        "step": "54"
+    },
+    {
+        "eval/loss": "14019908.0",
+        "rev": "workspace",
+        "step": "55"
+    },
+    {
+        "eval/loss": "13980689.0",
+        "rev": "workspace",
+        "step": "56"
+    },
+    {
+        "eval/loss": "13868362.0",
+        "rev": "workspace",
+        "step": "57"
+    },
+    {
+        "eval/loss": "13852211.0",
+        "rev": "workspace",
+        "step": "58"
+    },
+    {
+        "eval/loss": "13810242.0",
+        "rev": "workspace",
+        "step": "59"
+    },
+    {
+        "eval/loss": "13752700.0",
+        "rev": "workspace",
+        "step": "60"
+    },
+    {
+        "eval/loss": "13622940.0",
+        "rev": "workspace",
+        "step": "61"
+    },
+    {
+        "eval/loss": "13648377.0",
+        "rev": "workspace",
+        "step": "62"
+    },
+    {
+        "eval/loss": "13616974.0",
+        "rev": "workspace",
+        "step": "63"
+    },
+    {
+        "eval/loss": "13568768.0",
+        "rev": "workspace",
+        "step": "64"
+    },
+    {
+        "eval/loss": "13491871.0",
+        "rev": "workspace",
+        "step": "65"
+    },
+    {
+        "eval/loss": "13467465.0",
+        "rev": "workspace",
+        "step": "66"
+    },
+    {
+        "eval/loss": "13353454.0",
+        "rev": "workspace",
+        "step": "67"
+    },
+    {
+        "eval/loss": "13492345.0",
+        "rev": "workspace",
+        "step": "68"
+    },
+    {
+        "eval/loss": "13330709.0",
+        "rev": "workspace",
+        "step": "69"
+    },
+    {
+        "eval/loss": "13312503.0",
+        "rev": "workspace",
+        "step": "70"
+    },
+    {
+        "eval/loss": "13296960.0",
+        "rev": "workspace",
+        "step": "71"
+    },
+    {
+        "eval/loss": "13264557.0",
+        "rev": "workspace",
+        "step": "72"
+    },
+    {
+        "eval/loss": "13225375.0",
+        "rev": "workspace",
+        "step": "73"
+    },
+    {
+        "eval/loss": "13203363.0",
+        "rev": "workspace",
+        "step": "74"
+    },
+    {
+        "eval/loss": "13135955.0",
+        "rev": "workspace",
+        "step": "75"
+    },
+    {
+        "eval/loss": "13058825.0",
+        "rev": "workspace",
+        "step": "76"
+    },
+    {
+        "eval/loss": "13098057.0",
+        "rev": "workspace",
+        "step": "77"
+    },
+    {
+        "eval/loss": "12982920.0",
+        "rev": "workspace",
+        "step": "78"
+    },
+    {
+        "eval/loss": "12925516.0",
+        "rev": "workspace",
+        "step": "79"
+    },
+    {
+        "eval/loss": "12882147.0",
+        "rev": "workspace",
+        "step": "80"
+    },
+    {
+        "eval/loss": "12866452.0",
+        "rev": "workspace",
+        "step": "81"
+    },
+    {
+        "eval/loss": "12841911.0",
+        "rev": "workspace",
+        "step": "82"
+    },
+    {
+        "eval/loss": "12771469.0",
+        "rev": "workspace",
+        "step": "83"
+    },
+    {
+        "eval/loss": "12630112.0",
+        "rev": "workspace",
+        "step": "84"
+    },
+    {
+        "eval/loss": "12701718.0",
+        "rev": "workspace",
+        "step": "85"
+    },
+    {
+        "eval/loss": "12573282.0",
+        "rev": "workspace",
+        "step": "86"
+    },
+    {
+        "eval/loss": "12559965.0",
+        "rev": "workspace",
+        "step": "87"
+    },
+    {
+        "eval/loss": "12519431.0",
+        "rev": "workspace",
+        "step": "88"
+    },
+    {
+        "eval/loss": "12436459.0",
+        "rev": "workspace",
+        "step": "89"
+    },
+    {
+        "eval/loss": "12309893.0",
+        "rev": "workspace",
+        "step": "90"
+    },
+    {
+        "eval/loss": "12298423.0",
+        "rev": "workspace",
+        "step": "91"
+    },
+    {
+        "eval/loss": "12240975.0",
+        "rev": "workspace",
+        "step": "92"
+    },
+    {
+        "eval/loss": "12185777.0",
+        "rev": "workspace",
+        "step": "93"
+    },
+    {
+        "eval/loss": "12029867.0",
+        "rev": "workspace",
+        "step": "94"
+    },
+    {
+        "eval/loss": "11928012.0",
+        "rev": "workspace",
+        "step": "95"
+    },
+    {
+        "eval/loss": "11791581.0",
+        "rev": "workspace",
+        "step": "96"
+    },
+    {
+        "eval/loss": "11677600.0",
+        "rev": "workspace",
+        "step": "97"
+    },
+    {
+        "eval/loss": "11561282.0",
+        "rev": "workspace",
+        "step": "98"
+    },
+    {
+        "eval/loss": "11325413.0",
+        "rev": "workspace",
+        "step": "99"
+    },
+    {
+        "eval/loss": "11287910.0",
+        "rev": "workspace",
+        "step": "100"
+    },
+    {
+        "eval/loss": "11043556.0",
+        "rev": "workspace",
+        "step": "101"
+    },
+    {
+        "eval/loss": "10970080.0",
+        "rev": "workspace",
+        "step": "102"
+    },
+    {
+        "eval/loss": "10709058.0",
+        "rev": "workspace",
+        "step": "103"
+    },
+    {
+        "eval/loss": "10419443.0",
+        "rev": "workspace",
+        "step": "104"
+    },
+    {
+        "eval/loss": "10246234.0",
+        "rev": "workspace",
+        "step": "105"
+    },
+    {
+        "eval/loss": "9950490.0",
+        "rev": "workspace",
+        "step": "106"
+    },
+    {
+        "eval/loss": "9764857.0",
+        "rev": "workspace",
+        "step": "107"
+    },
+    {
+        "eval/loss": "9490422.0",
+        "rev": "workspace",
+        "step": "108"
+    },
+    {
+        "eval/loss": "9216346.0",
+        "rev": "workspace",
+        "step": "109"
+    },
+    {
+        "eval/loss": "8947482.0",
+        "rev": "workspace",
+        "step": "110"
+    },
+    {
+        "eval/loss": "8776571.0",
+        "rev": "workspace",
+        "step": "111"
+    },
+    {
+        "eval/loss": "8481578.0",
+        "rev": "workspace",
+        "step": "112"
+    },
+    {
+        "eval/loss": "8332732.5",
+        "rev": "workspace",
+        "step": "113"
+    },
+    {
+        "eval/loss": "8132361.0",
+        "rev": "workspace",
+        "step": "114"
+    },
+    {
+        "eval/loss": "7903370.5",
+        "rev": "workspace",
+        "step": "115"
+    },
+    {
+        "eval/loss": "7776100.0",
+        "rev": "workspace",
+        "step": "116"
+    },
+    {
+        "eval/loss": "7687353.0",
+        "rev": "workspace",
+        "step": "117"
+    },
+    {
+        "eval/loss": "7637955.5",
+        "rev": "workspace",
+        "step": "118"
+    },
+    {
+        "eval/loss": "7474912.0",
+        "rev": "workspace",
+        "step": "119"
+    },
+    {
+        "eval/loss": "7445059.5",
+        "rev": "workspace",
+        "step": "120"
+    },
+    {
+        "eval/loss": "7308274.0",
+        "rev": "workspace",
+        "step": "121"
+    },
+    {
+        "eval/loss": "7277154.5",
+        "rev": "workspace",
+        "step": "122"
+    },
+    {
+        "eval/loss": "7195694.0",
+        "rev": "workspace",
+        "step": "123"
+    },
+    {
+        "eval/loss": "7266348.5",
+        "rev": "workspace",
+        "step": "124"
+    },
+    {
+        "eval/loss": "7233617.0",
+        "rev": "workspace",
+        "step": "125"
+    },
+    {
+        "eval/loss": "7143264.5",
+        "rev": "workspace",
+        "step": "126"
+    },
+    {
+        "eval/loss": "7130361.5",
+        "rev": "workspace",
+        "step": "127"
+    },
+    {
+        "eval/loss": "7060196.5",
+        "rev": "workspace",
+        "step": "128"
+    },
+    {
+        "eval/loss": "7183688.5",
+        "rev": "workspace",
+        "step": "129"
+    },
+    {
+        "eval/loss": "6983714.0",
+        "rev": "workspace",
+        "step": "130"
+    },
+    {
+        "eval/loss": "7026319.5",
+        "rev": "workspace",
+        "step": "131"
+    },
+    {
+        "eval/loss": "6931122.5",
+        "rev": "workspace",
+        "step": "132"
+    },
+    {
+        "eval/loss": "7022099.0",
+        "rev": "workspace",
+        "step": "133"
+    },
+    {
+        "eval/loss": "7025639.0",
+        "rev": "workspace",
+        "step": "134"
+    },
+    {
+        "eval/loss": "7000389.5",
+        "rev": "workspace",
+        "step": "135"
+    },
+    {
+        "eval/loss": "6893307.0",
+        "rev": "workspace",
+        "step": "136"
+    },
+    {
+        "eval/loss": "6844004.0",
+        "rev": "workspace",
+        "step": "137"
+    },
+    {
+        "eval/loss": "6962219.0",
+        "rev": "workspace",
+        "step": "138"
+    },
+    {
+        "eval/loss": "6812601.5",
+        "rev": "workspace",
+        "step": "139"
+    },
+    {
+        "eval/loss": "6839946.0",
+        "rev": "workspace",
+        "step": "140"
+    },
+    {
+        "eval/loss": "6790013.0",
+        "rev": "workspace",
+        "step": "141"
+    },
+    {
+        "eval/loss": "6888470.0",
+        "rev": "workspace",
+        "step": "142"
+    },
+    {
+        "eval/loss": "6851973.0",
+        "rev": "workspace",
+        "step": "143"
+    },
+    {
+        "eval/loss": "6743994.0",
+        "rev": "workspace",
+        "step": "144"
+    },
+    {
+        "eval/loss": "6825949.5",
+        "rev": "workspace",
+        "step": "145"
+    },
+    {
+        "eval/loss": "6918446.0",
+        "rev": "workspace",
+        "step": "146"
+    },
+    {
+        "eval/loss": "6791357.0",
+        "rev": "workspace",
+        "step": "147"
+    },
+    {
+        "eval/loss": "6714099.0",
+        "rev": "workspace",
+        "step": "148"
+    },
+    {
+        "eval/loss": "6828064.5",
+        "rev": "workspace",
+        "step": "149"
+    }
+]
+    },
+    "title": "",
+    "width": 300,
+    "height": 300,
+    "layer": [
+        {
+            "encoding": {
+                "x": {
+                    "field": "step",
+                    "type": "quantitative",
+                    "title": "step"
+                },
+                "y": {
+                    "field": "eval/loss",
+                    "type": "quantitative",
+                    "title": "eval/loss",
+                    "scale": {
+                        "zero": false
+                    }
+                },
+                "color": {
+                    "field": "rev",
+                    "type": "nominal"
+                }
+            },
+            "layer": [
+                {
+                    "mark": "line"
+                },
+                {
+                    "selection": {
+                        "label": {
+                            "type": "single",
+                            "nearest": true,
+                            "on": "mouseover",
+                            "encodings": [
+                                "x"
+                            ],
+                            "empty": "none",
+                            "clear": "mouseout"
+                        }
+                    },
+                    "mark": "point",
+                    "encoding": {
+                        "opacity": {
+                            "condition": {
+                                "selection": "label",
+                                "value": 1
+                            },
+                            "value": 0
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "transform": [
+                {
+                    "filter": {
+                        "selection": "label"
+                    }
+                }
+            ],
+            "layer": [
+                {
+                    "mark": {
+                        "type": "rule",
+                        "color": "gray"
+                    },
+                    "encoding": {
+                        "x": {
+                            "field": "step",
+                            "type": "quantitative"
+                        }
+                    }
+                },
+                {
+                    "encoding": {
+                        "text": {
+                            "type": "quantitative",
+                            "field": "eval/loss"
+                        },
+                        "x": {
+                            "field": "step",
+                            "type": "quantitative"
+                        },
+                        "y": {
+                            "field": "eval/loss",
+                            "type": "quantitative"
+                        }
+                    },
+                    "layer": [
+                        {
+                            "mark": {
+                                "type": "text",
+                                "align": "left",
+                                "dx": 5,
+                                "dy": -5
+                            },
+                            "encoding": {
+                                "color": {
+                                    "type": "nominal",
+                                    "field": "rev"
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
+;
+            vegaEmbed('#static_eval_loss', spec);
+        </script>
+    </div>
+    
+
+    <div id = "static_eval_mean_absolute_error">
+        <script type = "text/javascript">
+            var spec = {
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    "data": {
+        "values": [
+    {
+        "eval/mean_absolute_error": "36267.65625",
+        "rev": "workspace",
+        "step": "0"
+    },
+    {
+        "eval/mean_absolute_error": "36150.3125",
+        "rev": "workspace",
+        "step": "1"
+    },
+    {
+        "eval/mean_absolute_error": "36415.06640625",
+        "rev": "workspace",
+        "step": "2"
+    },
+    {
+        "eval/mean_absolute_error": "36853.5",
+        "rev": "workspace",
+        "step": "3"
+    },
+    {
+        "eval/mean_absolute_error": "36661.78515625",
+        "rev": "workspace",
+        "step": "4"
+    },
+    {
+        "eval/mean_absolute_error": "35974.7109375",
+        "rev": "workspace",
+        "step": "5"
+    },
+    {
+        "eval/mean_absolute_error": "34782.02734375",
+        "rev": "workspace",
+        "step": "6"
+    },
+    {
+        "eval/mean_absolute_error": "31392.1640625",
+        "rev": "workspace",
+        "step": "7"
+    },
+    {
+        "eval/mean_absolute_error": "28231.013671875",
+        "rev": "workspace",
+        "step": "8"
+    },
+    {
+        "eval/mean_absolute_error": "25678.501953125",
+        "rev": "workspace",
+        "step": "9"
+    },
+    {
+        "eval/mean_absolute_error": "23393.755859375",
+        "rev": "workspace",
+        "step": "10"
+    },
+    {
+        "eval/mean_absolute_error": "21086.03125",
+        "rev": "workspace",
+        "step": "11"
+    },
+    {
+        "eval/mean_absolute_error": "19288.134765625",
+        "rev": "workspace",
+        "step": "12"
+    },
+    {
+        "eval/mean_absolute_error": "17540.033203125",
+        "rev": "workspace",
+        "step": "13"
+    },
+    {
+        "eval/mean_absolute_error": "15923.564453125",
+        "rev": "workspace",
+        "step": "14"
+    },
+    {
+        "eval/mean_absolute_error": "14480.38671875",
+        "rev": "workspace",
+        "step": "15"
+    },
+    {
+        "eval/mean_absolute_error": "13220.3935546875",
+        "rev": "workspace",
+        "step": "16"
+    },
+    {
+        "eval/mean_absolute_error": "12111.03515625",
+        "rev": "workspace",
+        "step": "17"
+    },
+    {
+        "eval/mean_absolute_error": "11124.318359375",
+        "rev": "workspace",
+        "step": "18"
+    },
+    {
+        "eval/mean_absolute_error": "10232.5712890625",
+        "rev": "workspace",
+        "step": "19"
+    },
+    {
+        "eval/mean_absolute_error": "9436.955078125",
+        "rev": "workspace",
+        "step": "20"
+    },
+    {
+        "eval/mean_absolute_error": "8705.380859375",
+        "rev": "workspace",
+        "step": "21"
+    },
+    {
+        "eval/mean_absolute_error": "8054.70703125",
+        "rev": "workspace",
+        "step": "22"
+    },
+    {
+        "eval/mean_absolute_error": "7458.69921875",
+        "rev": "workspace",
+        "step": "23"
+    },
+    {
+        "eval/mean_absolute_error": "6912.31591796875",
+        "rev": "workspace",
+        "step": "24"
+    },
+    {
+        "eval/mean_absolute_error": "6415.8505859375",
+        "rev": "workspace",
+        "step": "25"
+    },
+    {
+        "eval/mean_absolute_error": "5981.97314453125",
+        "rev": "workspace",
+        "step": "26"
+    },
+    {
+        "eval/mean_absolute_error": "5594.21484375",
+        "rev": "workspace",
+        "step": "27"
+    },
+    {
+        "eval/mean_absolute_error": "5261.10498046875",
+        "rev": "workspace",
+        "step": "28"
+    },
+    {
+        "eval/mean_absolute_error": "4960.90625",
+        "rev": "workspace",
+        "step": "29"
+    },
+    {
+        "eval/mean_absolute_error": "4699.36181640625",
+        "rev": "workspace",
+        "step": "30"
+    },
+    {
+        "eval/mean_absolute_error": "4472.68896484375",
+        "rev": "workspace",
+        "step": "31"
+    },
+    {
+        "eval/mean_absolute_error": "4273.20556640625",
+        "rev": "workspace",
+        "step": "32"
+    },
+    {
+        "eval/mean_absolute_error": "4112.68408203125",
+        "rev": "workspace",
+        "step": "33"
+    },
+    {
+        "eval/mean_absolute_error": "3966.30322265625",
+        "rev": "workspace",
+        "step": "34"
+    },
+    {
+        "eval/mean_absolute_error": "3841.31884765625",
+        "rev": "workspace",
+        "step": "35"
+    },
+    {
+        "eval/mean_absolute_error": "3740.267333984375",
+        "rev": "workspace",
+        "step": "36"
+    },
+    {
+        "eval/mean_absolute_error": "3648.28515625",
+        "rev": "workspace",
+        "step": "37"
+    },
+    {
+        "eval/mean_absolute_error": "3571.603515625",
+        "rev": "workspace",
+        "step": "38"
+    },
+    {
+        "eval/mean_absolute_error": "3503.72412109375",
+        "rev": "workspace",
+        "step": "39"
+    },
+    {
+        "eval/mean_absolute_error": "3443.003173828125",
+        "rev": "workspace",
+        "step": "40"
+    },
+    {
+        "eval/mean_absolute_error": "3401.283935546875",
+        "rev": "workspace",
+        "step": "41"
+    },
+    {
+        "eval/mean_absolute_error": "3358.512451171875",
+        "rev": "workspace",
+        "step": "42"
+    },
+    {
+        "eval/mean_absolute_error": "3322.26416015625",
+        "rev": "workspace",
+        "step": "43"
+    },
+    {
+        "eval/mean_absolute_error": "3295.305419921875",
+        "rev": "workspace",
+        "step": "44"
+    },
+    {
+        "eval/mean_absolute_error": "3267.0419921875",
+        "rev": "workspace",
+        "step": "45"
+    },
+    {
+        "eval/mean_absolute_error": "3242.7939453125",
+        "rev": "workspace",
+        "step": "46"
+    },
+    {
+        "eval/mean_absolute_error": "3229.439697265625",
+        "rev": "workspace",
+        "step": "47"
+    },
+    {
+        "eval/mean_absolute_error": "3215.580810546875",
+        "rev": "workspace",
+        "step": "48"
+    },
+    {
+        "eval/mean_absolute_error": "3196.174560546875",
+        "rev": "workspace",
+        "step": "49"
+    },
+    {
+        "eval/mean_absolute_error": "3185.74951171875",
+        "rev": "workspace",
+        "step": "50"
+    },
+    {
+        "eval/mean_absolute_error": "3170.3466796875",
+        "rev": "workspace",
+        "step": "51"
+    },
+    {
+        "eval/mean_absolute_error": "3159.65673828125",
+        "rev": "workspace",
+        "step": "52"
+    },
+    {
+        "eval/mean_absolute_error": "3154.95849609375",
+        "rev": "workspace",
+        "step": "53"
+    },
+    {
+        "eval/mean_absolute_error": "3139.47119140625",
+        "rev": "workspace",
+        "step": "54"
+    },
+    {
+        "eval/mean_absolute_error": "3142.245361328125",
+        "rev": "workspace",
+        "step": "55"
+    },
+    {
+        "eval/mean_absolute_error": "3137.67138671875",
+        "rev": "workspace",
+        "step": "56"
+    },
+    {
+        "eval/mean_absolute_error": "3124.677490234375",
+        "rev": "workspace",
+        "step": "57"
+    },
+    {
+        "eval/mean_absolute_error": "3122.91748046875",
+        "rev": "workspace",
+        "step": "58"
+    },
+    {
+        "eval/mean_absolute_error": "3117.8896484375",
+        "rev": "workspace",
+        "step": "59"
+    },
+    {
+        "eval/mean_absolute_error": "3111.03125",
+        "rev": "workspace",
+        "step": "60"
+    },
+    {
+        "eval/mean_absolute_error": "3095.317626953125",
+        "rev": "workspace",
+        "step": "61"
+    },
+    {
+        "eval/mean_absolute_error": "3098.770263671875",
+        "rev": "workspace",
+        "step": "62"
+    },
+    {
+        "eval/mean_absolute_error": "3094.900390625",
+        "rev": "workspace",
+        "step": "63"
+    },
+    {
+        "eval/mean_absolute_error": "3088.941162109375",
+        "rev": "workspace",
+        "step": "64"
+    },
+    {
+        "eval/mean_absolute_error": "3079.771484375",
+        "rev": "workspace",
+        "step": "65"
+    },
+    {
+        "eval/mean_absolute_error": "3077.0",
+        "rev": "workspace",
+        "step": "66"
+    },
+    {
+        "eval/mean_absolute_error": "3063.00830078125",
+        "rev": "workspace",
+        "step": "67"
+    },
+    {
+        "eval/mean_absolute_error": "3080.040771484375",
+        "rev": "workspace",
+        "step": "68"
+    },
+    {
+        "eval/mean_absolute_error": "3060.163330078125",
+        "rev": "workspace",
+        "step": "69"
+    },
+    {
+        "eval/mean_absolute_error": "3057.9404296875",
+        "rev": "workspace",
+        "step": "70"
+    },
+    {
+        "eval/mean_absolute_error": "3055.948486328125",
+        "rev": "workspace",
+        "step": "71"
+    },
+    {
+        "eval/mean_absolute_error": "3052.044677734375",
+        "rev": "workspace",
+        "step": "72"
+    },
+    {
+        "eval/mean_absolute_error": "3047.34423828125",
+        "rev": "workspace",
+        "step": "73"
+    },
+    {
+        "eval/mean_absolute_error": "3044.290283203125",
+        "rev": "workspace",
+        "step": "74"
+    },
+    {
+        "eval/mean_absolute_error": "3035.775146484375",
+        "rev": "workspace",
+        "step": "75"
+    },
+    {
+        "eval/mean_absolute_error": "3026.098388671875",
+        "rev": "workspace",
+        "step": "76"
+    },
+    {
+        "eval/mean_absolute_error": "3030.963623046875",
+        "rev": "workspace",
+        "step": "77"
+    },
+    {
+        "eval/mean_absolute_error": "3016.430908203125",
+        "rev": "workspace",
+        "step": "78"
+    },
+    {
+        "eval/mean_absolute_error": "3009.114013671875",
+        "rev": "workspace",
+        "step": "79"
+    },
+    {
+        "eval/mean_absolute_error": "3003.399169921875",
+        "rev": "workspace",
+        "step": "80"
+    },
+    {
+        "eval/mean_absolute_error": "3001.174072265625",
+        "rev": "workspace",
+        "step": "81"
+    },
+    {
+        "eval/mean_absolute_error": "2997.77001953125",
+        "rev": "workspace",
+        "step": "82"
+    },
+    {
+        "eval/mean_absolute_error": "2988.6162109375",
+        "rev": "workspace",
+        "step": "83"
+    },
+    {
+        "eval/mean_absolute_error": "2970.23974609375",
+        "rev": "workspace",
+        "step": "84"
+    },
+    {
+        "eval/mean_absolute_error": "2978.947265625",
+        "rev": "workspace",
+        "step": "85"
+    },
+    {
+        "eval/mean_absolute_error": "2962.260986328125",
+        "rev": "workspace",
+        "step": "86"
+    },
+    {
+        "eval/mean_absolute_error": "2960.02294921875",
+        "rev": "workspace",
+        "step": "87"
+    },
+    {
+        "eval/mean_absolute_error": "2954.17724609375",
+        "rev": "workspace",
+        "step": "88"
+    },
+    {
+        "eval/mean_absolute_error": "2943.103515625",
+        "rev": "workspace",
+        "step": "89"
+    },
+    {
+        "eval/mean_absolute_error": "2925.974853515625",
+        "rev": "workspace",
+        "step": "90"
+    },
+    {
+        "eval/mean_absolute_error": "2923.31689453125",
+        "rev": "workspace",
+        "step": "91"
+    },
+    {
+        "eval/mean_absolute_error": "2915.020263671875",
+        "rev": "workspace",
+        "step": "92"
+    },
+    {
+        "eval/mean_absolute_error": "2906.7197265625",
+        "rev": "workspace",
+        "step": "93"
+    },
+    {
+        "eval/mean_absolute_error": "2885.1103515625",
+        "rev": "workspace",
+        "step": "94"
+    },
+    {
+        "eval/mean_absolute_error": "2870.372314453125",
+        "rev": "workspace",
+        "step": "95"
+    },
+    {
+        "eval/mean_absolute_error": "2850.685546875",
+        "rev": "workspace",
+        "step": "96"
+    },
+    {
+        "eval/mean_absolute_error": "2833.897705078125",
+        "rev": "workspace",
+        "step": "97"
+    },
+    {
+        "eval/mean_absolute_error": "2816.1962890625",
+        "rev": "workspace",
+        "step": "98"
+    },
+    {
+        "eval/mean_absolute_error": "2782.32080078125",
+        "rev": "workspace",
+        "step": "99"
+    },
+    {
+        "eval/mean_absolute_error": "2773.917236328125",
+        "rev": "workspace",
+        "step": "100"
+    },
+    {
+        "eval/mean_absolute_error": "2737.35595703125",
+        "rev": "workspace",
+        "step": "101"
+    },
+    {
+        "eval/mean_absolute_error": "2723.74658203125",
+        "rev": "workspace",
+        "step": "102"
+    },
+    {
+        "eval/mean_absolute_error": "2682.672607421875",
+        "rev": "workspace",
+        "step": "103"
+    },
+    {
+        "eval/mean_absolute_error": "2637.61328125",
+        "rev": "workspace",
+        "step": "104"
+    },
+    {
+        "eval/mean_absolute_error": "2607.115234375",
+        "rev": "workspace",
+        "step": "105"
+    },
+    {
+        "eval/mean_absolute_error": "2558.8056640625",
+        "rev": "workspace",
+        "step": "106"
+    },
+    {
+        "eval/mean_absolute_error": "2523.24853515625",
+        "rev": "workspace",
+        "step": "107"
+    },
+    {
+        "eval/mean_absolute_error": "2474.278564453125",
+        "rev": "workspace",
+        "step": "108"
+    },
+    {
+        "eval/mean_absolute_error": "2426.74755859375",
+        "rev": "workspace",
+        "step": "109"
+    },
+    {
+        "eval/mean_absolute_error": "2377.2998046875",
+        "rev": "workspace",
+        "step": "110"
+    },
+    {
+        "eval/mean_absolute_error": "2342.69384765625",
+        "rev": "workspace",
+        "step": "111"
+    },
+    {
+        "eval/mean_absolute_error": "2292.477783203125",
+        "rev": "workspace",
+        "step": "112"
+    },
+    {
+        "eval/mean_absolute_error": "2263.4775390625",
+        "rev": "workspace",
+        "step": "113"
+    },
+    {
+        "eval/mean_absolute_error": "2227.27294921875",
+        "rev": "workspace",
+        "step": "114"
+    },
+    {
+        "eval/mean_absolute_error": "2189.04150390625",
+        "rev": "workspace",
+        "step": "115"
+    },
+    {
+        "eval/mean_absolute_error": "2166.82568359375",
+        "rev": "workspace",
+        "step": "116"
+    },
+    {
+        "eval/mean_absolute_error": "2149.9638671875",
+        "rev": "workspace",
+        "step": "117"
+    },
+    {
+        "eval/mean_absolute_error": "2139.616455078125",
+        "rev": "workspace",
+        "step": "118"
+    },
+    {
+        "eval/mean_absolute_error": "2115.00830078125",
+        "rev": "workspace",
+        "step": "119"
+    },
+    {
+        "eval/mean_absolute_error": "2108.25732421875",
+        "rev": "workspace",
+        "step": "120"
+    },
+    {
+        "eval/mean_absolute_error": "2086.171875",
+        "rev": "workspace",
+        "step": "121"
+    },
+    {
+        "eval/mean_absolute_error": "2080.331298828125",
+        "rev": "workspace",
+        "step": "122"
+    },
+    {
+        "eval/mean_absolute_error": "2068.82275390625",
+        "rev": "workspace",
+        "step": "123"
+    },
+    {
+        "eval/mean_absolute_error": "2078.578857421875",
+        "rev": "workspace",
+        "step": "124"
+    },
+    {
+        "eval/mean_absolute_error": "2074.107177734375",
+        "rev": "workspace",
+        "step": "125"
+    },
+    {
+        "eval/mean_absolute_error": "2058.740966796875",
+        "rev": "workspace",
+        "step": "126"
+    },
+    {
+        "eval/mean_absolute_error": "2057.353759765625",
+        "rev": "workspace",
+        "step": "127"
+    },
+    {
+        "eval/mean_absolute_error": "2046.2515869140625",
+        "rev": "workspace",
+        "step": "128"
+    },
+    {
+        "eval/mean_absolute_error": "2064.948486328125",
+        "rev": "workspace",
+        "step": "129"
+    },
+    {
+        "eval/mean_absolute_error": "2034.3294677734375",
+        "rev": "workspace",
+        "step": "130"
+    },
+    {
+        "eval/mean_absolute_error": "2040.474365234375",
+        "rev": "workspace",
+        "step": "131"
+    },
+    {
+        "eval/mean_absolute_error": "2026.0587158203125",
+        "rev": "workspace",
+        "step": "132"
+    },
+    {
+        "eval/mean_absolute_error": "2039.121337890625",
+        "rev": "workspace",
+        "step": "133"
+    },
+    {
+        "eval/mean_absolute_error": "2039.541748046875",
+        "rev": "workspace",
+        "step": "134"
+    },
+    {
+        "eval/mean_absolute_error": "2034.98291015625",
+        "rev": "workspace",
+        "step": "135"
+    },
+    {
+        "eval/mean_absolute_error": "2019.516357421875",
+        "rev": "workspace",
+        "step": "136"
+    },
+    {
+        "eval/mean_absolute_error": "2011.4569091796875",
+        "rev": "workspace",
+        "step": "137"
+    },
+    {
+        "eval/mean_absolute_error": "2029.7647705078125",
+        "rev": "workspace",
+        "step": "138"
+    },
+    {
+        "eval/mean_absolute_error": "2008.8544921875",
+        "rev": "workspace",
+        "step": "139"
+    },
+    {
+        "eval/mean_absolute_error": "2010.7376708984375",
+        "rev": "workspace",
+        "step": "140"
+    },
+    {
+        "eval/mean_absolute_error": "2003.212646484375",
+        "rev": "workspace",
+        "step": "141"
+    },
+    {
+        "eval/mean_absolute_error": "2018.1351318359375",
+        "rev": "workspace",
+        "step": "142"
+    },
+    {
+        "eval/mean_absolute_error": "2012.265380859375",
+        "rev": "workspace",
+        "step": "143"
+    },
+    {
+        "eval/mean_absolute_error": "1995.6380615234375",
+        "rev": "workspace",
+        "step": "144"
+    },
+    {
+        "eval/mean_absolute_error": "2008.503662109375",
+        "rev": "workspace",
+        "step": "145"
+    },
+    {
+        "eval/mean_absolute_error": "2021.9312744140625",
+        "rev": "workspace",
+        "step": "146"
+    },
+    {
+        "eval/mean_absolute_error": "2002.706298828125",
+        "rev": "workspace",
+        "step": "147"
+    },
+    {
+        "eval/mean_absolute_error": "1991.9796142578125",
+        "rev": "workspace",
+        "step": "148"
+    },
+    {
+        "eval/mean_absolute_error": "2009.931884765625",
+        "rev": "workspace",
+        "step": "149"
+    }
+]
+    },
+    "title": "",
+    "width": 300,
+    "height": 300,
+    "layer": [
+        {
+            "encoding": {
+                "x": {
+                    "field": "step",
+                    "type": "quantitative",
+                    "title": "step"
+                },
+                "y": {
+                    "field": "eval/mean_absolute_error",
+                    "type": "quantitative",
+                    "title": "eval/mean_absolute_error",
+                    "scale": {
+                        "zero": false
+                    }
+                },
+                "color": {
+                    "field": "rev",
+                    "type": "nominal"
+                }
+            },
+            "layer": [
+                {
+                    "mark": "line"
+                },
+                {
+                    "selection": {
+                        "label": {
+                            "type": "single",
+                            "nearest": true,
+                            "on": "mouseover",
+                            "encodings": [
+                                "x"
+                            ],
+                            "empty": "none",
+                            "clear": "mouseout"
+                        }
+                    },
+                    "mark": "point",
+                    "encoding": {
+                        "opacity": {
+                            "condition": {
+                                "selection": "label",
+                                "value": 1
+                            },
+                            "value": 0
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "transform": [
+                {
+                    "filter": {
+                        "selection": "label"
+                    }
+                }
+            ],
+            "layer": [
+                {
+                    "mark": {
+                        "type": "rule",
+                        "color": "gray"
+                    },
+                    "encoding": {
+                        "x": {
+                            "field": "step",
+                            "type": "quantitative"
+                        }
+                    }
+                },
+                {
+                    "encoding": {
+                        "text": {
+                            "type": "quantitative",
+                            "field": "eval/mean_absolute_error"
+                        },
+                        "x": {
+                            "field": "step",
+                            "type": "quantitative"
+                        },
+                        "y": {
+                            "field": "eval/mean_absolute_error",
+                            "type": "quantitative"
+                        }
+                    },
+                    "layer": [
+                        {
+                            "mark": {
+                                "type": "text",
+                                "align": "left",
+                                "dx": 5,
+                                "dy": -5
+                            },
+                            "encoding": {
+                                "color": {
+                                    "type": "nominal",
+                                    "field": "rev"
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
+;
+            vegaEmbed('#static_eval_mean_absolute_error', spec);
+        </script>
+    </div>
+    
+
+    <div id = "static_eval_mean_absolute_percentage_error">
+        <script type = "text/javascript">
+            var spec = {
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    "data": {
+        "values": [
+    {
+        "eval/mean_absolute_percentage_error": "96.50704956054688",
+        "rev": "workspace",
+        "step": "0"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "96.2157211303711",
+        "rev": "workspace",
+        "step": "1"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "96.96632385253906",
+        "rev": "workspace",
+        "step": "2"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "98.15959167480469",
+        "rev": "workspace",
+        "step": "3"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "97.4566879272461",
+        "rev": "workspace",
+        "step": "4"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "95.43621826171875",
+        "rev": "workspace",
+        "step": "5"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "92.1073226928711",
+        "rev": "workspace",
+        "step": "6"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "83.05645751953125",
+        "rev": "workspace",
+        "step": "7"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "74.66378784179688",
+        "rev": "workspace",
+        "step": "8"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "67.87492370605469",
+        "rev": "workspace",
+        "step": "9"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "61.830204010009766",
+        "rev": "workspace",
+        "step": "10"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "55.72018051147461",
+        "rev": "workspace",
+        "step": "11"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "50.908416748046875",
+        "rev": "workspace",
+        "step": "12"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "46.236934661865234",
+        "rev": "workspace",
+        "step": "13"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "41.9237060546875",
+        "rev": "workspace",
+        "step": "14"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "38.06521224975586",
+        "rev": "workspace",
+        "step": "15"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "34.692718505859375",
+        "rev": "workspace",
+        "step": "16"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "31.72322654724121",
+        "rev": "workspace",
+        "step": "17"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "29.08652687072754",
+        "rev": "workspace",
+        "step": "18"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "26.70629119873047",
+        "rev": "workspace",
+        "step": "19"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "24.583200454711914",
+        "rev": "workspace",
+        "step": "20"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "22.63387107849121",
+        "rev": "workspace",
+        "step": "21"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "20.899272918701172",
+        "rev": "workspace",
+        "step": "22"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "19.311094284057617",
+        "rev": "workspace",
+        "step": "23"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "17.855491638183594",
+        "rev": "workspace",
+        "step": "24"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "16.53598976135254",
+        "rev": "workspace",
+        "step": "25"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "15.387195587158203",
+        "rev": "workspace",
+        "step": "26"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "14.363648414611816",
+        "rev": "workspace",
+        "step": "27"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "13.491015434265137",
+        "rev": "workspace",
+        "step": "28"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "12.710206031799316",
+        "rev": "workspace",
+        "step": "29"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "12.033616065979004",
+        "rev": "workspace",
+        "step": "30"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "11.450643539428711",
+        "rev": "workspace",
+        "step": "31"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "10.94179916381836",
+        "rev": "workspace",
+        "step": "32"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "10.53475570678711",
+        "rev": "workspace",
+        "step": "33"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "10.166716575622559",
+        "rev": "workspace",
+        "step": "34"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "9.854337692260742",
+        "rev": "workspace",
+        "step": "35"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "9.604612350463867",
+        "rev": "workspace",
+        "step": "36"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "9.378299713134766",
+        "rev": "workspace",
+        "step": "37"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "9.190445899963379",
+        "rev": "workspace",
+        "step": "38"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "9.024950981140137",
+        "rev": "workspace",
+        "step": "39"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "8.87745189666748",
+        "rev": "workspace",
+        "step": "40"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "8.776063919067383",
+        "rev": "workspace",
+        "step": "41"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "8.673233985900879",
+        "rev": "workspace",
+        "step": "42"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "8.58599853515625",
+        "rev": "workspace",
+        "step": "43"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "8.520918846130371",
+        "rev": "workspace",
+        "step": "44"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "8.45328140258789",
+        "rev": "workspace",
+        "step": "45"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "8.395397186279297",
+        "rev": "workspace",
+        "step": "46"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "8.363048553466797",
+        "rev": "workspace",
+        "step": "47"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "8.32929801940918",
+        "rev": "workspace",
+        "step": "48"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "8.282914161682129",
+        "rev": "workspace",
+        "step": "49"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "8.257486343383789",
+        "rev": "workspace",
+        "step": "50"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "8.220541954040527",
+        "rev": "workspace",
+        "step": "51"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "8.194740295410156",
+        "rev": "workspace",
+        "step": "52"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "8.18278694152832",
+        "rev": "workspace",
+        "step": "53"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "8.145623207092285",
+        "rev": "workspace",
+        "step": "54"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "8.151034355163574",
+        "rev": "workspace",
+        "step": "55"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "8.139512062072754",
+        "rev": "workspace",
+        "step": "56"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "8.107763290405273",
+        "rev": "workspace",
+        "step": "57"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "8.10244083404541",
+        "rev": "workspace",
+        "step": "58"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "8.08980655670166",
+        "rev": "workspace",
+        "step": "59"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "8.072795867919922",
+        "rev": "workspace",
+        "step": "60"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "8.035239219665527",
+        "rev": "workspace",
+        "step": "61"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "8.041817665100098",
+        "rev": "workspace",
+        "step": "62"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "8.031957626342773",
+        "rev": "workspace",
+        "step": "63"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "8.01712703704834",
+        "rev": "workspace",
+        "step": "64"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "7.99436092376709",
+        "rev": "workspace",
+        "step": "65"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "7.9866204261779785",
+        "rev": "workspace",
+        "step": "66"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "7.952735900878906",
+        "rev": "workspace",
+        "step": "67"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "7.9912190437316895",
+        "rev": "workspace",
+        "step": "68"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "7.943719387054443",
+        "rev": "workspace",
+        "step": "69"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "7.937265872955322",
+        "rev": "workspace",
+        "step": "70"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "7.931451797485352",
+        "rev": "workspace",
+        "step": "71"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "7.920802593231201",
+        "rev": "workspace",
+        "step": "72"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "7.908452033996582",
+        "rev": "workspace",
+        "step": "73"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "7.900003910064697",
+        "rev": "workspace",
+        "step": "74"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "7.87871789932251",
+        "rev": "workspace",
+        "step": "75"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "7.854753494262695",
+        "rev": "workspace",
+        "step": "76"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "7.864313125610352",
+        "rev": "workspace",
+        "step": "77"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "7.82874870300293",
+        "rev": "workspace",
+        "step": "78"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "7.810160160064697",
+        "rev": "workspace",
+        "step": "79"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "7.795015811920166",
+        "rev": "workspace",
+        "step": "80"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "7.787899971008301",
+        "rev": "workspace",
+        "step": "81"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "7.778071403503418",
+        "rev": "workspace",
+        "step": "82"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "7.754665374755859",
+        "rev": "workspace",
+        "step": "83"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "7.709728717803955",
+        "rev": "workspace",
+        "step": "84"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "7.727635860443115",
+        "rev": "workspace",
+        "step": "85"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "7.686307430267334",
+        "rev": "workspace",
+        "step": "86"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "7.6784586906433105",
+        "rev": "workspace",
+        "step": "87"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "7.66192102432251",
+        "rev": "workspace",
+        "step": "88"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "7.63322114944458",
+        "rev": "workspace",
+        "step": "89"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "7.589971542358398",
+        "rev": "workspace",
+        "step": "90"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "7.5800065994262695",
+        "rev": "workspace",
+        "step": "91"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "7.556916236877441",
+        "rev": "workspace",
+        "step": "92"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "7.533358097076416",
+        "rev": "workspace",
+        "step": "93"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "7.47830867767334",
+        "rev": "workspace",
+        "step": "94"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "7.438982963562012",
+        "rev": "workspace",
+        "step": "95"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "7.387852668762207",
+        "rev": "workspace",
+        "step": "96"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "7.342761039733887",
+        "rev": "workspace",
+        "step": "97"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "7.294402122497559",
+        "rev": "workspace",
+        "step": "98"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "7.208581924438477",
+        "rev": "workspace",
+        "step": "99"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "7.179825305938721",
+        "rev": "workspace",
+        "step": "100"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "7.085369110107422",
+        "rev": "workspace",
+        "step": "101"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "7.043923377990723",
+        "rev": "workspace",
+        "step": "102"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "6.936343669891357",
+        "rev": "workspace",
+        "step": "103"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "6.819484233856201",
+        "rev": "workspace",
+        "step": "104"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "6.735580921173096",
+        "rev": "workspace",
+        "step": "105"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "6.609228610992432",
+        "rev": "workspace",
+        "step": "106"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "6.509796142578125",
+        "rev": "workspace",
+        "step": "107"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "6.378870964050293",
+        "rev": "workspace",
+        "step": "108"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "6.254619598388672",
+        "rev": "workspace",
+        "step": "109"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "6.122831344604492",
+        "rev": "workspace",
+        "step": "110"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "6.027714252471924",
+        "rev": "workspace",
+        "step": "111"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "5.900032043457031",
+        "rev": "workspace",
+        "step": "112"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "5.82260274887085",
+        "rev": "workspace",
+        "step": "113"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "5.7286529541015625",
+        "rev": "workspace",
+        "step": "114"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "5.632655620574951",
+        "rev": "workspace",
+        "step": "115"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "5.5763421058654785",
+        "rev": "workspace",
+        "step": "116"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "5.531085014343262",
+        "rev": "workspace",
+        "step": "117"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "5.502670764923096",
+        "rev": "workspace",
+        "step": "118"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "5.445154190063477",
+        "rev": "workspace",
+        "step": "119"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "5.425375938415527",
+        "rev": "workspace",
+        "step": "120"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "5.371978282928467",
+        "rev": "workspace",
+        "step": "121"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "5.356158256530762",
+        "rev": "workspace",
+        "step": "122"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "5.3308634757995605",
+        "rev": "workspace",
+        "step": "123"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "5.351595401763916",
+        "rev": "workspace",
+        "step": "124"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "5.341493606567383",
+        "rev": "workspace",
+        "step": "125"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "5.303892612457275",
+        "rev": "workspace",
+        "step": "126"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "5.301351547241211",
+        "rev": "workspace",
+        "step": "127"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "5.274754047393799",
+        "rev": "workspace",
+        "step": "128"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "5.31683874130249",
+        "rev": "workspace",
+        "step": "129"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "5.2470784187316895",
+        "rev": "workspace",
+        "step": "130"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "5.26015043258667",
+        "rev": "workspace",
+        "step": "131"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "5.2275495529174805",
+        "rev": "workspace",
+        "step": "132"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "5.2547078132629395",
+        "rev": "workspace",
+        "step": "133"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "5.255599021911621",
+        "rev": "workspace",
+        "step": "134"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "5.244527339935303",
+        "rev": "workspace",
+        "step": "135"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "5.210260391235352",
+        "rev": "workspace",
+        "step": "136"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "5.191219329833984",
+        "rev": "workspace",
+        "step": "137"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "5.23300838470459",
+        "rev": "workspace",
+        "step": "138"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "5.188088893890381",
+        "rev": "workspace",
+        "step": "139"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "5.188581466674805",
+        "rev": "workspace",
+        "step": "140"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "5.171037673950195",
+        "rev": "workspace",
+        "step": "141"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "5.20456600189209",
+        "rev": "workspace",
+        "step": "142"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "5.190500736236572",
+        "rev": "workspace",
+        "step": "143"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "5.153064727783203",
+        "rev": "workspace",
+        "step": "144"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "5.182553768157959",
+        "rev": "workspace",
+        "step": "145"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "5.2108683586120605",
+        "rev": "workspace",
+        "step": "146"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "5.167295932769775",
+        "rev": "workspace",
+        "step": "147"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "5.145812511444092",
+        "rev": "workspace",
+        "step": "148"
+    },
+    {
+        "eval/mean_absolute_percentage_error": "5.186705589294434",
+        "rev": "workspace",
+        "step": "149"
+    }
+]
+    },
+    "title": "",
+    "width": 300,
+    "height": 300,
+    "layer": [
+        {
+            "encoding": {
+                "x": {
+                    "field": "step",
+                    "type": "quantitative",
+                    "title": "step"
+                },
+                "y": {
+                    "field": "eval/mean_absolute_percentage_error",
+                    "type": "quantitative",
+                    "title": "eval/mean_absolute_percentage_error",
+                    "scale": {
+                        "zero": false
+                    }
+                },
+                "color": {
+                    "field": "rev",
+                    "type": "nominal"
+                }
+            },
+            "layer": [
+                {
+                    "mark": "line"
+                },
+                {
+                    "selection": {
+                        "label": {
+                            "type": "single",
+                            "nearest": true,
+                            "on": "mouseover",
+                            "encodings": [
+                                "x"
+                            ],
+                            "empty": "none",
+                            "clear": "mouseout"
+                        }
+                    },
+                    "mark": "point",
+                    "encoding": {
+                        "opacity": {
+                            "condition": {
+                                "selection": "label",
+                                "value": 1
+                            },
+                            "value": 0
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "transform": [
+                {
+                    "filter": {
+                        "selection": "label"
+                    }
+                }
+            ],
+            "layer": [
+                {
+                    "mark": {
+                        "type": "rule",
+                        "color": "gray"
+                    },
+                    "encoding": {
+                        "x": {
+                            "field": "step",
+                            "type": "quantitative"
+                        }
+                    }
+                },
+                {
+                    "encoding": {
+                        "text": {
+                            "type": "quantitative",
+                            "field": "eval/mean_absolute_percentage_error"
+                        },
+                        "x": {
+                            "field": "step",
+                            "type": "quantitative"
+                        },
+                        "y": {
+                            "field": "eval/mean_absolute_percentage_error",
+                            "type": "quantitative"
+                        }
+                    },
+                    "layer": [
+                        {
+                            "mark": {
+                                "type": "text",
+                                "align": "left",
+                                "dx": 5,
+                                "dy": -5
+                            },
+                            "encoding": {
+                                "color": {
+                                    "type": "nominal",
+                                    "field": "rev"
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
+;
+            vegaEmbed('#static_eval_mean_absolute_percentage_error', spec);
+        </script>
+    </div>
+    
+
+    <div id = "static_eval_root_mean_squared_error">
+        <script type = "text/javascript">
+            var spec = {
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    "data": {
+        "values": [
+    {
+        "eval/root_mean_squared_error": "36995.23046875",
+        "rev": "workspace",
+        "step": "0"
+    },
+    {
+        "eval/root_mean_squared_error": "36805.6484375",
+        "rev": "workspace",
+        "step": "1"
+    },
+    {
+        "eval/root_mean_squared_error": "36944.30859375",
+        "rev": "workspace",
+        "step": "2"
+    },
+    {
+        "eval/root_mean_squared_error": "37283.46484375",
+        "rev": "workspace",
+        "step": "3"
+    },
+    {
+        "eval/root_mean_squared_error": "37111.08984375",
+        "rev": "workspace",
+        "step": "4"
+    },
+    {
+        "eval/root_mean_squared_error": "36512.48046875",
+        "rev": "workspace",
+        "step": "5"
+    },
+    {
+        "eval/root_mean_squared_error": "35415.26171875",
+        "rev": "workspace",
+        "step": "6"
+    },
+    {
+        "eval/root_mean_squared_error": "32118.080078125",
+        "rev": "workspace",
+        "step": "7"
+    },
+    {
+        "eval/root_mean_squared_error": "29013.474609375",
+        "rev": "workspace",
+        "step": "8"
+    },
+    {
+        "eval/root_mean_squared_error": "26494.490234375",
+        "rev": "workspace",
+        "step": "9"
+    },
+    {
+        "eval/root_mean_squared_error": "24182.33984375",
+        "rev": "workspace",
+        "step": "10"
+    },
+    {
+        "eval/root_mean_squared_error": "21858.85546875",
+        "rev": "workspace",
+        "step": "11"
+    },
+    {
+        "eval/root_mean_squared_error": "20120.21484375",
+        "rev": "workspace",
+        "step": "12"
+    },
+    {
+        "eval/root_mean_squared_error": "18337.4375",
+        "rev": "workspace",
+        "step": "13"
+    },
+    {
+        "eval/root_mean_squared_error": "16683.330078125",
+        "rev": "workspace",
+        "step": "14"
+    },
+    {
+        "eval/root_mean_squared_error": "15229.203125",
+        "rev": "workspace",
+        "step": "15"
+    },
+    {
+        "eval/root_mean_squared_error": "13985.958984375",
+        "rev": "workspace",
+        "step": "16"
+    },
+    {
+        "eval/root_mean_squared_error": "12902.7880859375",
+        "rev": "workspace",
+        "step": "17"
+    },
+    {
+        "eval/root_mean_squared_error": "11930.357421875",
+        "rev": "workspace",
+        "step": "18"
+    },
+    {
+        "eval/root_mean_squared_error": "11049.7392578125",
+        "rev": "workspace",
+        "step": "19"
+    },
+    {
+        "eval/root_mean_squared_error": "10263.65625",
+        "rev": "workspace",
+        "step": "20"
+    },
+    {
+        "eval/root_mean_squared_error": "9537.154296875",
+        "rev": "workspace",
+        "step": "21"
+    },
+    {
+        "eval/root_mean_squared_error": "8891.5224609375",
+        "rev": "workspace",
+        "step": "22"
+    },
+    {
+        "eval/root_mean_squared_error": "8301.724609375",
+        "rev": "workspace",
+        "step": "23"
+    },
+    {
+        "eval/root_mean_squared_error": "7763.54248046875",
+        "rev": "workspace",
+        "step": "24"
+    },
+    {
+        "eval/root_mean_squared_error": "7273.29296875",
+        "rev": "workspace",
+        "step": "25"
+    },
+    {
+        "eval/root_mean_squared_error": "6839.908203125",
+        "rev": "workspace",
+        "step": "26"
+    },
+    {
+        "eval/root_mean_squared_error": "6451.29443359375",
+        "rev": "workspace",
+        "step": "27"
+    },
+    {
+        "eval/root_mean_squared_error": "6108.76416015625",
+        "rev": "workspace",
+        "step": "28"
+    },
+    {
+        "eval/root_mean_squared_error": "5794.9873046875",
+        "rev": "workspace",
+        "step": "29"
+    },
+    {
+        "eval/root_mean_squared_error": "5517.60791015625",
+        "rev": "workspace",
+        "step": "30"
+    },
+    {
+        "eval/root_mean_squared_error": "5274.7060546875",
+        "rev": "workspace",
+        "step": "31"
+    },
+    {
+        "eval/root_mean_squared_error": "5056.15576171875",
+        "rev": "workspace",
+        "step": "32"
+    },
+    {
+        "eval/root_mean_squared_error": "4876.8388671875",
+        "rev": "workspace",
+        "step": "33"
+    },
+    {
+        "eval/root_mean_squared_error": "4710.6337890625",
+        "rev": "workspace",
+        "step": "34"
+    },
+    {
+        "eval/root_mean_squared_error": "4567.18212890625",
+        "rev": "workspace",
+        "step": "35"
+    },
+    {
+        "eval/root_mean_squared_error": "4447.63232421875",
+        "rev": "workspace",
+        "step": "36"
+    },
+    {
+        "eval/root_mean_squared_error": "4338.0068359375",
+        "rev": "workspace",
+        "step": "37"
+    },
+    {
+        "eval/root_mean_squared_error": "4247.03857421875",
+        "rev": "workspace",
+        "step": "38"
+    },
+    {
+        "eval/root_mean_squared_error": "4166.966796875",
+        "rev": "workspace",
+        "step": "39"
+    },
+    {
+        "eval/root_mean_squared_error": "4095.601318359375",
+        "rev": "workspace",
+        "step": "40"
+    },
+    {
+        "eval/root_mean_squared_error": "4046.1015625",
+        "rev": "workspace",
+        "step": "41"
+    },
+    {
+        "eval/root_mean_squared_error": "3995.85986328125",
+        "rev": "workspace",
+        "step": "42"
+    },
+    {
+        "eval/root_mean_squared_error": "3953.221923828125",
+        "rev": "workspace",
+        "step": "43"
+    },
+    {
+        "eval/root_mean_squared_error": "3921.28271484375",
+        "rev": "workspace",
+        "step": "44"
+    },
+    {
+        "eval/root_mean_squared_error": "3888.22412109375",
+        "rev": "workspace",
+        "step": "45"
+    },
+    {
+        "eval/root_mean_squared_error": "3860.0732421875",
+        "rev": "workspace",
+        "step": "46"
+    },
+    {
+        "eval/root_mean_squared_error": "3844.551025390625",
+        "rev": "workspace",
+        "step": "47"
+    },
+    {
+        "eval/root_mean_squared_error": "3828.37451171875",
+        "rev": "workspace",
+        "step": "48"
+    },
+    {
+        "eval/root_mean_squared_error": "3806.059814453125",
+        "rev": "workspace",
+        "step": "49"
+    },
+    {
+        "eval/root_mean_squared_error": "3794.01171875",
+        "rev": "workspace",
+        "step": "50"
+    },
+    {
+        "eval/root_mean_squared_error": "3776.398193359375",
+        "rev": "workspace",
+        "step": "51"
+    },
+    {
+        "eval/root_mean_squared_error": "3764.285888671875",
+        "rev": "workspace",
+        "step": "52"
+    },
+    {
+        "eval/root_mean_squared_error": "3758.89013671875",
+        "rev": "workspace",
+        "step": "53"
+    },
+    {
+        "eval/root_mean_squared_error": "3741.364990234375",
+        "rev": "workspace",
+        "step": "54"
+    },
+    {
+        "eval/root_mean_squared_error": "3744.31640625",
+        "rev": "workspace",
+        "step": "55"
+    },
+    {
+        "eval/root_mean_squared_error": "3739.075927734375",
+        "rev": "workspace",
+        "step": "56"
+    },
+    {
+        "eval/root_mean_squared_error": "3724.02490234375",
+        "rev": "workspace",
+        "step": "57"
+    },
+    {
+        "eval/root_mean_squared_error": "3721.85595703125",
+        "rev": "workspace",
+        "step": "58"
+    },
+    {
+        "eval/root_mean_squared_error": "3716.213623046875",
+        "rev": "workspace",
+        "step": "59"
+    },
+    {
+        "eval/root_mean_squared_error": "3708.46337890625",
+        "rev": "workspace",
+        "step": "60"
+    },
+    {
+        "eval/root_mean_squared_error": "3690.9267578125",
+        "rev": "workspace",
+        "step": "61"
+    },
+    {
+        "eval/root_mean_squared_error": "3694.37109375",
+        "rev": "workspace",
+        "step": "62"
+    },
+    {
+        "eval/root_mean_squared_error": "3690.118408203125",
+        "rev": "workspace",
+        "step": "63"
+    },
+    {
+        "eval/root_mean_squared_error": "3683.5810546875",
+        "rev": "workspace",
+        "step": "64"
+    },
+    {
+        "eval/root_mean_squared_error": "3673.128173828125",
+        "rev": "workspace",
+        "step": "65"
+    },
+    {
+        "eval/root_mean_squared_error": "3669.804443359375",
+        "rev": "workspace",
+        "step": "66"
+    },
+    {
+        "eval/root_mean_squared_error": "3654.23779296875",
+        "rev": "workspace",
+        "step": "67"
+    },
+    {
+        "eval/root_mean_squared_error": "3673.19287109375",
+        "rev": "workspace",
+        "step": "68"
+    },
+    {
+        "eval/root_mean_squared_error": "3651.124267578125",
+        "rev": "workspace",
+        "step": "69"
+    },
+    {
+        "eval/root_mean_squared_error": "3648.63037109375",
+        "rev": "workspace",
+        "step": "70"
+    },
+    {
+        "eval/root_mean_squared_error": "3646.5",
+        "rev": "workspace",
+        "step": "71"
+    },
+    {
+        "eval/root_mean_squared_error": "3642.05419921875",
+        "rev": "workspace",
+        "step": "72"
+    },
+    {
+        "eval/root_mean_squared_error": "3636.6708984375",
+        "rev": "workspace",
+        "step": "73"
+    },
+    {
+        "eval/root_mean_squared_error": "3633.643310546875",
+        "rev": "workspace",
+        "step": "74"
+    },
+    {
+        "eval/root_mean_squared_error": "3624.355712890625",
+        "rev": "workspace",
+        "step": "75"
+    },
+    {
+        "eval/root_mean_squared_error": "3613.69921875",
+        "rev": "workspace",
+        "step": "76"
+    },
+    {
+        "eval/root_mean_squared_error": "3619.12353515625",
+        "rev": "workspace",
+        "step": "77"
+    },
+    {
+        "eval/root_mean_squared_error": "3603.18212890625",
+        "rev": "workspace",
+        "step": "78"
+    },
+    {
+        "eval/root_mean_squared_error": "3595.207275390625",
+        "rev": "workspace",
+        "step": "79"
+    },
+    {
+        "eval/root_mean_squared_error": "3589.170654296875",
+        "rev": "workspace",
+        "step": "80"
+    },
+    {
+        "eval/root_mean_squared_error": "3586.983642578125",
+        "rev": "workspace",
+        "step": "81"
+    },
+    {
+        "eval/root_mean_squared_error": "3583.56103515625",
+        "rev": "workspace",
+        "step": "82"
+    },
+    {
+        "eval/root_mean_squared_error": "3573.71923828125",
+        "rev": "workspace",
+        "step": "83"
+    },
+    {
+        "eval/root_mean_squared_error": "3553.88671875",
+        "rev": "workspace",
+        "step": "84"
+    },
+    {
+        "eval/root_mean_squared_error": "3563.947021484375",
+        "rev": "workspace",
+        "step": "85"
+    },
+    {
+        "eval/root_mean_squared_error": "3545.882080078125",
+        "rev": "workspace",
+        "step": "86"
+    },
+    {
+        "eval/root_mean_squared_error": "3544.00390625",
+        "rev": "workspace",
+        "step": "87"
+    },
+    {
+        "eval/root_mean_squared_error": "3538.281005859375",
+        "rev": "workspace",
+        "step": "88"
+    },
+    {
+        "eval/root_mean_squared_error": "3526.53662109375",
+        "rev": "workspace",
+        "step": "89"
+    },
+    {
+        "eval/root_mean_squared_error": "3508.545654296875",
+        "rev": "workspace",
+        "step": "90"
+    },
+    {
+        "eval/root_mean_squared_error": "3506.910888671875",
+        "rev": "workspace",
+        "step": "91"
+    },
+    {
+        "eval/root_mean_squared_error": "3498.7109375",
+        "rev": "workspace",
+        "step": "92"
+    },
+    {
+        "eval/root_mean_squared_error": "3490.8134765625",
+        "rev": "workspace",
+        "step": "93"
+    },
+    {
+        "eval/root_mean_squared_error": "3468.409912109375",
+        "rev": "workspace",
+        "step": "94"
+    },
+    {
+        "eval/root_mean_squared_error": "3453.6953125",
+        "rev": "workspace",
+        "step": "95"
+    },
+    {
+        "eval/root_mean_squared_error": "3433.88720703125",
+        "rev": "workspace",
+        "step": "96"
+    },
+    {
+        "eval/root_mean_squared_error": "3417.250244140625",
+        "rev": "workspace",
+        "step": "97"
+    },
+    {
+        "eval/root_mean_squared_error": "3400.1884765625",
+        "rev": "workspace",
+        "step": "98"
+    },
+    {
+        "eval/root_mean_squared_error": "3365.3251953125",
+        "rev": "workspace",
+        "step": "99"
+    },
+    {
+        "eval/root_mean_squared_error": "3359.748291015625",
+        "rev": "workspace",
+        "step": "100"
+    },
+    {
+        "eval/root_mean_squared_error": "3323.184814453125",
+        "rev": "workspace",
+        "step": "101"
+    },
+    {
+        "eval/root_mean_squared_error": "3312.11083984375",
+        "rev": "workspace",
+        "step": "102"
+    },
+    {
+        "eval/root_mean_squared_error": "3272.4697265625",
+        "rev": "workspace",
+        "step": "103"
+    },
+    {
+        "eval/root_mean_squared_error": "3227.916259765625",
+        "rev": "workspace",
+        "step": "104"
+    },
+    {
+        "eval/root_mean_squared_error": "3200.97412109375",
+        "rev": "workspace",
+        "step": "105"
+    },
+    {
+        "eval/root_mean_squared_error": "3154.439453125",
+        "rev": "workspace",
+        "step": "106"
+    },
+    {
+        "eval/root_mean_squared_error": "3124.877197265625",
+        "rev": "workspace",
+        "step": "107"
+    },
+    {
+        "eval/root_mean_squared_error": "3080.65283203125",
+        "rev": "workspace",
+        "step": "108"
+    },
+    {
+        "eval/root_mean_squared_error": "3035.84375",
+        "rev": "workspace",
+        "step": "109"
+    },
+    {
+        "eval/root_mean_squared_error": "2991.234130859375",
+        "rev": "workspace",
+        "step": "110"
+    },
+    {
+        "eval/root_mean_squared_error": "2962.527587890625",
+        "rev": "workspace",
+        "step": "111"
+    },
+    {
+        "eval/root_mean_squared_error": "2912.31494140625",
+        "rev": "workspace",
+        "step": "112"
+    },
+    {
+        "eval/root_mean_squared_error": "2886.647216796875",
+        "rev": "workspace",
+        "step": "113"
+    },
+    {
+        "eval/root_mean_squared_error": "2851.7294921875",
+        "rev": "workspace",
+        "step": "114"
+    },
+    {
+        "eval/root_mean_squared_error": "2811.29345703125",
+        "rev": "workspace",
+        "step": "115"
+    },
+    {
+        "eval/root_mean_squared_error": "2788.56591796875",
+        "rev": "workspace",
+        "step": "116"
+    },
+    {
+        "eval/root_mean_squared_error": "2772.607421875",
+        "rev": "workspace",
+        "step": "117"
+    },
+    {
+        "eval/root_mean_squared_error": "2763.685302734375",
+        "rev": "workspace",
+        "step": "118"
+    },
+    {
+        "eval/root_mean_squared_error": "2734.02880859375",
+        "rev": "workspace",
+        "step": "119"
+    },
+    {
+        "eval/root_mean_squared_error": "2728.563720703125",
+        "rev": "workspace",
+        "step": "120"
+    },
+    {
+        "eval/root_mean_squared_error": "2703.3818359375",
+        "rev": "workspace",
+        "step": "121"
+    },
+    {
+        "eval/root_mean_squared_error": "2697.619873046875",
+        "rev": "workspace",
+        "step": "122"
+    },
+    {
+        "eval/root_mean_squared_error": "2682.47900390625",
+        "rev": "workspace",
+        "step": "123"
+    },
+    {
+        "eval/root_mean_squared_error": "2695.616455078125",
+        "rev": "workspace",
+        "step": "124"
+    },
+    {
+        "eval/root_mean_squared_error": "2689.53857421875",
+        "rev": "workspace",
+        "step": "125"
+    },
+    {
+        "eval/root_mean_squared_error": "2672.6884765625",
+        "rev": "workspace",
+        "step": "126"
+    },
+    {
+        "eval/root_mean_squared_error": "2670.27392578125",
+        "rev": "workspace",
+        "step": "127"
+    },
+    {
+        "eval/root_mean_squared_error": "2657.10302734375",
+        "rev": "workspace",
+        "step": "128"
+    },
+    {
+        "eval/root_mean_squared_error": "2680.240478515625",
+        "rev": "workspace",
+        "step": "129"
+    },
+    {
+        "eval/root_mean_squared_error": "2642.671630859375",
+        "rev": "workspace",
+        "step": "130"
+    },
+    {
+        "eval/root_mean_squared_error": "2650.720458984375",
+        "rev": "workspace",
+        "step": "131"
+    },
+    {
+        "eval/root_mean_squared_error": "2632.702392578125",
+        "rev": "workspace",
+        "step": "132"
+    },
+    {
+        "eval/root_mean_squared_error": "2649.924560546875",
+        "rev": "workspace",
+        "step": "133"
+    },
+    {
+        "eval/root_mean_squared_error": "2650.59228515625",
+        "rev": "workspace",
+        "step": "134"
+    },
+    {
+        "eval/root_mean_squared_error": "2645.82470703125",
+        "rev": "workspace",
+        "step": "135"
+    },
+    {
+        "eval/root_mean_squared_error": "2625.510986328125",
+        "rev": "workspace",
+        "step": "136"
+    },
+    {
+        "eval/root_mean_squared_error": "2616.104736328125",
+        "rev": "workspace",
+        "step": "137"
+    },
+    {
+        "eval/root_mean_squared_error": "2638.601806640625",
+        "rev": "workspace",
+        "step": "138"
+    },
+    {
+        "eval/root_mean_squared_error": "2610.095947265625",
+        "rev": "workspace",
+        "step": "139"
+    },
+    {
+        "eval/root_mean_squared_error": "2615.328857421875",
+        "rev": "workspace",
+        "step": "140"
+    },
+    {
+        "eval/root_mean_squared_error": "2605.765625",
+        "rev": "workspace",
+        "step": "141"
+    },
+    {
+        "eval/root_mean_squared_error": "2624.589599609375",
+        "rev": "workspace",
+        "step": "142"
+    },
+    {
+        "eval/root_mean_squared_error": "2617.627197265625",
+        "rev": "workspace",
+        "step": "143"
+    },
+    {
+        "eval/root_mean_squared_error": "2596.920166015625",
+        "rev": "workspace",
+        "step": "144"
+    },
+    {
+        "eval/root_mean_squared_error": "2612.651611328125",
+        "rev": "workspace",
+        "step": "145"
+    },
+    {
+        "eval/root_mean_squared_error": "2630.293701171875",
+        "rev": "workspace",
+        "step": "146"
+    },
+    {
+        "eval/root_mean_squared_error": "2606.023193359375",
+        "rev": "workspace",
+        "step": "147"
+    },
+    {
+        "eval/root_mean_squared_error": "2591.157958984375",
+        "rev": "workspace",
+        "step": "148"
+    },
+    {
+        "eval/root_mean_squared_error": "2613.056640625",
+        "rev": "workspace",
+        "step": "149"
+    }
+]
+    },
+    "title": "",
+    "width": 300,
+    "height": 300,
+    "layer": [
+        {
+            "encoding": {
+                "x": {
+                    "field": "step",
+                    "type": "quantitative",
+                    "title": "step"
+                },
+                "y": {
+                    "field": "eval/root_mean_squared_error",
+                    "type": "quantitative",
+                    "title": "eval/root_mean_squared_error",
+                    "scale": {
+                        "zero": false
+                    }
+                },
+                "color": {
+                    "field": "rev",
+                    "type": "nominal"
+                }
+            },
+            "layer": [
+                {
+                    "mark": "line"
+                },
+                {
+                    "selection": {
+                        "label": {
+                            "type": "single",
+                            "nearest": true,
+                            "on": "mouseover",
+                            "encodings": [
+                                "x"
+                            ],
+                            "empty": "none",
+                            "clear": "mouseout"
+                        }
+                    },
+                    "mark": "point",
+                    "encoding": {
+                        "opacity": {
+                            "condition": {
+                                "selection": "label",
+                                "value": 1
+                            },
+                            "value": 0
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "transform": [
+                {
+                    "filter": {
+                        "selection": "label"
+                    }
+                }
+            ],
+            "layer": [
+                {
+                    "mark": {
+                        "type": "rule",
+                        "color": "gray"
+                    },
+                    "encoding": {
+                        "x": {
+                            "field": "step",
+                            "type": "quantitative"
+                        }
+                    }
+                },
+                {
+                    "encoding": {
+                        "text": {
+                            "type": "quantitative",
+                            "field": "eval/root_mean_squared_error"
+                        },
+                        "x": {
+                            "field": "step",
+                            "type": "quantitative"
+                        },
+                        "y": {
+                            "field": "eval/root_mean_squared_error",
+                            "type": "quantitative"
+                        }
+                    },
+                    "layer": [
+                        {
+                            "mark": {
+                                "type": "text",
+                                "align": "left",
+                                "dx": 5,
+                                "dy": -5
+                            },
+                            "encoding": {
+                                "color": {
+                                    "type": "nominal",
+                                    "field": "rev"
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
+;
+            vegaEmbed('#static_eval_root_mean_squared_error', spec);
+        </script>
+    </div>
+    
+</body>
+</html>

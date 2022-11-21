@@ -68,10 +68,14 @@ def predict_autoregressive_load(model,data):
 
 
 
-def predict_load(model, pred_dataset: pd.DataFrame, params: Dict):
-    """If the param MODEL_TYPE is set to "AUTOREGRESSIVE" in params.yaml,
-        return autoregressive predictions.
+def predict_load(model, input_and_target: pd.DataFrame, params: Dict):
+    """ 
+    If the param MODEL_TYPE is set to "AUTOREGRESSIVE" in params.yaml,
+    return autoregressive predictions in array.
 
+    If the param MODEL_TYPE is set to "SINGLE-SHOT" in params.yaml,
+    return df with inputs and single-shot predictions.
+       
     Args:
         model (_type_): _description_
         pred_dataset (_type_): _description_
@@ -82,18 +86,19 @@ def predict_load(model, pred_dataset: pd.DataFrame, params: Dict):
     """
     autoreg_steps = params["featurize"]["TARGET_PERIOD"]
     model_type = params["featurize"]["MODEL_TYPE"]
-    temp_pred_dataset = pred_dataset
 
     if model_type == "AUTOREGRESSIVE":
-        temp_pred_dataset = predict_autoregressive_load(model, temp_pred_dataset)
+        predictions = predict_autoregressive_load(model, input_and_target)
         print("Forecasting type: AUTOREGRESSIVE... Done!")
+        return predictions
 
     elif model_type == "SINGLE-SHOT":
-        temp_pred = model.predict(temp_pred_dataset)
-        temp_pred_dataset = temp_pred_dataset.merge(
+        input_data = input_and_target[0]
+        predictions = model.predict(input_data)
+        inputs_and_predictions = input_data.merge(
             pd.DataFrame(
-                temp_pred,
-                index=pred_dataset.index,
+                predictions,
+                index=input_data.index,
                 columns=[
                     f"previsão semana {week}" for week in range(1, autoreg_steps + 1)
                 ],
@@ -103,7 +108,7 @@ def predict_load(model, pred_dataset: pd.DataFrame, params: Dict):
         )
         print("Forecasting type: SINGLE-SHOT... Done!")
 
-    return temp_pred_dataset
+        return inputs_and_predictions
 
 def prepare_predicted_data(
     pred_data,
@@ -131,4 +136,6 @@ def prepare_predicted_data(
         return concat_pred
 
     if model_type == 'SINGLE-SHOT':
+        date_forecast = pred_data.index + pd.Timedelta(value=7 * window_size, unit="d")
+        pred_data["Data Previsão"] = [str(date).split(" ")[0] for date in date_forecast]
         return pred_data
