@@ -1,62 +1,98 @@
 stages:
   preprocess:
-    cmd: python src/preprocess.py
+    cmd: python -m src.preprocess
     deps:
     - data/raw-data
     - src/preprocess.py
+    - src/common/load_data.py
     params:
     - preprocess.DATA_YEAR_START_PP
     - preprocess.HOW_IMPUTE_NAN
     - preprocess.TEST_START_PP
     - preprocess.VAL_START_PP
+    - featurize.WINDOW_SIZE
     outs:
     - data/preprocessed/train_preprocessed.csv
     - data/preprocessed/val_preprocessed.csv
-    - data/preprocessed/test_preprocessed.csv
-    - data/target/target_df.csv
-  featurize:
-    cmd: python src/featurize.py
+    # - data/preprocessed/test_preprocessed.csv
+  generate_target:
+    cmd: python -m src.generate_target
     deps:
-    - data/preprocessed/train_preprocessed.csv
-    - data/preprocessed/val_preprocessed.csv
-    - data/preprocessed/test_preprocessed.csv
-    - src/featurize.py
+     - src/common/target_methods.py
+     - src/common/load_data.py
+     - src/preprocess.py
     params:
-    - featurize.BATCH_SIZE_PRO
-    - featurize.WINDOW_SIZE_PRO
-    - featurize.SUFFLE_BUFFER_PRO
-    - featurize.TARGET_PERIOD_PRO
-    - featurize.HOW_WINDOW_GEN_PRO
+    - preprocess.DATA_YEAR_START_PP
+    - preprocess.HOW_IMPUTE_NAN
     outs:
-    - data/featurized/train_processed
-    - data/featurized/val_processed
-    - data/featurized/test_processed
-  train: 
-    cmd: python src/train.py
+      - data/target/target_df.csv
+  featurize:
+    cmd: python -m src.featurize
     deps:
-    - data/featurized/train_processed
-    - data/featurized/val_processed
-    - data/featurized/test_processed
+    - data/preprocessed/train_preprocessed.csv
+    - data/preprocessed/val_preprocessed.csv
+    # - data/preprocessed/test_preprocessed.csv
+    - src/featurize.py
+    - src/common/load_data.py
+    params:
+    - preprocess.TEST_START_PP
+    - featurize.BATCH_SIZE_PRO
+    - featurize.WINDOW_SIZE
+    - featurize.SUFFLE_BUFFER_PRO
+    - featurize.TARGET_PERIOD
+    - featurize.HOW_INPUT_WINDOW_GEN
+    - featurize.HOW_TARGET_WINDOW_GEN
+    - featurize.MODEL_TYPE
+    outs:
+    - data/featurized/train_processed.csv
+    - data/featurized/val_processed.csv
+    # - data/featurized/test_processed.csv
+  train: 
+    cmd: python -m src.train
+    deps:
+    - data/featurized/train_processed.csv
+    - data/featurized/val_processed.csv
+    # - data/featurized/test_processed.csv
     - src/train.py
+    - src/common/load_data.py
+    - src/utils/utils_evaluate.py
+    - src/utils/create_model.py
+    - src/utils/data_transform.py
     params:
     - train.EPOCHS
     - train.PATIENCE
     - train.NEURONS
     - train.MODEL_NAME
+    - featurize.MODEL_TYPE
+    metrics:
+    - dvclive/metrics.json:
+        cache: false
+    plots:
+    - dvclive/plots:
+        cache: false
     outs:
-    - src/model/model_train.h5
+    - src/model/model_train/
     - evaluation/history.json
     - evaluation/history_params.json
-  evaluate:
-    cmd: python src/evaluate.py
-    deps:
-    - src/evaluate.py
-    - src/model/model_train.h5
-    - data/target/target_df.csv
-    - evaluation/history.json
-    outs:
     - evaluation/learning_curves.png
     - evaluation/metrics_semana.png
     - evaluation/prediction_series.png
     - evaluation/residuo.png
-  
+    - data/predicted/train.csv
+    - data/predicted/val.csv
+  # evaluate:
+  #   cmd: python -m src.evaluate
+  #   deps:
+  #   - src/evaluate.py
+  #   - src/common/utils_evaluate.py
+  #   - src/common/load_data.py
+  #   - src/model/model_train/
+  #   - data/target/target_df.csv
+  #   - evaluation/history.json
+  #   outs:
+  #   - evaluation/learning_curves.png
+  #   - evaluation/metrics_semana.png
+  #   - evaluation/prediction_series.png
+  #   - evaluation/residuo.png
+  #   params:
+  #   - featurize.MODEL_TYPE

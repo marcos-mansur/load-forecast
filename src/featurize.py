@@ -1,16 +1,24 @@
+""" Module for transforming cleaned data into properly featurized input data """
 import os
 
-import numpy as np
 import pandas as pd
-import tensorflow as tf
 import yaml
 from sklearn.base import BaseEstimator
 
-from common.logger import get_logger
-from const import *
+from src.common.load_data import load_processed_data
+from src.common.logger import get_logger
+from src.config.const import (
+    PROCESSED_DATA_PATH,
+    TEST_PROCESSED_DATA_PATH,
+    TRAIN_PRED_PROCESSED_DATA_PATH,
+    TRAIN_PROCESSED_DATA_PATH,
+    VAL_PROCESSED_DATA_PATH,
+)
 
 
-class Window_Generator(BaseEstimator):
+class WindowGenerator(BaseEstimator):
+    """Class for generating windowed dataframes for time series prediction"""
+
     def __init__(
         self,
         target_period,
@@ -19,152 +27,168 @@ class Window_Generator(BaseEstimator):
         shuffle_buffer,
         regiao="SUDESTE",
         sazo_weeks=2,
-        SEED=SEED,
-        how="input diário",
+        how_input="weekly",
+        how_target="weekly",
+        model_type="AUTOREGRESSIVE",
     ):
-        self.target_period = target_period * 7  # in weeks
-        self.window_size = window_size  # in weeks
         self.batch_size = batch_size
         self.shuffle_buffer = shuffle_buffer
+
         self.regiao = regiao
-        self.SEED = SEED
-        self.how = how
         self.sazo_weeks = sazo_weeks
-        assert self.how in ["input diário", "sazonalidade anual", "autorregressivo"]
+
+        self.how_input = how_input
+        self.how_target = how_target
+
+        self.window_size = window_size
+        self.target_period = target_period
+
+        self.model_type = model_type
+
+        if self.how_input == "daily":
+            assert (
+                self.window_size % 7 == 0
+            ), "how_input = 'daily' demmands window_size multiple of 7 (days in a week)"
+
+        assert self.how_input in [
+            "daily",
+            "weekly",
+        ], "how_input only accepts 'daily' or 'weekly"
+        assert self.how_target in [
+            "daily",
+            "weekly",
+        ], "how_target only accepts 'daily' or 'weekly"
+
         pass
 
-    def generate_data_week(self, df):
-        """Generate a list with the same index as the window features with the first
-            day of the first week of the target
-        Returns:
-            data_week: first day of the first target week
-        """
-        df = df.copy()
-        # groupby object by week and then by day
-        df_grouped = df[self.window_size * 7 :].groupby(by=["semana"])["din_instante"]
-        # get first day of each week and  removes the last 4 rows
-        # because we want to save the first day of the first target week
-        # so we drop the last target 4 weeks
-        return df_grouped.min().iloc[:-4]
-
-    def map_data(self, dataset):
-        """Defines how the data will be processed into features and target.
-        If self.how = 'input diário', the features will be in daily load
-                        of window_size lenght.
-        If self.how = 'sazonalidade anual', the features will be the last
-                        'sazo_weeks' weeks and the same week from last year.
-        if self.how = 'autorregressivo', the features are detailed in weekly
-                       average load. target window_size = 1. This option
-                       enables multi-step prediction.
+    def group_data(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Groups load data by weekly average
 
         Args:
-            dataset (tf.data.Dataset): windowed dataset
+            df (pd.DataFrame): input data
 
         Returns:
-            tf.data.Dataset: dataset processed into features and targets
+            pd: DataFrame: input dataframe aggregated by average weekly load
         """
-        if self.how == "input diário":
-            """inputs in daily average load, targets in weekly average load"""
+        weekly_load = df.groupby("semana")["val_cargaenergiamwmed"].mean()
+        # reset index so we can use din_instante in the calculations
+        df_reset_index = df.reset_index(drop=False)
+        first_day_of_week = df_reset_index.groupby("semana")["din_instante"].min()
+        group_df = pd.DataFrame(
+            data={
+                "val_cargaenergiamwmed": weekly_load,
+                "din_instante": first_day_of_week,
+            }
+        )
+        group_df_mais_dia = pd.merge(
+            left=group_df,
+            right=df_reset_index[["din_instante", "dia semana", "semana"]],
+            how="left",
+            on="din_instante",
+        )
+        return group_df_mais_dia
 
-            assert (
-                self.target_period == 35
-            ), f"""targe_period = {self.target_period}, 
-                                                deve ser igual a 35 (5 semanas)"""
-            dataset = dataset.map(
-                lambda window: (
-                    window[: -self.target_period],  # features
-                    [
-                        tf.math.reduce_sum(window[-35:-28]) / 7,  # first target week
-                        tf.math.reduce_sum(window[-28:-21]) / 7,  # second target week
-                        tf.math.reduce_sum(window[-21:-14]) / 7,  # third target week
-                        tf.math.reduce_sum(window[-14:-7]) / 7,  # fourth target week
-                        tf.math.reduce_sum(window[-7:]) / 7,
-                    ],  # fifith target week
-                )
-            )
+    def create_input_window(
+        self, df: pd.DataFrame, df_weekly: pd.DataFrame
+    ) -> pd.DataFrame:
+        """Creates a input window dataframe from a series.
 
-        if self.how == "sazonalidade anual":
-            """the inputs are the daily load of the same week in
-            the year before and in the last sazo_weeks from the time window"""
-            assert (
-                self.window_size * 7 >= 365
-            ), """window size menor que 365 dias, 
-                                        não é possível usar how = 'sazonalidade anual'"""
-            assert (
-                self.target_period == 35
-            ), f"""targe_period = {self.target_period},
-                                                deve ser igual a 35 (5 semanas)"""
-            dataset = dataset.map(
-                lambda window: (
-                    tf.concat(
-                        values=[  # week in the year before
-                            tf.math.reduce_mean(
-                                window[
-                                    -364
-                                    - self.target_period : -357
-                                    - self.target_period
-                                ],
-                                axis=0,
-                            ),
-                            # last weeks
-                            tf.math.reduce_mean(
-                                window[
-                                    -(self.sazo_weeks * 7)
-                                    - self.target_period : -self.target_period
-                                ],
-                                axis=0,
-                            ),
-                        ],
-                        axis=-1,
-                    ),  # features
-                    [
-                        tf.math.reduce_sum(window[-35:-28]) / 7,  # first target week
-                        tf.math.reduce_sum(window[-28:-21]) / 7,  # second target week
-                        tf.math.reduce_sum(window[-21:-14]) / 7,  # third target week
-                        tf.math.reduce_sum(window[-14:-7]) / 7,  # fourth target week
-                        tf.math.reduce_sum(window[-7:]) / 7,
-                    ],  # fifith target week
-                )
-            )
+        Args:
+            df (pd.DataFrame): input data series dataframe
+            df_weekly (pd.DataFrame): input data series dataframe
+                aggregated by average weekly load
 
-        if self.how == "autorregressivo":
-            """for multi-step forecasting. target = next week;
-            inputs = last self.window_size weeks as weekly average load
-            """
-            assert (
-                self.target_period == 7
-            ), f"""target_periodo = {self.target_period},
-                                                deve ser igual = 7 (dias)"""
-            assert self.window_size >= 5, "window_size menor que 5 semanas"
+        Returns:
+            pd.DataFrame: a windowed input dataframe with shifted values.
+        """
 
-            dataset = dataset.map(
-                lambda window: (
-                    # transform input to weeks
-                    tf.reshape(
-                        [
-                            tf.reshape(
-                                tf.math.reduce_mean(
-                                    window[
-                                        -x * 7
-                                        - self.target_period : -(x - 1) * 7
-                                        - self.target_period
-                                    ],
-                                    axis=0,
-                                ),
-                                shape=[-1],
-                            )
-                            for x in range(int(self.window_size), 0, -1)
-                        ],
-                        shape=[-1],
-                    ),
-                    # target
-                    tf.math.reduce_mean(window[-self.target_period :], axis=0),
-                )
-            )
+        if self.how_input == "daily":
+            df_shift = df.copy()
+            periodo = "dia"
+            for time_step in range(self.window_size):
+                df_shift[f"input {periodo} {time_step+1}"] = df_shift[
+                    "val_cargaenergiamwmed"
+                ].shift(-time_step)
 
-        return dataset
+        elif self.how_input == "weekly":
+            df_shift = df_weekly.copy()
+            periodo = "semana"
+            for time_step in range(1, self.window_size + 1):
+                df_shift[f"input {periodo} {time_step}"] = df_weekly[
+                    "val_cargaenergiamwmed"
+                ].shift(-time_step + 1)
 
-    def transform(self, df, shuffle=True):
+        return df_shift
+
+    def create_target_window(
+        self, df: pd.DataFrame, df_weekly: pd.DataFrame
+    ) -> pd.DataFrame:
+        """Creates a target window dataframe from a series.
+
+        Args:
+            df (pd.DataFrame): data series dataframe
+            df_weekly (pd.DataFrame): data series dataframe
+                aggregated by average weekly load
+
+        Returns:
+            pd.DataFrame: a windowed dataframe with shifted values for target.
+        """
+        # if input is daily, the window_size unit is 'day' and the shift must be in days
+        temp_window_size = self.window_size
+        if self.how_input == "daily":
+            temp_window_size = self.window_size / 7
+
+        df = df.copy()
+        df["Data Forecast"] = df.index + pd.Timedelta(
+            value=7 * temp_window_size, unit="d"
+        )
+        if self.how_input == "weekly":
+            time_step_factor = 7
+        elif self.how_input == "daily":
+            time_step_factor = 1
+
+        # if self.how_target == "daily":
+        #     df_shift = df.copy()
+        #     periodo = "dia"
+        #     # DAILY DAILY TA QUEBRADO
+        #     for time_step in range(
+        #         self.window_size * time_step_factor,
+        #         self.window_size + self.target_period,
+        #     ):
+        #         df_shift[
+        #             f"target {periodo} {time_step/time_step_factor+1}"
+        #         ] = df_shift["val_cargaenergiamwmed"].shift(-time_step)
+
+        #     df_shift[df_shift["dia semana"] == "Friday"]
+
+        if self.how_target == "weekly":
+            df_shift = df_weekly.copy()
+            periodo = "semana"
+
+            # if self.how_input == "daily":
+            #     for time_step in range(
+            #         int(self.window_size / 7),
+            #         int(self.window_size / 7) + self.target_period,
+            #     ):
+            #         df_shift[
+            #             f"target {periodo} {time_step+1}"
+            #         ] = (
+            #             df_weekly.groupby("semana")["val_cargaenergiamwmed"]
+            #             .mean()
+            #             .shift(-time_step)
+            #         )
+
+            if self.how_input == "weekly":
+                for time_step in range(
+                    self.window_size, self.window_size + self.target_period
+                ):
+                    df_shift[f"target {periodo} {time_step+1}"] = df_weekly[
+                        "val_cargaenergiamwmed"
+                    ].shift(-time_step)
+
+        return df_shift
+
+    def transform(self, df: pd.DataFrame, shuffle: bool = True) -> pd.DataFrame:
         """Transform a preprocessed dataframe in a windowed dataset
         Returns:
             dataset: a windowed tensorflow.dataset with window_size
@@ -172,106 +196,87 @@ class Window_Generator(BaseEstimator):
                      load for the next five weeks as targets
         """
         df = df.copy()
-        data_week = self.generate_data_week(df)
-        series = df["val_cargaenergiamwmed"]
-        # generate tf.dataset
-        dataset = tf.data.Dataset.from_tensor_slices(series)
+        df_period = df.copy()
 
-        # create windows
-        dataset = dataset.window(
-            self.window_size * 7 + self.target_period, shift=7, drop_remainder=True
+        if self.how_input == "weekly" or self.how_target == "weekly":
+            df_period = self.group_data(df)
+
+        df_input_window = self.create_input_window(df, df_period)
+        df_target_window = self.create_target_window(df, df_period)
+
+        df_window_merge = pd.merge(
+            left=df_input_window, right=df_target_window, how="left", on="din_instante"
         )
-        # make sure every window is the same size / clip NaN at the end
-        dataset = dataset.flat_map(
-            lambda window: window.batch(self.window_size * 7 + self.target_period)
-        )
+        df_window_merge.set_index("din_instante", inplace=True)
+
         if shuffle:
             # randomly shuffles the windows instances in the dataset
-            dataset = dataset.shuffle(self.shuffle_buffer, seed=self.SEED)
-        # separates features and target and take the average of the target days by week
-        dataset = self.map_data(dataset)
+            df_window_merge = df_window_merge.sample(frac=1)
 
-        # batch and prefetch
-        dataset = dataset.batch(self.batch_size).prefetch(1)
+        df_drop_na = df_window_merge.dropna(axis=0, how="any")
+        df_drop_cols = df_drop_na.drop(
+            labels=[
+                "Unnamed: 0",
+                "val_cargaenergiamwmed_x",
+                "val_cargaenergiamwmed_y",
+                "dia semana_x",
+                "dia semana_y",
+                "semana_x",
+                "semana_y",
+                "ano",
+                "Mes",
+                "dia mes",
+            ],
+            errors="ignore",
+            axis=1,
+        )
+        return df_drop_cols
 
-        for i, t in dataset:
-            logger.debug({"input shape": i.shape, "target shape": t.shape})
-            break
-        return dataset, data_week
 
+def main():
+    """Main function of featurize module. Featurize cleaned data and save it to disk."""
 
-def load_data_process():
-    train_df = pd.read_csv(TRAIN_TREATED_DATA_PATH)
-    val_df = pd.read_csv(VAL_TREATED_DATA_PATH)
-    test_df = pd.read_csv(TEST_TREATED_DATA_PATH)
-    return train_df, val_df, test_df
+    params = yaml.safe_load(open("params.yaml"))
 
+    train_df, val_df, test_df = load_processed_data(params)
+    logger.info("FEATURIZE: LOADING DATA... DONE!")
 
-if __name__ == "__main__":
-
-    logger = get_logger(__name__)
-
-    train_df, val_df, test_df = load_data_process()
-
-    params = yaml.safe_load(open("params.yaml"))["featurize"]
-
-    wd = Window_Generator(
-        batch_size=params["BATCH_SIZE_PRO"],
-        window_size=params["WINDOW_SIZE_PRO"],
-        shuffle_buffer=params["SUFFLE_BUFFER_PRO"],
-        target_period=params["TARGET_PERIOD_PRO"],
-        how=params["HOW_WINDOW_GEN_PRO"],
-        SEED=SEED,
+    wd = WindowGenerator(
+        batch_size=params["featurize"]["BATCH_SIZE_PRO"],
+        window_size=params["featurize"]["WINDOW_SIZE"],
+        shuffle_buffer=params["featurize"]["SUFFLE_BUFFER_PRO"],
+        target_period=params["featurize"]["TARGET_PERIOD"],
+        how_input=params["featurize"]["HOW_INPUT_WINDOW_GEN"],
+        how_target=params["featurize"]["HOW_TARGET_WINDOW_GEN"],
+        model_type=params["featurize"]["MODEL_TYPE"],
     )
 
     # dataset for performance evaluation
-    train_pred_dataset, train_pred_data_week = wd.transform(df=train_df, shuffle=False)
-    val_dataset, val_data_week = wd.transform(df=val_df, shuffle=False)
-    test_dataset, test_data_week = wd.transform(df=test_df, shuffle=False)
+    train_pred_dataset = wd.transform(df=train_df, shuffle=False)
     # dataset to training
-    train_dataset, train_data_week = wd.transform(df=train_df, shuffle=True)
-    logger.info("PROCESS: TRASFORMING DATASETS (1/3): DONE!")
+    train_dataset = wd.transform(df=train_df, shuffle=True)
+    val_dataset = wd.transform(df=val_df, shuffle=False)
+
+    if params["preprocess"]["TEST_START_PP"]:
+        test_dataset = wd.transform(df=test_df, shuffle=False)
+
+    logger.info("FEATURIZE: TRASFORMING DATASETS... DONE!")
 
     os.makedirs(PROCESSED_DATA_PATH, exist_ok=True)
 
     # saves datasets to disk
     # dataset for performance evaluation
-    tf.data.Dataset.save(
-        train_pred_dataset,
-        TRAIN_PRED_PROCESSED_DATA_PATH,
-        compression=None,
-        shard_func=None,
-        checkpoint_args=None,
-    )
-    tf.data.Dataset.save(
-        val_dataset,
-        VAL_PROCESSED_DATA_PATH,
-        compression=None,
-        shard_func=None,
-        checkpoint_args=None,
-    )
-    tf.data.Dataset.save(
-        test_dataset,
-        TEST_PROCESSED_DATA_PATH,
-        compression=None,
-        shard_func=None,
-        checkpoint_args=None,
-    )
+    train_pred_dataset.to_csv(TRAIN_PRED_PROCESSED_DATA_PATH, index="din_instante")
     # dataset to training
-    tf.data.Dataset.save(
-        train_dataset,
-        TRAIN_PROCESSED_DATA_PATH,
-        compression=None,
-        shard_func=None,
-        checkpoint_args=None,
-    )
-    logger.info("PROCESS: SAVING DATASETS (2/3): DONE!")
+    train_dataset.to_csv(TRAIN_PROCESSED_DATA_PATH, index="din_instante")
 
-    # saves datasets week initial day
-    # dataset for performance evaluation
-    train_pred_data_week.to_csv(TRAIN_PRED_PROCESSED_DATA_WEEK_PATH)
-    val_data_week.to_csv(VAL_PROCESSED_DATA_WEEK_PATH)
-    test_data_week.to_csv(TEST_PROCESSED_DATA_WEEK_PATH)
-    # dataset to training
-    train_data_week.to_csv(TRAIN_PROCESSED_DATA_WEEK_PATH)
-    logger.info("PROCESS: SAVING WEEK INITIAL DAYS (3/3): DONE!")
+    val_dataset.to_csv(VAL_PROCESSED_DATA_PATH, index="din_instante")
+    if params["preprocess"]["TEST_START_PP"]:
+        test_dataset.to_csv(TEST_PROCESSED_DATA_PATH, index="din_instante")
+
+    logger.info("FEATURIZE: SAVING DATASETS... DONE!")
+
+
+if __name__ == "__main__":
+    logger = get_logger(__name__)
+    main()
