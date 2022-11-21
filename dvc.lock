@@ -72,8 +72,8 @@ stages:
       md5: 2bd93c0e70a81df2dbd68c699d957dbf
       size: 3217
     - path: src/train.py
-      md5: 529a142438b0d175efbf381859342adf
-      size: 7978
+      md5: 4a188572c6f3d12fdec6dffb4f853783
+      size: 8280
     - path: src/utils/create_model.py
       md5: a9cd58d15976227d09309043d23d0284
       size: 5359
@@ -81,8 +81,8 @@ stages:
       md5: 8dc624cdc019dd98b2a4ade6f6f8ac19
       size: 4592
     - path: src/utils/utils_evaluate.py
-      md5: b5b410eaf0f23aab4f4b74a45a47a189
-      size: 12440
+      md5: a7d0946a85345e14d75e284fc1060acf
+      size: 12400
     params:
       params.yaml:
         featurize.MODEL_TYPE: SINGLE-SHOT
@@ -93,36 +93,36 @@ stages:
         train.PATIENCE: 15
     outs:
     - path: data/predicted/train.csv
-      md5: 49fb188a45486036886b54c4cc17db41
-      size: 206443
+      md5: aabd752d145e39d7210315b549884984
+      size: 206448
     - path: data/predicted/val.csv
-      md5: e941628eb8c90c3209c3bd0f4855f778
-      size: 108315
+      md5: 3d885ad4217ea3e3aa9e89d1d8e3f12b
+      size: 108299
     - path: dvclive/metrics.json
-      md5: 4803be654b57caad5188e57b9a63df24
-      size: 440
+      md5: 9f5d06a924113a6549a944d6bc5c6b10
+      size: 447
     - path: dvclive/plots
-      md5: 8db4247b4a09dafb068958f886ae63ad.dir
-      size: 23181
+      md5: 8f0058c22eead3b41ca8bba7ecf677e1.dir
+      size: 23061
       nfiles: 8
     - path: evaluation/history.json
-      md5: b836cb981ef69aa63f95eb3131172ab6
-      size: 20433
+      md5: f1f95002d70aa9814d771daa9d993f8e
+      size: 20313
     - path: evaluation/history_params.json
       md5: abcbc9c2db08358ad1625b8146ee0464
       size: 42
     - path: evaluation/learning_curves.png
-      md5: 8acefd00f5dc2c1617b33a030dd14c0e
-      size: 114282
+      md5: 5151573650039619adeecc3c6976315a
+      size: 102097
     - path: evaluation/metrics_semana.png
-      md5: d01830f11d41ca1def697e84d751041f
-      size: 102026
+      md5: 9b4acace33f75a30222f2d076911d6a6
+      size: 96316
     - path: evaluation/prediction_series.png
-      md5: 8e4d51ab71ea87dc8dbf8d533ff7cf3d
-      size: 1110513
+      md5: f30797329079a539f5ec0ac25592213d
+      size: 1110375
     - path: evaluation/residuo.png
-      md5: 79a466e49e95eb1679a65b295a8bfe2a
-      size: 309590
+      md5: 4cc65bdcab15626ac6f01217f2975c2f
+      size: 316476
   evaluate:
     cmd: python -m src.evaluate
     deps:

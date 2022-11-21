@@ -58,6 +58,7 @@ stages:
     - src/utils/utils_evaluate.py
     - src/utils/create_model.py
     - src/utils/data_transform.py
+    - src/utils/vault_dagshub.py
     params:
     - train.EPOCHS
     - train.PATIENCE

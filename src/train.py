@@ -30,12 +30,15 @@ from src.config.const import (
     VAL_PREDICTION_PATH,
     EVAL_ARCHIVE_PATH
 )
-from src.vault_dagshub import DAGSHUB_PASSWORD, DAGSHUB_USERNAME
+# from src.vault_dagshub import DAGSHUB_PASSWORD, DAGSHUB_USERNAME
 from src.utils.data_transform import prepare_data_for_prediction, predict_load,prepare_predicted_data
+# from src.utils.vault_dagshub import get_dagshub_credentials
+
 
 # mlflow settings
-os.environ["MLFLOW_TRACKING_USERNAME"] = DAGSHUB_USERNAME
-os.environ["MLFLOW_TRACKING_PASSWORD"] = DAGSHUB_PASSWORD
+# DAGSHUB_USERNAME, DAGSHUB_PASSWORD = get_dagshub_credentials()
+os.environ["MLFLOW_TRACKING_USERNAME"] = "ticomansur@gmail.com"
+os.environ["MLFLOW_TRACKING_PASSWORD"] = "7ab5d30298571d8f88569dedca7904ea234a18d1"
 os.environ[
     "MLFLOW_TRACKING_URI"
 ] = "https://dagshub.com/marcos-mansur/load-forecast.mlflow"
@@ -112,7 +115,7 @@ def eval(pred_list,history):
     
     logger.info("PREDICTIONS: DONE!")
 
-    run_id = str(datetime.now()) + "_" + params['featurize']['MODEL_TYPE'] + '_'+ params['featurize']['LAYERS']
+    run_id = str(datetime.now()) + "_" + params['featurize']['MODEL_TYPE'] + '_' + str(params['train']['LAYERS'])
 
     df_target = pd.read_csv(TARGET_DF_PATH, index_col="Data")
     logger.info("LOADED TARGET DATA")
