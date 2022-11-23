@@ -13,9 +13,9 @@ from sklearn.metrics import (
 )
 
 
-def learning_curves(history, skip, plot=False):
+def learning_curves(history, skip, plot=False, model_name='rnn', zoom=False):
 
-    fig, ax = plt.subplots(figsize=(30, 6), nrows=1, ncols=3)
+    fig, ax = plt.subplots(figsize=(13, 18), nrows=3, ncols=1)
     metrics_list = [
         "loss",
         "val_loss",
@@ -37,10 +37,10 @@ def learning_curves(history, skip, plot=False):
 
         if (i % 2) == 0:
             curve_label = "Treino"
-            color = 'teal'
+            color = 'orange'
         else:
             curve_label = "Validação"
-            color = 'orange'
+            color = 'green'
 
         sns.lineplot(
             x=range(skip, len(history[metric])),
@@ -50,9 +50,20 @@ def learning_curves(history, skip, plot=False):
             color=color
         )
 
-    ax.ravel()[0].set_title("Learning Curve: EMQ - loss")
-    ax.ravel()[1].set_title("Learning Curve: EMA")
-    ax.ravel()[2].set_title("Learning Curve: REMQ")
+    if zoom:
+        zoom_title = '- zoom'
+        ax.ravel()[0].set_ylim(0)
+        ax.ravel()[1].set_ylim(0)
+        ax.ravel()[2].set_ylim(0)
+
+    else: 
+        zoom_title =''
+    ax.ravel()[0].set_title(f"Learning Curve: EMQ (custo) - {model_name} {zoom_title}")
+    ax.ravel()[1].set_title(f"Learning Curve: EMA - {model_name} {zoom_title}")
+    ax.ravel()[2].set_title(f"Learning Curve: REMQ - {model_name} {zoom_title}")
+
+    for x in range(0,3):
+        ax.ravel()[x].set_xlabel('epochs')
 
     if plot:
         plt.show()
@@ -60,21 +71,22 @@ def learning_curves(history, skip, plot=False):
     return fig
 
 
-def plot_predicted_series(pred_list, df_target, plot=False):
+
+def plot_predicted_series(pred_list, df_target, plot=False,figsize=(12,18),iterate_over=range(0,5)):
 
     params = yaml.safe_load(open("params.yaml"))
 
-    window_size = params["featurize"]["WINDOW_SIZE"]
-    # window size in days
-    if params["featurize"]["HOW_INPUT_WINDOW_GEN"] == "daily":
-        window_size = window_size / 7
+    window_size = pred_list[0].shape[1] - 6
 
     colors = ["orange", "green"]
     dataset_names = ["Treino", "Validação"]
-    fig, ax = plt.subplots(figsize=(20, 35), ncols=1, nrows=5)
+    
+    fig = plt.figure(figsize=figsize)    
+    gs = fig.add_gridspec(len(iterate_over), hspace=0.30)
+    ax = gs.subplots(sharex=False)
 
     # loop over 5 weeks
-    for week_count in range(0, params["featurize"]["TARGET_PERIOD"]):
+    for enumerator, week_count in enumerate(iterate_over):
 
         extra = plt.Rectangle(
             (0, 0), 0, 0, fc="none", fill=False, ec="none", linewidth=0
@@ -84,16 +96,16 @@ def plot_predicted_series(pred_list, df_target, plot=False):
         sns.lineplot(
             x=df_target.iloc[week_count:].index,
             y=df_target[f"Semana {week_count+1}"].iloc[: -week_count or None],
-            ax=np.ravel(ax)[week_count],
+            ax=ax.ravel()[enumerator],
             color="teal",
             label="Carga Real",
         )
 
         # plot predicted data
         for pred_set, color, ds_name in zip(pred_list, colors, dataset_names):
-
+            
             # shift index so it shows date of prediction
-            true_index = pred_set.index.astype("datetime64[ms]") + pd.Timedelta(
+            true_index = pred_set.index.astype("datetime64[ns]") + pd.Timedelta(
                 value=7 * (window_size - 1), unit="d"
             )  # -1
             x_value = [str(index_unit).split(" ")[0] for index_unit in true_index]
@@ -102,12 +114,12 @@ def plot_predicted_series(pred_list, df_target, plot=False):
             sns.lineplot(
                 x=x_value,
                 y=y_value,
-                ax=np.ravel(ax)[week_count],
+                ax=ax.ravel()[enumerator],
                 color=color,
                 label=ds_name,
             )
 
-        np.ravel(ax)[week_count].set_title(
+        ax.ravel()[enumerator].set_title(
             f"Carga real vs Predição em todo o período - Semana {week_count+1}"
         )
 
@@ -146,15 +158,19 @@ def plot_predicted_series(pred_list, df_target, plot=False):
             + r"EMAP val = {:.2f}%"
         ).format(*score_list_by_dataset)
 
-        np.ravel(ax)[week_count].legend([extra], [scores], loc="lower right")
+        legend_metrics = plt.legend([extra], [scores], loc="lower right")
+        legend_lines = plt.legend(loc="lower right")
+        
 
+        ax.ravel()[enumerator].add_artist(legend_metrics)
+        ax.ravel()[enumerator].add_artist(legend_lines)
         # add rectangle patch
-        np.ravel(ax)[week_count].add_patch(extra)
+        ax.ravel()[enumerator].add_patch(extra)
         # patch coordinates
         extra_x, extra_y = extra.get_xy()
         cx = extra_x + extra.get_width() / 2.0
         cy = extra_y + extra.get_height() / 2.0
-        np.ravel(ax)[week_count].annotate(
+        ax.ravel()[enumerator].annotate(
             scores,
             (cx, cy),
             color="black",
@@ -164,12 +180,12 @@ def plot_predicted_series(pred_list, df_target, plot=False):
             va="center",
         )
 
-        # np.ravel(ax)[week_count].legend(loc='upper left')
+        # np.ravel(ax)[enumerator].legend(loc='upper left')
 
-        np.ravel(ax)[week_count].xaxis.set_major_locator(mdates.MonthLocator())
-        np.ravel(ax)[week_count].xaxis.set_minor_locator(mdates.MonthLocator(bymonth=1))
+        ax.ravel()[enumerator].xaxis.set_major_locator(mdates.MonthLocator())
+        ax.ravel()[enumerator].xaxis.set_minor_locator(mdates.MonthLocator(bymonth=1))
 
-        for label in np.ravel(ax)[week_count].get_xticklabels(which="major"):
+        for label in ax.ravel()[enumerator].get_xticklabels(which="major"):
             label.set(rotation=30, horizontalalignment="right")
 
     if plot:
@@ -177,7 +193,8 @@ def plot_predicted_series(pred_list, df_target, plot=False):
     return fig
 
 
-def generate_metrics_semana(df_target, pred_list, plot=False):
+
+def generate_metrics_semana(df_target, pred_list, plot=False,figsize=(12,18),title_mod=''):
     """Generates metrics for prediction performance of the 5 predicted weeks
     and generates plot for such metrics
 
@@ -193,7 +210,7 @@ def generate_metrics_semana(df_target, pred_list, plot=False):
     """
     name_dict = {0: "treino", 1: "validação", 2: "teste"}
 
-    fig, ax = plt.subplots(figsize=(20, 5), ncols=3)
+    fig, ax = plt.subplots(figsize=figsize, nrows=3)
 
     train_metrics_df = pd.DataFrame(index=[f"Semana {week}" for week in range(1, 6)])
     val_metrics_df = pd.DataFrame(index=[f"Semana {week}" for week in range(1, 6)])
@@ -204,7 +221,7 @@ def generate_metrics_semana(df_target, pred_list, plot=False):
     mape_plot_list = [0, 0]
     rmse_plot_list = [0, 0]
 
-    colors_list = ["teal", "orange"]
+    colors_list = ["orange", "green"]
 
     # df_set will take the values: train_pred, val_pred and test_pred
     for i, pred_set in enumerate(pred_list):
@@ -292,25 +309,25 @@ def generate_metrics_semana(df_target, pred_list, plot=False):
         metrics_df_list[i]["EMAP"] = mape_list
         metrics_df_list[i]["REMQ"] = rmse_list
 
-    ax[0].set_title("EMA das inferências por semana")
+    ax[0].set_title(f"EMA das inferências por semana - {title_mod}")
     ax[0].set_xticks(
         [1, 2, 3, 4, 5],
         labels=["Semana 1", "Semana 2", "Semana 3", "Semana 4", "Semana 5"],
     )
-    ax[1].set_title("EMAP das inferências por semana")
+    ax[1].set_title(f"EMAP das inferências por semana - {title_mod}")
     ax[1].set_xticks(
         [1, 2, 3, 4, 5],
         labels=["Semana 1", "Semana 2", "Semana 3", "Semana 4", "Semana 5"],
     )
-    ax[2].set_title("REMQ das inferências por semana")
+    ax[2].set_title(f"REMQ das inferências por semana - {title_mod}")
     ax[2].set_xticks(
         [1, 2, 3, 4, 5],
         labels=["Semana 1", "Semana 2", "Semana 3", "Semana 4", "Semana 5"],
     )
-
-    ax[0].legend(loc="lower right")
-    ax[1].legend(loc="lower right")
-    ax[2].legend(loc="lower right")
+    for x in range(3):
+        ax[x].legend(loc="lower right")
+        ax[x].set_ylim(0)
+        ax[2].legend(loc="lower right")
 
     if plot:
         plt.show()
@@ -341,35 +358,44 @@ def create_target_df(df, df_target_path, baseline_size=1):
     df_target.to_csv(df_target_path)
 
 
-def plot_residual_error(df_target, pred_list, plot=False):
+def plot_residual_error(df_target, pred_list,plot=False,figsize=(12,18), iterate_over=range(5)):
     # variation from one week to the next
     res_baseline = df_target[
         "Resíduo"
     ]  # - df_target['Resíduo'].mean())/df_target['Resíduo'].max()
     # prediction residues
     colors = ["orange", "green", "purple"]
+    
+    fig = plt.figure(figsize=figsize)    
+    gs = fig.add_gridspec(len(iterate_over), hspace=0.30)
+    ax = gs.subplots(sharex=False)
+    
+    window_size = pred_list[0].shape[1]-6
 
-    fig, ax = plt.subplots(figsize=(20, 8))
-    # diferença normalizada entre semanas consecutivas
-    # sns.lineplot(y=res_baseline, x=df_target['Data'], ax=ax)
+    for week in iterate_over:
 
-    res_list = []
-    for pred_set, color in zip(pred_list, colors[: len(pred_list)]):
-        pred = pred_set.iloc[:-3]
-        res_pred = (
-            pred.loc[:, "previsão semana 1"].values
-            - df_target["Semana 1"].loc[pred["Data Previsão"]].values
-        )
-        sns.lineplot(y=res_pred, x=pred["Data Previsão"], ax=ax, color=color)
-        res_list.append(res_pred)
+        # diferença normalizada entre semanas consecutivas
+        # sns.lineplot(y=res_baseline, x=df_target['Data'], ax=ax[week])
+        res_list = []
+        for pred_set, color in zip(pred_list, colors[: len(pred_list)]):
+            pred = pred_set.iloc[:-3]
+            res_pred = (
+                pred.loc[:, "previsão semana 1"].values
+                - df_target[f"Semana {week+1}"].loc[pred["Data Previsão"]].values
+            )
+            x_value = pred["Data Previsão"].astype("datetime64[ms]") + pd.Timedelta(
+                value=7 * (window_size - 1), unit="d"
+            )
+            sns.lineplot(y=res_pred, x=pred["Data Previsão"], ax=ax[week], color=color)
+            res_list.append(res_pred)
 
-    ax.set_title("Resíduo - Semana 1")
-    ax.legend("")
-    ax.xaxis.set_major_locator(mdates.MonthLocator())
-    ax.xaxis.set_minor_locator(mdates.MonthLocator(bymonth=1))
+        ax[week].set_title(f"Resíduo - Semana {week+1}")
+        ax[week].legend("")
+        ax[week].xaxis.set_major_locator(mdates.MonthLocator())
+        ax[week].xaxis.set_minor_locator(mdates.MonthLocator(bymonth=1))
 
-    for label in ax.get_xticklabels(which="major"):
-        label.set(rotation=30, horizontalalignment="right")
+        for label in ax[week].get_xticklabels(which="major"):
+            label.set(rotation=30, horizontalalignment="right")
 
     if plot:
         plt.show()
