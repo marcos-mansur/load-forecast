@@ -64,6 +64,7 @@ stages:
     - train.PATIENCE
     - train.NEURONS
     - train.MODEL_NAME
+    - train.LAYERS
     - featurize.MODEL_TYPE
     metrics:
     - dvclive/metrics.json:
