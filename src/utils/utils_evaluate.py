@@ -365,6 +365,11 @@ def plot_residual_error(df_target, pred_list, plot=False):
 
     ax.set_title("Resíduo - Semana 1")
     ax.legend("")
+    ax.xaxis.set_major_locator(mdates.MonthLocator())
+    ax.xaxis.set_minor_locator(mdates.MonthLocator(bymonth=1))
+
+    for label in ax.get_xticklabels(which="major"):
+        label.set(rotation=30, horizontalalignment="right")
 
     if plot:
         plt.show()
