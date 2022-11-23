@@ -158,12 +158,13 @@ def plot_predicted_series(pred_list, df_target, plot=False,figsize=(12,18),itera
             + r"EMAP val = {:.2f}%"
         ).format(*score_list_by_dataset)
 
-        legend_metrics = plt.legend([extra], [scores], loc="lower right")
-        legend_lines = plt.legend(loc="lower right")
+        legend_metrics = ax[enumerator].legend([extra], [scores], loc="lower right")
+        # legend_lines = plt.legend(loc="lower right")
         
 
-        ax.ravel()[enumerator].add_artist(legend_metrics)
-        ax.ravel()[enumerator].add_artist(legend_lines)
+        # ax.ravel()[enumerator].add_artist(legend_metrics)
+        # ax.ravel()[enumerator].add_artist(legend_lines)
+        
         # add rectangle patch
         ax.ravel()[enumerator].add_patch(extra)
         # patch coordinates
