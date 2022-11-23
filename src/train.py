@@ -30,15 +30,14 @@ from src.config.const import (
     VAL_PREDICTION_PATH,
     EVAL_ARCHIVE_PATH
 )
-# from src.vault_dagshub import DAGSHUB_PASSWORD, DAGSHUB_USERNAME
 from src.utils.data_transform import prepare_data_for_prediction, predict_load,prepare_predicted_data
-# from src.utils.vault_dagshub import get_dagshub_credentials
+from src.utils.vault_dagshub import get_dagshub_credentials
 
 
 # mlflow settings
-# DAGSHUB_USERNAME, DAGSHUB_PASSWORD = get_dagshub_credentials()
-os.environ["MLFLOW_TRACKING_USERNAME"] = "ticomansur@gmail.com"
-os.environ["MLFLOW_TRACKING_PASSWORD"] = "7ab5d30298571d8f88569dedca7904ea234a18d1"
+DAGSHUB_USERNAME, DAGSHUB_PASSWORD = get_dagshub_credentials()
+os.environ["MLFLOW_TRACKING_USERNAME"] = DAGSHUB_USERNAME
+os.environ["MLFLOW_TRACKING_PASSWORD"] = DAGSHUB_PASSWORD
 os.environ[
     "MLFLOW_TRACKING_URI"
 ] = "https://dagshub.com/marcos-mansur/load-forecast.mlflow"
@@ -121,12 +120,12 @@ def eval(pred_list,history):
     logger.info("LOADED TARGET DATA")
     os.makedirs(VALUATION_PATH, exist_ok=True)
 
-    lc_fig = learning_curves(history=history.history, skip=20, plot=True)
+    lc_fig = learning_curves(history=history.history, skip=0, plot=True)
     lc_fig.savefig(VALUATION_PATH / f"learning_curves.png")
     lc_fig.savefig(EVAL_ARCHIVE_PATH / f"learning_curves {run_id}.png")
     logger.info("LEARNING CURVES SAVED TO DISK")
 
-    lc_fig = learning_curves(history=history.history, skip=int(len(history.history)*0.2), plot=True)
+    lc_fig = learning_curves(history=history.history, skip=int(len(history.history['loss'])*0.8), plot=True)
     lc_fig.savefig(VALUATION_PATH / f"learning_curves-zoom.png")
     lc_fig.savefig(EVAL_ARCHIVE_PATH / f"learning_curves-zoom {run_id} .png")
     logger.info("LEARNING CURVES SAVED TO DISK")
@@ -161,9 +160,12 @@ def eval(pred_list,history):
 
     with open(EVAL_ARCHIVE_PATH / f"history_{run_id}", "w") as archive_path:
             json.dump(history.history, archive_path)
-    with open(HISTORY_PARAMS_PATH , "w") as archive_path:
+    with open(EVAL_ARCHIVE_PATH / f"historyparams_{run_id}", "w") as archive_path:
         json.dump(history.params, archive_path )
     logger.info("TRAIN HISTORY STORED TO DISK")
+    
+    for pred_set, set_name in zip(pred_list, ['train', 'val']):
+        pred_set.to_csv(EVAL_ARCHIVE_PATH / 'predictions' / f"{set_name}_{run_id}")
 
 
 def main(params):

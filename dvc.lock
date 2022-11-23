@@ -15,27 +15,27 @@ stages:
       size: 16273
     params:
       params.yaml:
-        featurize.WINDOW_SIZE: 35
+        featurize.WINDOW_SIZE: 20
         preprocess.DATA_YEAR_START_PP: 2012
         preprocess.HOW_IMPUTE_NAN: sazonalidade
         preprocess.TEST_START_PP:
         preprocess.VAL_START_PP: '2019-03-01'
     outs:
     - path: data/preprocessed/train_preprocessed.csv
-      md5: 17925307c7a81e07594c51964511851a
-      size: 110974
+      md5: 327052a383873d5903fb223a71cefe59
+      size: 115911
     - path: data/preprocessed/val_preprocessed.csv
-      md5: eb0813ab5e090905729304bc7ce1d814
-      size: 64096
+      md5: 604e293716f2dd952bd1725a3562f7f7
+      size: 59159
   featurize:
     cmd: python -m src.featurize
     deps:
     - path: data/preprocessed/train_preprocessed.csv
-      md5: 17925307c7a81e07594c51964511851a
-      size: 110974
+      md5: 327052a383873d5903fb223a71cefe59
+      size: 115911
     - path: data/preprocessed/val_preprocessed.csv
-      md5: eb0813ab5e090905729304bc7ce1d814
-      size: 64096
+      md5: 604e293716f2dd952bd1725a3562f7f7
+      size: 59159
     - path: src/common/load_data.py
       md5: 2bd93c0e70a81df2dbd68c699d957dbf
       size: 3217
@@ -50,30 +50,30 @@ stages:
         featurize.MODEL_TYPE: SINGLE-SHOT
         featurize.SUFFLE_BUFFER_PRO: 20
         featurize.TARGET_PERIOD: 5
-        featurize.WINDOW_SIZE: 35
+        featurize.WINDOW_SIZE: 20
         preprocess.TEST_START_PP:
     outs:
     - path: data/featurized/train_processed.csv
-      md5: ac991fedb5848cf707b03223df60f083
-      size: 217161
+      md5: 96be9dea825de94e07b13e4e95dc9595
+      size: 150615
     - path: data/featurized/val_processed.csv
-      md5: 3937a60197bfead47894261c0bee8241
-      size: 113783
+      md5: 853fcf4e38350d94ee3f8b725487b1d8
+      size: 71808
   train:
     cmd: python -m src.train
     deps:
     - path: data/featurized/train_processed.csv
-      md5: ac991fedb5848cf707b03223df60f083
-      size: 217161
+      md5: 96be9dea825de94e07b13e4e95dc9595
+      size: 150615
     - path: data/featurized/val_processed.csv
-      md5: 3937a60197bfead47894261c0bee8241
-      size: 113783
+      md5: 853fcf4e38350d94ee3f8b725487b1d8
+      size: 71808
     - path: src/common/load_data.py
       md5: 2bd93c0e70a81df2dbd68c699d957dbf
       size: 3217
     - path: src/train.py
-      md5: 4a188572c6f3d12fdec6dffb4f853783
-      size: 8280
+      md5: 2b28de3cc276198d98b3a61eaffbcc5d
+      size: 8467
     - path: src/utils/create_model.py
       md5: a9cd58d15976227d09309043d23d0284
       size: 5359
@@ -83,6 +83,9 @@ stages:
     - path: src/utils/utils_evaluate.py
       md5: a7d0946a85345e14d75e284fc1060acf
       size: 12400
+    - path: src/utils/vault_dagshub.py
+      md5: 77c44a3c0efa401de19d9975c7161972
+      size: 212
     params:
       params.yaml:
         featurize.MODEL_TYPE: SINGLE-SHOT
@@ -93,36 +96,36 @@ stages:
         train.PATIENCE: 15
     outs:
     - path: data/predicted/train.csv
-      md5: aabd752d145e39d7210315b549884984
-      size: 206448
+      md5: 9d78677d16f6fd1d5b256930fabee8ae
+      size: 139752
     - path: data/predicted/val.csv
-      md5: 3d885ad4217ea3e3aa9e89d1d8e3f12b
-      size: 108299
+      md5: 815b11311d1c6b2f9c9cde388211a5c6
+      size: 66649
     - path: dvclive/metrics.json
-      md5: 9f5d06a924113a6549a944d6bc5c6b10
-      size: 447
+      md5: 0d7bf5b34d58d431376ae175dee32bc7
+      size: 449
     - path: dvclive/plots
-      md5: 8f0058c22eead3b41ca8bba7ecf677e1.dir
-      size: 23061
+      md5: 110abcd2b89e50d12cad3bd42865a5e7.dir
+      size: 20475
       nfiles: 8
     - path: evaluation/history.json
-      md5: f1f95002d70aa9814d771daa9d993f8e
-      size: 20313
+      md5: cd0bba08de92382cd62c70f2aa631340
+      size: 18135
     - path: evaluation/history_params.json
-      md5: abcbc9c2db08358ad1625b8146ee0464
+      md5: 3399fd7e67d2a27437f446d7c3a500d0
       size: 42
     - path: evaluation/learning_curves.png
-      md5: 5151573650039619adeecc3c6976315a
-      size: 102097
+      md5: 4cf0159dd8ed5c0d9e1b967a72ced6dc
+      size: 114674
     - path: evaluation/metrics_semana.png
-      md5: 9b4acace33f75a30222f2d076911d6a6
-      size: 96316
+      md5: 634f7353d5ee565daa7dd9f3598c7848
+      size: 104267
     - path: evaluation/prediction_series.png
-      md5: f30797329079a539f5ec0ac25592213d
-      size: 1110375
+      md5: c8bd1743821ab29152db377c3d0ab7f1
+      size: 1120016
     - path: evaluation/residuo.png
-      md5: 4cc65bdcab15626ac6f01217f2975c2f
-      size: 316476
+      md5: 8c1e37593e4be7f00b33db886eda7c89
+      size: 319314
   evaluate:
     cmd: python -m src.evaluate
     deps:
