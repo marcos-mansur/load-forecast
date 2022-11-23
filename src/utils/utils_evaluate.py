@@ -158,7 +158,7 @@ def plot_predicted_series(pred_list, df_target, plot=False,figsize=(12,18),itera
             + r"EMAP val = {:.2f}%"
         ).format(*score_list_by_dataset)
 
-        legend_metrics = ax[enumerator].legend([extra], [scores], loc="lower right")
+        legend_metrics = ax[enumerator].legend([extra], [scores], loc="upper left")
         # legend_lines = plt.legend(loc="lower right")
         
 
@@ -195,7 +195,13 @@ def plot_predicted_series(pred_list, df_target, plot=False,figsize=(12,18),itera
 
 
 
-def generate_metrics_semana(df_target, pred_list, plot=False,figsize=(12,18),title_mod=''):
+def generate_metrics_semana(
+    df_target, 
+    pred_list, 
+    plot=False,
+    figsize=(12,18),
+    title_mod=''
+):
     """Generates metrics for prediction performance of the 5 predicted weeks
     and generates plot for such metrics
 
