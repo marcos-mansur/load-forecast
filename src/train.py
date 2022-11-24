@@ -167,6 +167,10 @@ def eval(pred_list,history):
     
     for pred_set, set_name in zip(pred_list, ['train', 'val']):
         pred_set.to_csv(EVAL_ARCHIVE_PATH / 'predictions' / f"{set_name}_{run_id}")
+    
+    with open(EVAL_ARCHIVE_PATH / f"params_{run_id}", "w") as archive_path:
+        json.dump(params, archive_path )
+    
 
 
 def main(params):

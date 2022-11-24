@@ -20,4 +20,4 @@ train:
   NEURONS: [64]
   LAYERS: [RNN] 
   MODEL_NAME: model_train
-  LEARNING_RATE: 0.001
+  LEARNING_RATE: 0.01
