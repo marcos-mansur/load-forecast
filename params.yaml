@@ -7,7 +7,7 @@ preprocess:
 
 featurize:
   BATCH_SIZE_PRO: 64
-  WINDOW_SIZE: 52
+  WINDOW_SIZE: 60
   SUFFLE_BUFFER_PRO: 20
   TARGET_PERIOD: 5
   HOW_INPUT_WINDOW_GEN: weekly
@@ -17,7 +17,11 @@ featurize:
 train:
   EPOCHS: 200
   PATIENCE: 10
-  NEURONS: [64]
-  LAYERS: [RNN] 
+  NEURONS:
+  - 128
+  - 32
+  LAYERS:
+  - RNN
+  - RNN
   MODEL_NAME: model_train
-  LEARNING_RATE: 0.01
+  LEARNING_RATE: 0.001

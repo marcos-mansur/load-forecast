@@ -74,8 +74,6 @@ def learning_curves(history, skip, plot=False, model_name='rnn', zoom=False):
 
 def plot_predicted_series(pred_list, df_target, plot=False,figsize=(12,18),iterate_over=range(0,5)):
 
-    params = yaml.safe_load(open("params.yaml"))
-
     window_size = pred_list[0].shape[1] - 6
 
     colors = ["orange", "green"]
@@ -158,7 +156,7 @@ def plot_predicted_series(pred_list, df_target, plot=False,figsize=(12,18),itera
             + r"EMAP val = {:.2f}%"
         ).format(*score_list_by_dataset)
 
-        legend_metrics = ax[enumerator].legend([extra], [scores], loc="upper left")
+        ax[enumerator].legend([extra], [scores], loc="upper left")
         # legend_lines = plt.legend(loc="lower right")
         
 
