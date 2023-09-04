@@ -93,7 +93,7 @@ def compile_and_fit(
             epochs=epochs,
             verbose=0,
             validation_data=val_data,
-            callbacks=[early_stopping, DVCLiveCallback()],
+            callbacks=[early_stopping, DVCLiveCallback(),checkpoint],
             batch_size=batch_size,
         )
 
@@ -133,7 +133,8 @@ def eval(pred_list,history):
     # generates the plot of the original and
     # predicted time series for the 5 weeks
     pred_series_fig = plot_predicted_series(
-        pred_list=pred_list, df_target=df_target, plot=True
+        pred_list=pred_list, df_target=df_target, plot=True, 
+        figsize = (12,24), iterate_over=range(0,5)
     )
     pred_series_fig.savefig(os.path.join(VALUATION_PATH, f"prediction_series.png"))
     pred_series_fig.savefig(os.path.join(EVAL_ARCHIVE_PATH, f"prediction_series {run_id}.png"))
@@ -166,6 +167,10 @@ def eval(pred_list,history):
     
     for pred_set, set_name in zip(pred_list, ['train', 'val']):
         pred_set.to_csv(EVAL_ARCHIVE_PATH / 'predictions' / f"{set_name}_{run_id}")
+    
+    with open(EVAL_ARCHIVE_PATH / f"params_{run_id}", "w") as archive_path:
+        json.dump(params, archive_path )
+    
 
 
 def main(params):
@@ -196,7 +201,7 @@ def main(params):
             val_data=val_data,
             model=model,
             epochs=params["train"]["EPOCHS"],
-            optimizer=tf.optimizers.Adam(),
+            optimizer=tf.optimizers.Adam(learning_rate=params["train"]["LEARNING_RATE"] ),
             patience=params["train"]["PATIENCE"],
             filepath=params["train"]["MODEL_NAME"],
             batch_size=params["featurize"]["BATCH_SIZE_PRO"],

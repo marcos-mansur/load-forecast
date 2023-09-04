@@ -1,0 +1,21 @@
+source venv/bin/activate
+dvc exp run -f -S featurize.BATCH_SIZE_PRO=32 -S train.NEURONS=[170] -S featurize.WINDOW_SIZE=60 -S train.LEARNING_RATE=0.01  -S train.LAYERS=[RNN]
+dvc exp run -f -S featurize.BATCH_SIZE_PRO=64 -S train.NEURONS=[170] -S featurize.WINDOW_SIZE=65 -S train.LEARNING_RATE=0.01 -S train.LAYERS=[RNN]
+dvc exp run -f -S featurize.BATCH_SIZE_PRO=64 -S train.NEURONS=[170] -S featurize.WINDOW_SIZE=55 -S train.LEARNING_RATE=0.01 -S train.LAYERS=[RNN]
+dvc exp run -f -S featurize.BATCH_SIZE_PRO=64 -S train.NEURONS=[170] -S featurize.WINDOW_SIZE=60 -S train.LEARNING_RATE=0.02 -S train.LAYERS=[RNN]
+dvc exp run -f -S featurize.BATCH_SIZE_PRO=64 -S train.NEURONS=[170] -S featurize.WINDOW_SIZE=60 -S train.LEARNING_RATE=0.08 -S train.LAYERS=[RNN]
+dvc exp run -f -S featurize.BATCH_SIZE_PRO=64 -S train.NEURONS=[200] -S featurize.WINDOW_SIZE=80 -S train.LEARNING_RATE=0.01 -S train.LAYERS=[RNN]
+dvc exp run -f -S featurize.BATCH_SIZE_PRO=8 -S train.NEURONS=[170] -S featurize.WINDOW_SIZE=60 -S train.LEARNING_RATE=0.001  -S train.LAYERS=[RNN]
+dvc exp run -f -S featurize.BATCH_SIZE_PRO=8 -S train.NEURONS=[170] -S featurize.WINDOW_SIZE=60 -S train.LEARNING_RATE=0.01 -S train.LAYERS=[RNN]
+dvc exp run -f -S featurize.BATCH_SIZE_PRO=32 -S train.NEURONS=[128] -S featurize.WINDOW_SIZE=60 -S train.LEARNING_RATE=0.006 -S train.LAYERS=[RNN]
+dvc exp run -f -S featurize.BATCH_SIZE_PRO=64 -S train.NEURONS=[100] -S featurize.WINDOW_SIZE=60 -S train.LEARNING_RATE=0.006 -S train.LAYERS=[RNN]
+dvc exp run -f -S featurize.BATCH_SIZE_PRO=64 -S train.NEURONS=[130] -S featurize.WINDOW_SIZE=60 -S train.LEARNING_RATE=0.006-S train.LAYERS=[RNN]
+dvc exp run -f -S featurize.BATCH_SIZE_PRO=64 -S train.NEURONS=[80] -S featurize.WINDOW_SIZE=60 -S train.LEARNING_RATE=0.01 -S train.LAYERS=[RNN]
+dvc exp run -f -S featurize.BATCH_SIZE_PRO=64 -S train.NEURONS=[32,2] -S featurize.WINDOW_SIZE=60 -S train.LAYERS=[RNN,RNN] -S train.LEARNING_RATE=0.001
+dvc exp run -f -S featurize.BATCH_SIZE_PRO=64 -S train.NEURONS=[32,8] -S featurize.WINDOW_SIZE=60 -S train.LAYERS=[RNN,RNN] -S train.LEARNING_RATE=0.008 
+dvc exp run -f -S featurize.BATCH_SIZE_PRO=64 -S train.NEURONS=[32,32] -S featurize.WINDOW_SIZE=60 -S train.LAYERS=[RNN,RNN] -S train.LEARNING_RATE=0.002 
+dvc exp run -f -S featurize.BATCH_SIZE_PRO=64 -S train.NEURONS=[64,8] -S featurize.WINDOW_SIZE=60 -S train.LAYERS=[RNN,RNN] -S train.LEARNING_RATE=0.002 
+dvc exp run -f -S featurize.BATCH_SIZE_PRO=64 -S train.NEURONS=[64,64] -S featurize.WINDOW_SIZE=60 -S train.LAYERS=[RNN,RNN] -S train.LEARNING_RATE=0.001
+dvc exp run -f -S featurize.BATCH_SIZE_PRO=64 -S train.NEURONS=[128,8] -S featurize.WINDOW_SIZE=60 -S train.LAYERS=[RNN,RNN] -S train.LEARNING_RATE=0.001
+dvc exp run -f -S featurize.BATCH_SIZE_PRO=64 -S train.NEURONS=[128,32] -S featurize.WINDOW_SIZE=60 -S train.LAYERS=[RNN,RNN] -S train.LEARNING_RATE=0.001
+

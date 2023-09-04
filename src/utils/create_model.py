@@ -73,7 +73,6 @@ class AutoregressiveModel(tf.keras.Model):
             self.layer_cell = tf.keras.layers.LSTMCell(units)
         # Also wrap the LSTMCell in an RNN to simplify the `warmup` method.
         self.lstm_rnn = tf.keras.layers.RNN(self.layer_cell, return_state=True)
-        self.dropout_layer = tf.keras.layers.Dropout(rate=0.2)
         self.dense = tf.keras.layers.Dense(1)  # number of features
         self.scale_layer = tf.keras.layers.Lambda(lambda x: x * 10000.0)
 
